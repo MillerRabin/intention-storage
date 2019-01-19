@@ -1,0 +1,16 @@
+{
+  "name": "intension-storage",
+  "version": "0.0.1",
+  "description": "Intension Storage project",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://millerrabin@bitbucket.org/intensionteam/intensionstorage.git"
+  },
+  "author": "millerrabin",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/intensionteam/intensionstorage#readme"
+}
