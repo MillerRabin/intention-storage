@@ -1,6 +1,6 @@
 {
   "name": "intension-storage",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Intension Storage project",
   "main": "main.js",
   "scripts": {
@@ -12,5 +12,8 @@
   },
   "author": "millerrabin",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/intensionteam/intensionstorage#readme"
+  "homepage": "https://bitbucket.org/intensionteam/intensionstorage#readme",
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  }
 }

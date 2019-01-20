@@ -1,6 +1,6 @@
-import Intension from './Intension.js';
-import OriginMap from './OriginMap.js'
-import intensionQuery from './intensionQuery.js';
+const Intension = require('./Intension.js');
+const OriginMap = require('./OriginMap.js');
+const intensionQuery = require('./intensionQuery.js');
 
 const main = new Map();
 
@@ -72,8 +72,8 @@ const gIntension = create({
     onData: onData
 });
 
-export default {
+module.exports = {
     create: create,
     delete: deleteIntension,
     get: getIntensions
-}
+};

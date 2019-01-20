@@ -2,6 +2,6 @@ function isEmpty(value) {
     return (value == null) || (value == '');
 }
 
-export default {
+module.exports = {
     isEmpty: isEmpty
-}
+};

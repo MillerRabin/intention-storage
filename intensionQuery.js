@@ -14,8 +14,8 @@ function query(intensionStorage, query) {
     return format(intensionStorage, query)
 }
 
-export default {
+module.exports = {
     query
-}
+};
 
 

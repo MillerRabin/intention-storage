@@ -1,4 +1,4 @@
-export default class AcceptedIntensions {
+module.exports = class AcceptedIntensions {
     constructor (intension) {
         if (intension == null) throw new Error('intension expected');
         this.accepted = new Map();
@@ -41,6 +41,4 @@ export default class AcceptedIntensions {
         }
         return res;
     }
-
-
-}
+};

@@ -1,6 +1,14 @@
-import safe from './core/safe.js';
-import uuid from './core/uuid.js';
-import AcceptedIntensions from './AcceptedIntensions.js';
+const safe = require('./core/safe.js');
+const uuid = require('./core/uuid.js');
+const AcceptedIntensions = require('./AcceptedIntensions.js');
+
+function getOrigin() {
+    try {
+        return window.location.host;
+    } catch (e) {
+        return 'localhost';
+    }
+}
 
 async function accept(source, target) {
     let tData = null;
@@ -28,7 +36,7 @@ async function accept(source, target) {
 
 }
 
-export default class Intension {
+module.exports = class Intension {
     constructor ({
         title,
         description,
@@ -48,7 +56,7 @@ export default class Intension {
         this.description = description;
         this.input = input;
         this.output = output;
-        this.origin = window.location.host;
+        this.origin = getOrigin();
         this.onData = onData;
         this.parameters = parameters;
         this.id = uuid.generate();
@@ -89,4 +97,4 @@ export default class Intension {
             accepted: this.accepted.toObject()
         }
     }
-}
+};
