@@ -4,6 +4,7 @@
   "description": "Intension Storage project",
   "main": "main.js",
   "scripts": {
+    "publish": "node ./builder/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
