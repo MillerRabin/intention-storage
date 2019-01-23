@@ -6,7 +6,7 @@ function getOrigin() {
     try {
         return window.location.host;
     } catch (e) {
-        return 'localhost';
+        return 'local';
     }
 }
 

@@ -1,52 +1,15 @@
-const Intension = require('./Intension.js');
-const OriginMap = require('./OriginMap.js');
 const intensionQuery = require('./intensionQuery.js');
+const IntensionStorage = require('./intensionStorage.js');
 
-const main = new Map();
+const main = new IntensionStorage();
 
-function add(intensions, intension) {
-    const key = intension.getKey();
-    if (!intensions.has(key)) intensions.set(key, new OriginMap());
-    intensions.get(key).set(intension);
+
+function create(params) {
+    return main.createIntension(params);
 }
 
 function deleteIntension(intension, message) {
-    try {
-        intension.accepted.close(intension, { message: message });
-    } catch (e) {
-        console.log(e);
-    }
-    const key = intension.getKey();
-    const originSet = main.get(key);
-    if (originSet == null) return;
-    originSet.delete(intension);
-    if (originSet.size == 0) main.delete(key);
-}
-
-function create(params) {
-    const intension = new Intension(params);
-    add(main, intension);
-    setTimeout(() => {
-        dispatchIntensions(main, intension)
-    });
-    return intension;
-}
-
-function dispatchIntensions(intensions, intension) {
-    const rKey = intension.getKey(true);
-    const originMap = intensions.get(rKey);
-    if (originMap == null) return;
-    for (let [,origin] of originMap) {
-        for (let int of origin) {
-            try {
-                if (int == intension) continue;
-                int.accept(intension);
-            } catch (e) {
-                console.log(e);
-            }
-        }
-    }
-    gIntension.accepted.send(iobj);
+    return main.delete(intension, message);
 }
 
 function query(info) {
@@ -57,16 +20,13 @@ const iobj = {
     query: query,
 };
 
-function getIntensions() {
-    return main;
-}
-
 async function onData(status) {
     if (status == 'accept') return iobj;
+    throw new Error(`status ${status} is not supported`);
 }
 
-const gIntension = create({
-    title: 'can query intension storage information',
+main.createIntension({
+    title: 'Can be intension storage',
     input: 'None',
     output: 'InterfaceObject',
     onData: onData
@@ -75,5 +35,5 @@ const gIntension = create({
 module.exports = {
     create: create,
     delete: deleteIntension,
-    get: getIntensions
+    storage: main
 };

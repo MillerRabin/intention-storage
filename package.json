@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "prepublishOnly": "node ./builder/main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test"
   },
   "repository": {
     "type": "git",
