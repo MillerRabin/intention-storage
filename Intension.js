@@ -51,7 +51,7 @@ module.exports = class Intension {
         if (typeof(onData) != 'function') throw new Error('Intension onData must be an async function');
         if (!Array.isArray(parameters)) throw new Error('Parameters must be array');
 
-        if (this.input == this.output) throw new Error('Input and Output can`t be same');
+        if (this.input == this.output) throw new Error('Input and Output can`t be the same');
 
         this.time = new Date();
         this.title = title;
