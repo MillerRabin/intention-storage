@@ -39,7 +39,7 @@ function dispatchIntensions(intensions, intension) {
     for (let [,origin] of originMap) {
         for (let int of origin) {
             try {
-                if (int == intension) throw new Error('Intension can`t be equal to itself');
+                if (int == intension) continue;
                 int.accept(intension);
             } catch (e) {
                 console.log(e);
