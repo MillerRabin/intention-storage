@@ -11,6 +11,8 @@ function getOrigin() {
 }
 
 async function accept(source, target) {
+    if (source.accepted.has(target)) return;
+    if (target.accepted.has(source)) return;
     let tData = null;
     let sData = null;
     try {
@@ -51,8 +53,6 @@ module.exports = class Intension {
         if (typeof(onData) != 'function') throw new Error('Intension onData must be an async function');
         if (!Array.isArray(parameters)) throw new Error('Parameters must be array');
 
-        if (input == output) throw new Error('Input and Output can`t be the same');
-
         this.time = new Date();
         this.title = title;
         this.description = description;
@@ -82,6 +82,9 @@ module.exports = class Intension {
     async close(intension, info) {
         try {
             return await this.onData('close', intension, info);
+        }
+        catch (e) {
+            console.log(e);
         }
         finally {
             this.accepted.delete(intension);

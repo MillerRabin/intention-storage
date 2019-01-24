@@ -4,8 +4,11 @@ module.exports = class AcceptedIntensions {
         this.accepted = new Map();
         this.intension = intension;
     }
-    set(value) {
-        this.accepted.set(value.id, value);
+    set(intension) {
+        return this.accepted.set(intension.id, intension);
+    }
+    has(intension) {
+        return this.accepted.has(intension.id);
     }
     delete(value) {
         this.accepted.delete(value.id);
