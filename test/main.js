@@ -1,5 +1,6 @@
 const assert = require('assert');
 const main = require('../main.js');
+const intensionQuery = require('../intensionQuery.js');
 
 describe('Intension Storage', function() {
     describe('#Create Storage Server', function() {
@@ -49,12 +50,25 @@ describe('Intension Storage', function() {
             const intension = main.storage.get('TestOut - TestIn');
             assert.ok(intension != null, 'Target must be exists in storage');
         });
-        it('source must be accepted', function () {
-            assert.ok(sourceAccept.intension.getKey() == 'TestOut - TestIn');
+        it('source must be accepted', function (done) {
+            setTimeout(function () {
+                assert.ok(sourceAccept.intension.getKey() == 'TestOut - TestIn');
+                done();
+            });
+
         });
-        it('target must be accepted', function () {
-            assert.ok(targetAccept.intension.getKey() == 'TestIn - TestOut');
+        it('target must be accepted', function (done) {
+            setTimeout(function () {
+                assert.ok(targetAccept.intension.getKey() == 'TestIn - TestOut');
+                done();
+            });
+
         });
+        it('query intension', function () {
+            const list = intensionQuery.query(main.storage, {});
+            assert.ok(list.length == 3);
+        });
+
     });
 
 });
