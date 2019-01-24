@@ -52,7 +52,7 @@ describe('Intension Storage', function() {
         it('source must be accepted', function () {
             assert.ok(sourceAccept.intension.getKey() == 'TestOut - TestIn');
         });
-        it('tagret must be accepted', function () {
+        it('target must be accepted', function () {
             assert.ok(targetAccept.intension.getKey() == 'TestIn - TestOut');
         });
     });
