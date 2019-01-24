@@ -1,6 +1,5 @@
 function format(intensionStorage) {
     const res = [];
-    console.log(intensionStorage.intensions);
     for (let [, originMap] of intensionStorage.intensions) {
         for (let [, intensions] of originMap) {
             for (let intension of intensions) {

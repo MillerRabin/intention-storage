@@ -52,9 +52,9 @@ module.exports = class IntensionStorage {
     get(key) {
         return this.intensions.get(key);
     }
-    deleteIntension(intension, message) {
+    deleteIntension(intension, data) {
         try {
-            intension.accepted.close(intension, { message: message });
+            intension.accepted.close(intension, data);
         } catch (e) {
             console.log(e);
         }

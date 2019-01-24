@@ -8,8 +8,8 @@ function create(params) {
     return main.createIntension(params);
 }
 
-function deleteIntension(intension, message) {
-    return main.delete(intension, message);
+function deleteIntension(intension, data) {
+    return main.deleteIntension(intension, data);
 }
 
 function query(info) {

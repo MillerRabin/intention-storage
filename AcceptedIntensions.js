@@ -41,4 +41,7 @@ module.exports = class AcceptedIntensions {
         }
         return res;
     }
+    get size() {
+        return this.accepted.size;
+    }
 };
