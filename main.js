@@ -22,7 +22,6 @@ const iobj = {
 
 async function onData(status) {
     if (status == 'accept') return iobj;
-    throw new Error(`status ${status} is not supported`);
 }
 
 main.createIntension({
