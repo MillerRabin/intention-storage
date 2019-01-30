@@ -1,5 +1,6 @@
 const intensionQuery = require('./intensionQuery.js');
 const IntensionStorage = require('./intensionStorage.js');
+const uuid = require('./core/uuid.js');
 
 const main = new IntensionStorage();
 
@@ -34,5 +35,6 @@ main.createIntension({
 module.exports = {
     create: create,
     delete: deleteIntension,
-    storage: main
+    storage: main,
+    generateUUID: uuid.generate
 };
