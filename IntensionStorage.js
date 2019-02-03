@@ -35,12 +35,17 @@ module.exports = class IntensionStorage {
         this.links.set(op, {
             origin: op
         });
+        return op;
     }
+
     deleteLink(origin) {
         const op = getParameter(origin, 'WebAddress');
         if (op == null) throw new Error('WebAddress parameter expected');
+        if (!this.links.has(op)) throw new Error(`${ op } does not exists in linked storages`);
         this.links.delete(op);
+        return op;
     }
+
     createIntension({
         title,
         description,
