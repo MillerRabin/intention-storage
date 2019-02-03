@@ -17,15 +17,29 @@ function dispatchIntensions(intensions, intension) {
     }
 }
 
+function getParameter(params, type) {
+    if (!Array.isArray(params)) return params;
+    const par = params.filter(p => p.type == type);
+    if (par[0] == null) return null;
+    return par[0].value;
+}
+
 module.exports = class IntensionStorage {
     constructor () {
         this.intensions = new IntensionMap(this);
         this.links = new Map();
     }
     addLink(origin) {
-        this.links.set(origin, {
-            origin: origin
+        const op = getParameter(origin, 'WebAddress');
+        if (op == null) throw new Error('WebAddress parameter expected');
+        this.links.set(op, {
+            origin: op
         });
+    }
+    deleteLink(origin) {
+        const op = getParameter(origin, 'WebAddress');
+        if (op == null) throw new Error('WebAddress parameter expected');
+        this.links.delete(op);
     }
     createIntension({
         title,

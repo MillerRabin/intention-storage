@@ -3,19 +3,19 @@ const main = require('../main.js');
 const intensionQuery = require('../intensionQuery.js');
 
 describe('Intension Storage', function() {
-    describe('#Create Storage Server', function() {
-        it('should create', function() {
+    describe('Query Intension', function() {
+        it('Should create', function() {
             const intension = main.storage.get('None - InterfaceObject');
             assert.ok(intension != null, 'intension must be exists');
         });
     });
-    describe('#Create intensions', function() {
+    describe('Intensions', function() {
         let source = null;
         let target = null;
         let sourceAccept = null;
         let targetAccept = null;
         let sourceClose = null;
-        it('should create', function() {
+        it('create test intension', function() {
             source = main.create({
                title: 'test intension',
                input: 'TestIn',
@@ -36,9 +36,8 @@ describe('Intension Storage', function() {
             assert.ok(source != null, 'source must be created');
             const intension = main.storage.get('TestIn - TestOut');
             assert.ok(intension != null, 'Source must be exists in storage');
-
         });
-        it('#Create counter intension', function () {
+        it('create counter intension', function () {
             assert.ok(source != null);
             target = main.create({
                 title: 'test intension',
@@ -56,39 +55,38 @@ describe('Intension Storage', function() {
             const intension = main.storage.get('TestOut - TestIn');
             assert.ok(intension != null, 'Target must be exists in storage');
         });
-        it('#Source must be accepted', function (done) {
+        it('source must be accepted', function (done) {
             setTimeout(function () {
                 assert.strictEqual(sourceAccept.intension.getKey(), 'TestOut - TestIn');
                 done();
             });
 
         });
-        it('#Target must be accepted', function (done) {
+        it('target must be accepted', function (done) {
             setTimeout(function () {
                 assert.strictEqual(targetAccept.intension.getKey(),'TestIn - TestOut');
                 done();
             });
-
         });
-        it('#Query intension', function () {
+        it('intensions must exists', function () {
             const list = intensionQuery.query(main.storage, {});
-            assert.ok(list.length == 3);
+            assert.strictEqual(list.length, 3);
         });
-        it('#Delete accepted target intension', function () {
+        it('delete accepted target intension', function () {
             main.delete(target, { message: 'target is deleted'});
             const list = intensionQuery.query(main.storage, {});
-            assert.ok(list.length == 2);
+            assert.strictEqual(list.length, 2);
         });
-        it('#Source must receive close message', function (done) {
+        it('source must receive close message', function (done) {
             setTimeout(() => {
-                assert.ok(sourceClose.value.message == 'target is deleted');
+                assert.strictEqual(sourceClose.value.message,'target is deleted');
                 done();
             });
         });
-        it('#Target must be removed from source accepted list', function () {
+        it('target must be removed from source accepted list', function () {
             assert.strictEqual(source.accepted.size, 0);
         });
-        it('#Source must be removed from target accepted list', function () {
+        it('source must be removed from target accepted list', function () {
             assert.strictEqual(target.accepted.size, 0);
         });
     });
