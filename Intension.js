@@ -99,6 +99,7 @@ module.exports = class Intension {
             output: this.output,
             origin: this.origin,
             title: this.title,
+            description: this.description,
             accepted: this.accepted.toObject()
         }
     }
