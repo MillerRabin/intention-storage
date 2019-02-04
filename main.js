@@ -4,7 +4,6 @@ const uuid = require('./core/uuid.js');
 
 const main = new IntensionStorage();
 
-
 function create(params) {
     return main.createIntension(params);
 }
@@ -21,15 +20,14 @@ const iobj = {
     query: query,
 };
 
-async function onData(status) {
-    if (status == 'accept') return iobj;
-}
 
 main.createIntension({
-    title: 'Can be intension storage',
+    title: 'Can return intension information',
     input: 'None',
-    output: 'InterfaceObject',
-    onData: onData
+    output: 'StorageIntensions',
+    onData: async function onData(status) {
+        if (status == 'accept') return iobj;
+    }
 });
 
 module.exports = {
