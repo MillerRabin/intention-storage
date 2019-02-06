@@ -52,7 +52,7 @@ const iobj = {
 const iQuery = main.createIntention({
     title: {
         en: 'Can query information from intention storage',
-        ru: 'Запрашивает информацию у хранилища намерений'
+        ru: 'Запрашиваю информацию у хранилища намерений'
     },
     input: 'None',
     output: 'StorageIntentions',
