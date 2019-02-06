@@ -1,30 +1,41 @@
-const intensionQuery = require('./intensionQuery.js');
-const IntensionStorage = require('./intensionStorage.js');
+const intentionQuery = require('./intentionQuery.js');
+const IntentionStorage = require('./IntentionStorage.js');
 const uuid = require('./core/uuid.js');
 
-const main = new IntensionStorage();
+const main = new IntentionStorage();
 
-function create(params) {
-    return main.createIntension(params);
+function onUpdate(intention, status) {
+    iQuery.accepted.send({
+        intention: intention.toObject(),
+        status: status
+    });
 }
 
-function deleteIntension(intension, data) {
-    return main.deleteIntension(intension, data);
+function create(params) {
+    const tParams = Object.assign(params);
+    tParams.onUpdate = onUpdate;
+    return main.createIntention(params);
+}
+
+function deleteIntention(intention, data) {
+    return main.deleteIntention(intention, data);
 }
 
 function query(info) {
-    return intensionQuery.query(main, info);
+    return intentionQuery.query(main, info);
 }
 
 const iobj = {
     query: query,
 };
 
-
-main.createIntension({
-    title: 'Can return intension information',
+const iQuery = main.createIntention({
+    title: {
+        en: 'Can query information from intention storage',
+        ru: 'Запрашивает информацию у хранилища намерений'
+    },
     input: 'None',
-    output: 'StorageIntensions',
+    output: 'StorageIntentions',
     onData: async function onData(status) {
         if (status == 'accept') return iobj;
     }
@@ -32,7 +43,7 @@ main.createIntension({
 
 module.exports = {
     create: create,
-    delete: deleteIntension,
+    delete: deleteIntention,
     storage: main,
     generateUUID: uuid.generate
 };

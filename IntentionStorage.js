@@ -1,15 +1,15 @@
-const Intension = require('./Intension.js');
-const IntensionMap = require('./IntensionMap.js');
+const Intention = require('./Intention.js');
+const IntentionMap = require('./IntentionMap.js');
 
-function dispatchIntensions(intensions, intension) {
-    const rKey = intension.getKey(true);
-    const originMap = intensions.get(rKey);
+function dispatchIntentions(intentions, intention) {
+    const rKey = intention.getKey(true);
+    const originMap = intentions.get(rKey);
     if (originMap == null) return;
     for (let [,origin] of originMap) {
         for (let int of origin) {
             try {
-                if (int == intension) continue;
-                int.accept(intension);
+                if (int == intention) continue;
+                int.accept(intention);
             } catch (e) {
                 console.log(e);
             }
@@ -24,9 +24,9 @@ function getParameter(params, type) {
     return par[0].value;
 }
 
-module.exports = class IntensionStorage {
+module.exports = class IntentionStorage {
     constructor () {
-        this.intensions = new IntensionMap(this);
+        this.intentions = new IntentionMap(this);
         this.links = new Map();
     }
     addLink(origin) {
@@ -46,37 +46,39 @@ module.exports = class IntensionStorage {
         return op;
     }
 
-    createIntension({
+    createIntention({
         title,
         description,
         input,
         output,
         onData,
-        parameters = []
+        parameters = [],
+        onUpdate
     }) {
-        const intension = new Intension({
+        const intention = new Intention({
             title,
             description,
             input,
             output,
             onData,
-            parameters
+            parameters,
+            onUpdate
         });
-        this.intensions.set(intension);
+        this.intentions.set(intention);
         setTimeout(() => {
-            dispatchIntensions(this, intension)
+            dispatchIntentions(this, intention)
         });
-        return intension;
+        return intention;
     }
     get(key) {
-        return this.intensions.get(key);
+        return this.intentions.get(key);
     }
-    deleteIntension(intension, data) {
+    deleteIntention(intention, data) {
         try {
-            intension.accepted.close(intension, data);
+            intention.accepted.close(intention, data);
         } catch (e) {
             console.log(e);
         }
-        this.intensions.delete(intension);
+        this.intentions.delete(intention);
     }
 };

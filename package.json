@@ -1,7 +1,7 @@
 {
-  "name": "intension-storage",
-  "version": "0.0.17",
-  "description": "Intension Storage project",
+  "name": "intention-storage",
+  "version": "0.0.1",
+  "description": "Intention Storage project",
   "main": "main.js",
   "scripts": {
     "prepublishOnly": "node ./builder/main.js",

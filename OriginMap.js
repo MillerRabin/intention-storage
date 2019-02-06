@@ -1,25 +1,25 @@
 module.exports = class OriginMap extends Map {
-    set(intension) {
-        if (!super.has(intension.origin))
-            super.set(intension.origin, new Set());
-        const origin = super.get(intension.origin);
-        origin.add(intension);
+    set(intention) {
+        if (!super.has(intention.origin))
+            super.set(intention.origin, new Set());
+        const origin = super.get(intention.origin);
+        origin.add(intention);
     }
-    delete(intension) {
-        if (!super.has(intension.origin)) throw new Error('Intension does not exists');
-        const origin = super.get(intension.origin);
-        origin.delete(intension);
+    delete(intention) {
+        if (!super.has(intention.origin)) throw new Error('Intention does not exists');
+        const origin = super.get(intention.origin);
+        origin.delete(intention);
         if (origin.size == 0)
-            super.delete(intension.origin);
+            super.delete(intention.origin);
     }
-    has(intension) {
-        const origin = super.get(intension.origin);
+    has(intention) {
+        const origin = super.get(intention.origin);
         if (origin == null) return false;
-        return origin.has(intension);
+        return origin.has(intention);
     }
-    get(intension) {
-        const origin = super.get(intension.origin);
+    get(intention) {
+        const origin = super.get(intention.origin);
         if (origin == null) return null;
-        return origin.get(intension);
+        return origin.get(intention);
     }
 };
