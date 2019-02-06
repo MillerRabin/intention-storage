@@ -1,86 +1,86 @@
 const assert = require('assert');
 const main = require('../main.js');
-const intensionQuery = require('../intentionQuery.js');
-describe('Intension Storage', function() {
-    describe('Create Storage intension', function() {
+const intentionQuery = require('../intentionQuery.js');
+describe('Intention Storage', function() {
+    describe('Create Storage intention', function() {
         it('Should create', function() {
-            const intension = main.storage.get('None - StorageIntensions');
-            assert.ok(intension != null, 'intension must be exists');
+            const intention = main.storage.get('None - StorageIntentions');
+            assert.ok(intention != null, 'intention must be exists');
         });
     });
 
 
-    const updatedIntensions = [];
-    describe('Query Intension', function() {
+    const updatedIntentions = [];
+    describe('Query Intention', function() {
         let iQuery = null;
         let iStorage = null;
-        it('Create query intension', function(done) {
+        it('Create query intention', function(done) {
 
             iQuery = main.create({
-                title: 'Test query intension',
-                input: 'StorageIntensions',
+                title: 'Test query intention',
+                input: 'StorageIntentions',
                 output: 'None',
-                onData: async (status, intension, value) => {
+                onData: async (status, intention, value) => {
                     if (status == 'accept') {
-                        iStorage = intension;
+                        iStorage = intention;
                         done();
                         return;
                     }
 
                     if (status == 'data') {
 
-                        updatedIntensions.push(value);
+                        updatedIntentions.push(value);
                     }
 
                 }
             });
-            assert.ok(iQuery != null, 'Intension must be created');
+            assert.ok(iQuery != null, 'Intention must be created');
         });
 
-        it('Query intension must be accepted', function() {
-            assert.ok(iStorage != null, 'Intension must be accepted');
+        it('Query intention must be accepted', function() {
+            assert.ok(iStorage != null, 'Intention must be accepted');
         });
     });
 
-    describe('Intensions', function() {
+    describe('Intentions', function() {
         let source = null;
         let target = null;
         let sourceAccept = null;
         let targetAccept = null;
         let sourceClose = null;
-        it('create test intension', function() {
+        it('create test intention', function() {
             source = main.create({
-               title: 'test intension',
+               title: 'test intention',
                input: 'TestIn',
                output: 'TestOut',
-               onData: async (status, intension, value) => {
+               onData: async (status, intention, value) => {
                     if (status == 'accept') {
                         sourceAccept = {
-                            intension: intension,
+                            intention: intention,
                             value: value
                         };
                     }
                     if (status == 'close')
                         sourceClose = {
-                            intension: intension,
+                            intention: intention,
                             value: value
                         }
                }
             });
             assert.ok(source != null, 'source must be created');
-            const intension = main.storage.get('TestIn - TestOut');
-            assert.ok(intension != null, 'Source must be exists in storage');
+            const intention = main.storage.get('TestIn - TestOut');
+            assert.ok(intention != null, 'Source must be exists in storage');
         });
-        it('create counter intension', function () {
+        it('create counter intention', function () {
             assert.ok(source != null);
             target = main.create({
-                title: 'test counter intension',
+                title: 'test counter intention',
                 input: 'TestOut',
                 output: 'TestIn',
-                onData: async (status, intension, value) => {
+                onData: async (status, intention, value) => {
                     if (status == 'accept') {
                         targetAccept = {
-                            intension: intension,
+                            intention: intention,
                             value: value
                         };
                     }
@@ -88,28 +88,28 @@ describe('Intension Storage', function() {
                 }
             });
             assert.ok(target != null, 'source must be created');
-            const intension = main.storage.get('TestOut - TestIn');
-            assert.ok(intension != null, 'Target must be exists in storage');
+            const intention = main.storage.get('TestOut - TestIn');
+            assert.ok(intention != null, 'Target must be exists in storage');
         });
         it('source must be accepted', function (done) {
             setTimeout(() => {
-                const key = sourceAccept.intension.getKey();
-                const iobj = updatedIntensions[1];
-                console.log(updatedIntensions);
+                const key = sourceAccept.intention.getKey();
+                const iobj = updatedIntentions[1];
+                console.log(updatedIntentions);
                 assert.strictEqual(key, 'TestOut - TestIn');
                 done()
             });
         });
         it('target must be accepted', function () {
-            assert.strictEqual(targetAccept.intension.getKey(),'TestIn - TestOut');
+            assert.strictEqual(targetAccept.intention.getKey(),'TestIn - TestOut');
         });
-        it('intensions must exists', function () {
-            const list = intensionQuery.query(main.storage, {});
+        it('intentions must exists', function () {
+            const list = intentionQuery.query(main.storage, {});
             assert.strictEqual(list.length, 4);
         });
-        it('delete accepted target intension', function () {
+        it('delete accepted target intention', function () {
             main.delete(target, { message: 'target is deleted'});
-            const list = intensionQuery.query(main.storage, {});
+            const list = intentionQuery.query(main.storage, {});
             assert.strictEqual(list.length, 3);
         });
         it('source must receive close message', function (done) {

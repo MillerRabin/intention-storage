@@ -1,7 +1,7 @@
 const assert = require('assert');
 const main = require('../main.js');
 
-describe('Intension Storage', function() {
+describe('Intention Storage', function() {
     describe('Linked storage by parameters', function() {
         it('add linked storage by parameters', function() {
             const res = main.storage.addLink([{ type: 'WebAddress', value: 'localhost' }]);
