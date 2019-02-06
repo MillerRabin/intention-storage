@@ -9,11 +9,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://millerrabin@bitbucket.org/intensionteam/intensionstorage.git"
+    "url": "git+https://millerrabin@bitbucket.org/intentionteam/intentionstorage.git"
   },
   "author": "millerrabin",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/intensionteam/intensionstorage#readme",
+  "homepage": "https://bitbucket.org/intentionteam/intentionstorage#readme",
   "devDependencies": {
     "mocha": "^5.2.0"
   }
