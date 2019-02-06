@@ -4,7 +4,7 @@
   "description": "Intention Storage project",
   "main": "main.js",
   "scripts": {
-    "prepublishOnly": "node ./builder/main.js",
+    "prepublishOnly": "node ./node_modules/intention-builder/main.js",
     "test": "mocha test"
   },
   "repository": {
@@ -15,6 +15,7 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/intentionteam/intentionstorage#readme",
   "devDependencies": {
+    "intention-builder": "0.0.3",
     "mocha": "^5.2.0"
   }
 }
