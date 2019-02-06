@@ -129,6 +129,7 @@ module.exports = class Intention {
         }
         finally {
             this._accepted.delete(intention);
+            update(intention, 'close');
         }
     }
     toObject() {

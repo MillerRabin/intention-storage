@@ -2,6 +2,13 @@ const assert = require('assert');
 const main = require('../main.js');
 const intentionQuery = require('../intentionQuery.js');
 describe('Intention Storage', function() {
+    describe('Enable stats', function () {
+        it ('should disable stats', function () {
+            main.enableStats();
+            main.setStatsInterval(500);
+        })
+    });
+
     describe('Create Storage intention', function() {
         it('Should create', function() {
             const intention = main.storage.get('None - StorageIntentions');
@@ -9,13 +16,11 @@ describe('Intention Storage', function() {
         });
     });
 
-
     const updatedIntentions = [];
     describe('Query Intention', function() {
         let iQuery = null;
         let iStorage = null;
         it('Create query intention', function(done) {
-
             iQuery = main.create({
                 title: 'Test query intention',
                 input: 'StorageIntentions',
@@ -26,12 +31,10 @@ describe('Intention Storage', function() {
                         done();
                         return;
                     }
-
                     if (status == 'data') {
-
-                        updatedIntentions.push(value);
+                        if (value.updatedIntentions != null)
+                            updatedIntentions.push(...value.updatedIntentions);
                     }
-
                 }
             });
             assert.ok(iQuery != null, 'Intention must be created');
@@ -94,14 +97,25 @@ describe('Intention Storage', function() {
         it('source must be accepted', function (done) {
             setTimeout(() => {
                 const key = sourceAccept.intention.getKey();
-                const iobj = updatedIntentions[1];
-                console.log(updatedIntentions);
                 assert.strictEqual(key, 'TestOut - TestIn');
-                done()
-            });
+                done();
+            }, 0);
         });
         it('target must be accepted', function () {
             assert.strictEqual(targetAccept.intention.getKey(),'TestIn - TestOut');
+        });
+        it('Stats has been sended accept status for source and target', function (done) {
+            this.timeout(3000);
+            setTimeout(() => {
+                const tito = updatedIntentions.find(v => v.intention.key == 'TestIn - TestOut');
+                const toti = updatedIntentions.find(v => v.intention.key == 'TestOut - TestIn');
+                assert.ok(toti != null, 'TestIn - TestOut must exists');
+                assert.ok(tito != null, 'TestOut - TestIn');
+                assert.strictEqual(toti.status, 'accept');
+                assert.strictEqual(tito.status, 'accept');
+                updatedIntentions.length = 0;
+                done();
+            }, 2000);
         });
         it('intentions must exists', function () {
             const list = intentionQuery.query(main.storage, {});
@@ -124,6 +138,21 @@ describe('Intention Storage', function() {
         it('source must be removed from target accepted list', function () {
             assert.strictEqual(target.accepted.size, 0);
         });
+        it('Stats has been sended close status for target', function (done) {
+            this.timeout(3000);
+            setTimeout(() => {
+                console.log(updatedIntentions);
+                const toti = updatedIntentions.find(v => v.intention.key == 'TestOut - TestIn');
+                assert.ok(toti != null, 'TestOut - TestIn must exists');
+                assert.strictEqual(toti.status, 'close');
+                updatedIntentions.length = 0;
+                done();
+            }, 2000);
+        });
     });
-
+    describe('Disable stats', function () {
+       it ('should disable stats', function () {
+           main.disableStats();
+       })
+    });
 });

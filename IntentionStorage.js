@@ -79,6 +79,7 @@ module.exports = class IntentionStorage {
         } catch (e) {
             console.log(e);
         }
+
         this.intentions.delete(intention);
     }
 };

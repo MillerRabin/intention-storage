@@ -3,12 +3,32 @@ const IntentionStorage = require('./IntentionStorage.js');
 const uuid = require('./core/uuid.js');
 
 const main = new IntentionStorage();
+const updatedIntentions = new Map();
+let gSendStats = true;
+let gStatsInterval = 5000;
+let gStatsTimeout = null;
+
+function sendStats() {
+    try {
+        if (updatedIntentions.size == 0) return;
+        iQuery.accepted.send({
+            updatedIntentions: [...updatedIntentions.values()],
+            query: query
+        });
+    } catch(e) {
+        console.log(e);
+    } finally {
+        updatedIntentions.clear();
+        if (gSendStats)
+            gStatsTimeout = setTimeout(sendStats, gStatsInterval);
+    }
+}
 
 function onUpdate(intention, status) {
-    iQuery.accepted.send({
+    updatedIntentions.set(intention.id, {
         intention: intention.toObject(),
         status: status
-    });
+    })
 }
 
 function create(params) {
@@ -41,9 +61,29 @@ const iQuery = main.createIntention({
     }
 });
 
+
+function enableStats() {
+    gSendStats = true;
+    gStatsTimeout = setTimeout(sendStats, gStatsInterval);
+}
+
+function disableStats() {
+    gSendStats = false;
+    clearTimeout(gStatsTimeout);
+}
+
+function setStatsInterval(interval) {
+    disableStats();
+    gStatsInterval = interval;
+    enableStats();
+}
+
 module.exports = {
     create: create,
     delete: deleteIntention,
     storage: main,
-    generateUUID: uuid.generate
+    generateUUID: uuid.generate,
+    disableStats: disableStats,
+    enableStats: enableStats,
+    setStatsInterval: setStatsInterval
 };
