@@ -112,7 +112,11 @@ module.exports = class Intention {
         return this._id;
     }
     async send(status, intention, data) {
-        return await this._onData(status, intention, data);
+        try {
+            return await this._onData(status, intention, data);
+        } catch (e) {
+            intention.send('error', this, data);
+        }
     }
     async sendError(error) {
         return await this._onData('error', this, error);
