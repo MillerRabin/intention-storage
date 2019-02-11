@@ -56,7 +56,8 @@ module.exports = class Intention {
         output,
         onData,
         onUpdate,
-        parameters = []
+        parameters = [],
+        value
     }) {
         if (safe.isEmpty(title)) throw new Error('Intention must have a title');
         if (safe.isEmpty(input)) throw new Error('Intention must have an input parameters');
@@ -77,6 +78,7 @@ module.exports = class Intention {
         this._id = uuid.generate();
         this._accepted = new AcceptedIntentions(this);
         this._onUpdate = onUpdate;
+        this._value = value;
     }
     getKey(reverse = false) {
         return (!reverse) ? `${ this._input } - ${ this._output }` : `${ this._output } - ${ this._input }`;
@@ -110,6 +112,9 @@ module.exports = class Intention {
     }
     get id() {
         return this._id;
+    }
+    get value() {
+        return this._value;
     }
     async send(status, intention, data) {
         try {
@@ -147,7 +152,8 @@ module.exports = class Intention {
             origin: this._origin,
             title: this._title,
             description: this._description,
-            accepted: this._accepted.toObject()
+            accepted: this._accepted.toObject(),
+            value: this._value
         }
     }
 };

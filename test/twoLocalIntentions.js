@@ -25,6 +25,7 @@ describe('Intention Storage', function() {
                 title: 'Test query intention',
                 input: 'StorageIntentions',
                 output: 'None',
+                value: 'test',
                 onData: async (status, intention, value) => {
                     if (status == 'accept') {
                         iStorage = intention;
@@ -38,6 +39,7 @@ describe('Intention Storage', function() {
                 }
             });
             assert.ok(iQuery != null, 'Intention must be created');
+            assert.strictEqual(iQuery.value, 'test');
         });
 
         it('Query intention must be accepted', function() {
@@ -141,7 +143,6 @@ describe('Intention Storage', function() {
         it('Stats has been sended close status for target', function (done) {
             this.timeout(3000);
             setTimeout(() => {
-                console.log(updatedIntentions);
                 const toti = updatedIntentions.find(v => v.intention.key == 'TestOut - TestIn');
                 assert.ok(toti != null, 'TestOut - TestIn must exists');
                 assert.strictEqual(toti.status, 'close');

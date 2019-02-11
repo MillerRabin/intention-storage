@@ -53,7 +53,8 @@ module.exports = class IntentionStorage {
         output,
         onData,
         parameters = [],
-        onUpdate
+        onUpdate,
+        value
     }) {
         const intention = new Intention({
             title,
@@ -62,7 +63,8 @@ module.exports = class IntentionStorage {
             output,
             onData,
             parameters,
-            onUpdate
+            onUpdate,
+            value
         });
         this.intentions.set(intention);
         setTimeout(() => {
