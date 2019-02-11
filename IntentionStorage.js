@@ -1,5 +1,6 @@
 const Intention = require('./Intention.js');
 const IntentionMap = require('./IntentionMap.js');
+const StorageLink = require('./StorageLink.js');
 
 function dispatchIntentions(intentions, intention) {
     const rKey = intention.getKey(true);
@@ -26,15 +27,13 @@ function getParameter(params, type) {
 
 module.exports = class IntentionStorage {
     constructor () {
-        this.intentions = new IntentionMap(this);
-        this.links = new Map();
+        this._intentions = new IntentionMap(this);
+        this._links = new Map();
     }
     addLink(origin) {
         const op = getParameter(origin, 'WebAddress');
         if (op == null) throw new Error('WebAddress parameter expected');
-        this.links.set(op, {
-            origin: op
-        });
+        this.links.set(op, new StorageLink({ storage: this, origin: op }));
         return op;
     }
 
@@ -83,5 +82,11 @@ module.exports = class IntentionStorage {
         }
 
         this.intentions.delete(intention);
+    }
+    get intentions() {
+        return this._intentions;
+    }
+    get links() {
+        return this._links;
     }
 };

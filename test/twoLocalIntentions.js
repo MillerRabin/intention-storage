@@ -11,7 +11,7 @@ describe('Intention Storage', function() {
 
     describe('Create Storage intention', function() {
         it('Should create', function() {
-            const intention = main.storage.get('None - StorageIntentions');
+            const intention = main.storage.get('None - StorageStats');
             assert.ok(intention != null, 'intention must be exists');
         });
     });
@@ -23,7 +23,7 @@ describe('Intention Storage', function() {
         it('Create query intention', function(done) {
             iQuery = main.create({
                 title: 'Test query intention',
-                input: 'StorageIntentions',
+                input: 'StorageStats',
                 output: 'None',
                 value: 'test',
                 onData: async (status, intention, value) => {
@@ -120,12 +120,12 @@ describe('Intention Storage', function() {
             }, 2000);
         });
         it('intentions must exists', function () {
-            const list = intentionQuery.query(main.storage, {});
+            const list = intentionQuery.queryIntentions(main.storage, {});
             assert.strictEqual(list.length, 4);
         });
         it('delete accepted target intention', function () {
             main.delete(target, { message: 'target is deleted'});
-            const list = intentionQuery.query(main.storage, {});
+            const list = intentionQuery.queryIntentions(main.storage, {});
             assert.strictEqual(list.length, 3);
         });
         it('source must receive close message', function (done) {

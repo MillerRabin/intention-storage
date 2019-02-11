@@ -13,7 +13,8 @@ function sendStats() {
         if (updatedIntentions.size == 0) return;
         iQuery.accepted.send({
             updatedIntentions: [...updatedIntentions.values()],
-            query: query
+            queryIntentions: queryIntentions,
+            queryLinkedStorages: queryLinkedStorages,
         });
     } catch(e) {
         console.log(e);
@@ -41,12 +42,17 @@ function deleteIntention(intention, data) {
     return main.deleteIntention(intention, data);
 }
 
-function query(info) {
-    return intentionQuery.query(main, info);
+function queryIntentions(info) {
+    return intentionQuery.queryIntentions(main, info);
+}
+
+function queryLinkedStorages(info) {
+    return intentionQuery.queryLinkedStorages(main, info);
 }
 
 const iobj = {
-    query: query,
+    queryIntentions: queryIntentions,
+    queryLinkedStorages: queryLinkedStorages
 };
 
 const iQuery = main.createIntention({
@@ -55,7 +61,7 @@ const iQuery = main.createIntention({
         ru: 'Запрашиваю информацию у хранилища намерений'
     },
     input: 'None',
-    output: 'StorageIntentions',
+    output: 'StorageStats',
     onData: async function onData(status) {
         if (status == 'accept') return iobj;
     }

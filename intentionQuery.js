@@ -1,4 +1,4 @@
-function format(intentionStorage) {
+function formatIntentions(intentionStorage) {
     const res = [];
     for (let [, originMap] of intentionStorage.intentions) {
         for (let [, intentions] of originMap) {
@@ -10,12 +10,24 @@ function format(intentionStorage) {
     return res;
 }
 
-function query(intentionStorage, query) {
-    return format(intentionStorage, query)
+function formatLinkedStorages(intentionStorage) {
+    const res = [];
+    for (let [, link] of intentionStorage.links) {
+        res.push(link.toObject());
+    }
+    return res;
+}
+
+function queryIntentions(intentionStorage, query) {
+    return formatIntentions(intentionStorage, query)
+}
+
+function queryLinkedStorages(intentionStorage, query) {
+    return formatLinkedStorages(intentionStorage, query)
 }
 
 module.exports = {
-    query
+    queryIntentions, queryLinkedStorages
 };
 
 
