@@ -44,7 +44,7 @@ describe('Intention Storage', function() {
     describe('Linked storage by parameters', function() {
         it('add linked storage by parameters', function() {
             const res = main.storage.addLink([{ type: 'WebAddress', value: 'localhost' }]);
-            const linked = main.storage.links.get('localhost');
+            const linked = main.storage.links.get('localhost:10010');
             assert.strictEqual(linked.origin, 'localhost');
             assert.strictEqual(res, 'localhost');
         });

@@ -47,7 +47,7 @@ module.exports = class IntentionStorage {
         const op = getParameter(origin, 'WebAddress');
         if (op == null) throw new Error('WebAddress parameter expected');
         const link = new StorageLink({ storage: this, origin: op });
-        this.links.set(op, link);
+        this.links.set(link.key, link);
         updateStorages(this, link, 'created');
         return op;
     }
@@ -55,9 +55,9 @@ module.exports = class IntentionStorage {
     deleteLink(origin) {
         const op = getParameter(origin, 'WebAddress');
         if (op == null) throw new Error('WebAddress parameter expected');
-        const link = this.links.get(op);
+        const link = this.links.get(`${op}:10010`);
         if (link == null) throw new Error(`${ op } does not exists in linked storages`);
-        this.links.delete(op);
+        this.links.delete(link.key);
         updateStorages(this, link, 'deleted');
         return op;
     }
