@@ -17,8 +17,8 @@ describe('Intention Storage', function() {
     });
 
     const updatedIntentions = [];
+    let iQuery = null;
     describe('Query Intention', function() {
-        let iQuery = null;
         let iStorage = null;
         it('Create query intention', function(done) {
             iQuery = main.create({
@@ -141,16 +141,23 @@ describe('Intention Storage', function() {
             assert.strictEqual(target.accepted.size, 0);
         });
         it('Stats has been sended close status for target', function (done) {
-            this.timeout(3000);
+            this.timeout(1000);
             setTimeout(() => {
                 const toti = updatedIntentions.find(v => v.intention.key == 'TestOut - TestIn');
                 assert.ok(toti != null, 'TestOut - TestIn must exists');
                 assert.strictEqual(toti.status, 'closed');
                 updatedIntentions.length = 0;
                 done();
-            }, 2000);
+            }, 500);
         });
     });
+
+    describe('Delete query intention', function () {
+        it('should disable stats', function () {
+            main.delete(iQuery, 'intention closed');
+        })
+    });
+
     describe('Disable stats', function () {
        it ('should disable stats', function () {
            main.disableStats();

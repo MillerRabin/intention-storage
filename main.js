@@ -22,6 +22,7 @@ function sendStats() {
         console.log(e);
     } finally {
         updatedIntentions.clear();
+        updatedStorages.clear();
         if (gSendStats)
             gStatsTimeout = setTimeout(sendStats, gStatsInterval);
     }
@@ -42,7 +43,6 @@ function onUpdateStorages(storage, status) {
 }
 
 function create(params) {
-    const tParams = Object.assign(params);
     return main.createIntention(params);
 }
 
