@@ -49,7 +49,7 @@ module.exports = class IntentionStorage {
         const link = new StorageLink({ storage: this, origin: op });
         this.links.set(link.key, link);
         updateStorages(this, link, 'created');
-        return op;
+        return link;
     }
 
     deleteLink(origin) {
@@ -59,7 +59,7 @@ module.exports = class IntentionStorage {
         if (link == null) throw new Error(`${ op } does not exists in linked storages`);
         this.links.delete(link.key);
         updateStorages(this, link, 'deleted');
-        return op;
+        return link;
     }
 
     createIntention({
