@@ -14,7 +14,8 @@ module.exports = class StorageLink {
     toObject() {
         return {
             origin: this._origin,
-            port: this._port
+            port: this._port,
+            key: `${this._origin}:${this._port}`
         }
     }
 };
