@@ -18,6 +18,17 @@ function dispatchIntentions(intentions, intention) {
     }
 }
 
+function updateIntention(storage, intention, status) {
+    if (storage._onUpdateIntentions != null)
+        storage._onUpdateIntentions(intention, status);
+}
+
+function updateStorages(storage, link, status) {
+    if (storage._onUpdateStorages != null)
+        storage._onUpdateStorages(link, status);
+}
+
+
 function getParameter(params, type) {
     if (!Array.isArray(params)) return params;
     const par = params.filter(p => p.type == type);
@@ -26,22 +37,28 @@ function getParameter(params, type) {
 }
 
 module.exports = class IntentionStorage {
-    constructor () {
+    constructor ({ onUpdateStorages, onUpdateIntentions }) {
         this._intentions = new IntentionMap(this);
         this._links = new Map();
+        this._onUpdateIntentions = onUpdateIntentions;
+        this._onUpdateStorages = onUpdateStorages;
     }
     addLink(origin) {
         const op = getParameter(origin, 'WebAddress');
         if (op == null) throw new Error('WebAddress parameter expected');
-        this.links.set(op, new StorageLink({ storage: this, origin: op }));
+        const link = new StorageLink({ storage: this, origin: op });
+        this.links.set(op, link);
+        updateStorages(this, link, 'created');
         return op;
     }
 
     deleteLink(origin) {
         const op = getParameter(origin, 'WebAddress');
         if (op == null) throw new Error('WebAddress parameter expected');
-        if (!this.links.has(op)) throw new Error(`${ op } does not exists in linked storages`);
+        const link = this.links.get(op);
+        if (link == null) throw new Error(`${ op } does not exists in linked storages`);
         this.links.delete(op);
+        updateStorages(this, link, 'deleted');
         return op;
     }
 
@@ -52,7 +69,6 @@ module.exports = class IntentionStorage {
         output,
         onData,
         parameters = [],
-        onUpdate,
         value
     }) {
         const intention = new Intention({
@@ -62,10 +78,11 @@ module.exports = class IntentionStorage {
             output,
             onData,
             parameters,
-            onUpdate,
+            onUpdate: this._onUpdateIntentions,
             value
         });
         this.intentions.set(intention);
+        updateIntention(this, intention, 'created');
         setTimeout(() => {
             dispatchIntentions(this, intention)
         });
@@ -82,6 +99,7 @@ module.exports = class IntentionStorage {
         }
 
         this.intentions.delete(intention);
+        updateIntention(this, intention, 'deleted');
     }
     get intentions() {
         return this._intentions;

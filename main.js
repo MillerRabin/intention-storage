@@ -2,8 +2,9 @@ const intentionQuery = require('./intentionQuery.js');
 const IntentionStorage = require('./IntentionStorage.js');
 const uuid = require('./core/uuid.js');
 
-const main = new IntentionStorage();
+const main = new IntentionStorage({ onUpdateStorages, onUpdateIntentions });
 const updatedIntentions = new Map();
+const updatedStorages = new Map();
 let gSendStats = true;
 let gStatsInterval = 5000;
 let gStatsTimeout = null;
@@ -13,6 +14,7 @@ function sendStats() {
         if (updatedIntentions.size == 0) return;
         iQuery.accepted.send({
             updatedIntentions: [...updatedIntentions.values()],
+            updatedStorages: [...updatedStorages.values()],
             queryIntentions: queryIntentions,
             queryLinkedStorages: queryLinkedStorages,
         });
@@ -25,16 +27,22 @@ function sendStats() {
     }
 }
 
-function onUpdate(intention, status) {
+function onUpdateIntentions(intention, status) {
     updatedIntentions.set(intention.id, {
         intention: intention.toObject(),
         status: status
     })
 }
 
+function onUpdateStorages(storage, status) {
+    updatedStorages.set(storage.id, {
+        storage: storage.toObject(),
+        status: status
+    })
+}
+
 function create(params) {
     const tParams = Object.assign(params);
-    tParams.onUpdate = onUpdate;
     return main.createIntention(params);
 }
 

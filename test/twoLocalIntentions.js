@@ -145,7 +145,7 @@ describe('Intention Storage', function() {
             setTimeout(() => {
                 const toti = updatedIntentions.find(v => v.intention.key == 'TestOut - TestIn');
                 assert.ok(toti != null, 'TestOut - TestIn must exists');
-                assert.strictEqual(toti.status, 'close');
+                assert.strictEqual(toti.status, 'closed');
                 updatedIntentions.length = 0;
                 done();
             }, 2000);
