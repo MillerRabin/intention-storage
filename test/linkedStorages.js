@@ -6,7 +6,10 @@ describe('Intention Storage', function() {
         it ('should disable stats', function () {
             main.enableStats();
             main.setStatsInterval(500);
-        })
+        });
+        it ('Set dispatch interval', function () {
+            main.storage.dispatchInterval = 500;
+        });
     });
 
     const updatedStorages = [];
@@ -21,8 +24,10 @@ describe('Intention Storage', function() {
                 value: 'test',
                 onData: async (status, intention, value) => {
                     if (status == 'accept') {
-                        iStorage = intention;
-                        done();
+                        if (iStorage == null) {
+                            iStorage = intention;
+                            done();
+                        }
                         return;
                     }
                     if (status == 'data') {
@@ -46,9 +51,8 @@ describe('Intention Storage', function() {
             const res = main.storage.addLink([{ type: 'WebAddress', value: 'localhost' }]);
             const linked = main.storage.links.get('localhost:10010');
             assert.strictEqual(linked.origin, 'localhost');
-            assert.strictEqual(res, 'localhost');
+            assert.strictEqual(res, linked);
         });
-
 
         it('Storage has been sended in stats', function (done) {
             this.timeout(1000);
@@ -61,10 +65,9 @@ describe('Intention Storage', function() {
         });
 
         it('delete linked storage by parameters', function() {
-            const res = main.storage.deleteLink([{ type: 'WebAddress', value: 'localhost' }]);
+            main.storage.deleteLink([{ type: 'WebAddress', value: 'localhost' }]);
             const linked = main.storage.links.get('localhost');
             assert.strictEqual(linked, undefined);
-            assert.strictEqual(res, 'localhost');
         });
     });
 
@@ -77,6 +80,10 @@ describe('Intention Storage', function() {
     describe('Disable stats', function () {
         it ('should disable stats', function () {
             main.disableStats();
-        })
+        });
+
+        it ('disable dispatch interval', function () {
+            main.storage.dispatchInterval = 0;
+        });
     });
 });

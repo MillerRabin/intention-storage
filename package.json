@@ -17,5 +17,8 @@
   "devDependencies": {
     "intention-builder": "0.0.3",
     "mocha": "^5.2.0"
+  },
+  "dependencies": {
+    "ws": "^6.1.3"
   }
 }

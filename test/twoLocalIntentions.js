@@ -1,12 +1,16 @@
 const assert = require('assert');
 const main = require('../main.js');
 const intentionQuery = require('../intentionQuery.js');
+
 describe('Intention Storage', function() {
     describe('Enable stats', function () {
         it ('should disable stats', function () {
             main.enableStats();
             main.setStatsInterval(500);
-        })
+        });
+        it ('Set dispatch interval', function () {
+            main.storage.dispatchInterval = 500;
+        });
     });
 
     describe('Create Storage intention', function() {
@@ -28,8 +32,10 @@ describe('Intention Storage', function() {
                 value: 'test',
                 onData: async (status, intention, value) => {
                     if (status == 'accept') {
-                        iStorage = intention;
-                        done();
+                        if (iStorage == null) {
+                            iStorage = intention;
+                            done();
+                        }
                         return;
                     }
                     if (status == 'data') {
@@ -101,7 +107,7 @@ describe('Intention Storage', function() {
                 const key = sourceAccept.intention.getKey();
                 assert.strictEqual(key, 'TestOut - TestIn');
                 done();
-            }, 0);
+            }, 500);
         });
         it('target must be accepted', function () {
             assert.strictEqual(targetAccept.intention.getKey(),'TestIn - TestOut');
@@ -109,8 +115,8 @@ describe('Intention Storage', function() {
         it('Stats has been sended accept status for source and target', function (done) {
             this.timeout(3000);
             setTimeout(() => {
-                const tito = updatedIntentions.find(v => v.intention.key == 'TestIn - TestOut');
-                const toti = updatedIntentions.find(v => v.intention.key == 'TestOut - TestIn');
+                const tito = updatedIntentions.find(v => (v.intention.key == 'TestIn - TestOut') && (v.status == 'accept'));
+                const toti = updatedIntentions.find(v => (v.intention.key == 'TestOut - TestIn') && (v.status == 'accept'));
                 assert.ok(toti != null, 'TestIn - TestOut must exists');
                 assert.ok(tito != null, 'TestOut - TestIn');
                 assert.strictEqual(toti.status, 'accept');
@@ -161,6 +167,10 @@ describe('Intention Storage', function() {
     describe('Disable stats', function () {
        it ('should disable stats', function () {
            main.disableStats();
-       })
+       });
+
+       it ('disable dispatch interval', function () {
+           main.storage.dispatchInterval = 0;
+       });
     });
 });

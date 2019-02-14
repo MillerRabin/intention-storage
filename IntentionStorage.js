@@ -18,6 +18,18 @@ function dispatchIntentions(intentions, intention) {
     }
 }
 
+function dispatchCycle(storage) {
+    clearTimeout(storage._dispatchTimeout);
+    storage._dispatchTimeout = setTimeout(() => {
+        for (let intention of storage._dispatchWait) {
+            dispatchIntentions(storage._intentions, intention);
+        }
+        storage._dispatchWait.clear();
+        dispatchCycle(storage);
+
+    }, storage._dispatchInterval);
+}
+
 function updateIntention(storage, intention, status) {
     if (storage._onUpdateIntentions != null)
         storage._onUpdateIntentions(intention, status);
@@ -40,8 +52,12 @@ module.exports = class IntentionStorage {
     constructor ({ onUpdateStorages, onUpdateIntentions }) {
         this._intentions = new IntentionMap(this);
         this._links = new Map();
+        this._dispatchWait = new Set();
         this._onUpdateIntentions = onUpdateIntentions;
         this._onUpdateStorages = onUpdateStorages;
+        this._dispatchInterval = 5000;
+        this._dispatchTimeout = null;
+        dispatchCycle(this);
     }
     addLink(origin) {
         const op = getParameter(origin, 'WebAddress');
@@ -83,9 +99,7 @@ module.exports = class IntentionStorage {
         });
         this.intentions.set(intention);
         updateIntention(this, intention, 'created');
-        setTimeout(() => {
-            dispatchIntentions(this, intention)
-        });
+        this._dispatchWait.add(intention);
         return intention;
     }
     get(key) {
@@ -107,4 +121,15 @@ module.exports = class IntentionStorage {
     get links() {
         return this._links;
     }
+    set dispatchInterval(value) {
+        clearTimeout(this._dispatchTimeout);
+        this._dispatchInterval = value;
+        if (value > 0)
+            dispatchCycle(this);
+    }
+    get dispatchInterval() {
+        return this._dispatchInterval;
+    }
+
+
 };
