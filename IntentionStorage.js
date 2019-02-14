@@ -95,7 +95,8 @@ module.exports = class IntentionStorage {
             onData,
             parameters,
             onUpdate: this._onUpdateIntentions,
-            value
+            value,
+            storage: this
         });
         this.intentions.set(intention);
         updateIntention(this, intention, 'created');

@@ -57,11 +57,13 @@ module.exports = class Intention {
         onData,
         onUpdate,
         parameters = [],
-        value
+        value,
+        storage
     }) {
         if (safe.isEmpty(title)) throw new Error('Intention must have a title');
         if (safe.isEmpty(input)) throw new Error('Intention must have an input parameters');
         if (safe.isEmpty(output)) throw new Error('Intention must have an output parameters');
+        if (storage == null) throw new Error('Intention must have a storage');
         if (typeof(onData) != 'function') throw new Error('Intention onData must be an async function');
         if (!Array.isArray(parameters)) throw new Error('Parameters must be array');
         if (input == output) throw new Error('Input and Output can`t be the same');
@@ -78,6 +80,7 @@ module.exports = class Intention {
         this._accepted = new AcceptedIntentions(this);
         this._onUpdate = onUpdate;
         this._value = value;
+        this._storage = storage;
     }
     getKey(reverse = false) {
         return (!reverse) ? `${ this._input } - ${ this._output }` : `${ this._output } - ${ this._input }`;
@@ -140,6 +143,10 @@ module.exports = class Intention {
             update(intention, 'closed');
         }
     }
+    dispatch() {
+        this._storage._dispatchWait.add(this);
+    }
+
     toObject() {
         return {
             id: this._id,
