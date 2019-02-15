@@ -22,27 +22,31 @@ function update(intention, status) {
 async function accept(source, target) {
     if (source._accepted.has(target)) return;
     if (target._accepted.has(source)) return;
+    source._accepted.set(target);
+    target._accepted.set(source);
     let tData = null;
     let sData = null;
     try {
         try {
             sData = await source.send('accept', target);
         } catch (e) {
+            source._accepted.delete(target);
+            target._accepted.delete(source);
             target.sendError(e);
             throw e;
         }
         try {
             tData = await target.send('accept', source);
         } catch (e) {
+            source._accepted.delete(target);
+            target._accepted.delete(source);
             source.sendError(e);
             throw e;
         }
-        source._accepted.set(target);
         update(source, 'accept');
-        target._accepted.set(source);
         update(target, 'accept');
-        if (tData != null) source.send('data', target, tData);
-        if (sData != null) target.send('data', source, sData);
+        if (tData != null) await source.send('data', target, tData);
+        if (sData != null) await target.send('data', source, sData);
     } catch (e) {
         console.log(e);
     }
@@ -122,7 +126,7 @@ module.exports = class Intention {
         try {
             return await this._onData(status, intention, data);
         } catch (e) {
-            intention.send('error', this, e);
+            return await intention.send('error', this, e);
         }
     }
     async sendError(error) {

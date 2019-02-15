@@ -2,7 +2,7 @@ const Intention = require('./Intention.js');
 const IntentionMap = require('./IntentionMap.js');
 const StorageLink = require('./StorageLink.js');
 
-function dispatchIntentions(intentions, intention) {
+async function dispatchIntentions(intentions, intention) {
     const rKey = intention.getKey(true);
     const originMap = intentions.get(rKey);
     if (originMap == null) return;

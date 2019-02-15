@@ -32,10 +32,8 @@ describe('Intention Storage', function() {
                 value: 'test',
                 onData: async (status, intention, value) => {
                     if (status == 'accept') {
-                        if (iStorage == null) {
-                            iStorage = intention;
-                            done();
-                        }
+                        iStorage = intention;
+                        done();
                         return;
                     }
                     if (status == 'data') {
