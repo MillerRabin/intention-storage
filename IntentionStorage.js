@@ -1,6 +1,6 @@
 const Intention = require('./Intention.js');
 const IntentionMap = require('./IntentionMap.js');
-const StorageLink = require('./StorageLink.js');
+const LinkedStorage = require('./LinkedStorage.js');
 
 async function dispatchIntentions(intentions, intention) {
     const rKey = intention.getKey(true);
@@ -62,7 +62,7 @@ module.exports = class IntentionStorage {
     addLink(origin) {
         const op = getParameter(origin, 'WebAddress');
         if (op == null) throw new Error('WebAddress parameter expected');
-        const link = new StorageLink({ storage: this, origin: op });
+        const link = new LinkedStorage({ storage: this, origin: op });
         this.links.set(link.key, link);
         updateStorages(this, link, 'created');
         return link;
@@ -74,6 +74,7 @@ module.exports = class IntentionStorage {
         const link = this.links.get(`${op}:10010`);
         if (link == null) throw new Error(`${ op } does not exists in linked storages`);
         this.links.delete(link.key);
+        link.offline();
         updateStorages(this, link, 'deleted');
         return link;
     }
@@ -131,6 +132,4 @@ module.exports = class IntentionStorage {
     get dispatchInterval() {
         return this._dispatchInterval;
     }
-
-
 };

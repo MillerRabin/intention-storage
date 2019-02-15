@@ -1,7 +1,7 @@
 const assert = require('assert');
 const main = require('../main.js');
 
-describe('Intention Storage', function() {
+describe.only('Intention Storage', function() {
     describe('Enable stats', function () {
         it ('should disable stats', function () {
             main.enableStats();
@@ -50,7 +50,7 @@ describe('Intention Storage', function() {
         it('add linked storage by parameters', function() {
             const res = main.storage.addLink([{ type: 'WebAddress', value: 'localhost' }]);
             const linked = main.storage.links.get('localhost:10010');
-            assert.strictEqual(linked.origin, 'localhost');
+            assert.strictEqual(linked.key, 'localhost:10010');
             assert.strictEqual(res, linked);
         });
 
