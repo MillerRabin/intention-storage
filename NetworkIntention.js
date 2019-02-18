@@ -10,15 +10,13 @@ module.exports = class NetworkIntention {
                      output,
                      origin,
                      parameters = [],
-                     value,
-                     storage
+                     value
                  }) {
         if (safe.isEmpty(title)) throw new Error('Network Intention must have a title');
         if (safe.isEmpty(input)) throw new Error('Network Intention must have an input parameter');
         if (safe.isEmpty(output)) throw new Error('Network Intention must have an output parameters');
         if (safe.isEmpty(createTime)) throw new Error('Network Intention must have createTime');
         if (safe.isEmpty(id)) throw new Error('Network Intention must have an id');
-        if (safe.isEmpty(storage)) throw new Error('Network Intention must have storage parameter');
         if (!Array.isArray(parameters)) throw new Error('Parameters must be array');
         if (input == output) throw new Error('Input and Output can`t be the same');
 
@@ -32,7 +30,7 @@ module.exports = class NetworkIntention {
         this._parameters = parameters;
         this._id = id;
         this._value = value;
-        this._storage = storage;
+        this._storage = null;
     }
     getKey(reverse = false) {
         return (!reverse) ? `${ this._input } - ${ this._output }` : `${ this._output } - ${ this._input }`;

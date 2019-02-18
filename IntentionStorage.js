@@ -89,6 +89,7 @@ module.exports = class IntentionStorage {
 
     _add(intention) {
         this.intentions.set(intention);
+        intention._storage = this;
         updateIntention(this, intention, 'created');
         this._dispatchWait.add(intention);
     }
