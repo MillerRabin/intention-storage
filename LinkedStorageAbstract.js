@@ -6,7 +6,7 @@ const gCommandTable = {
         const textIntention = message.intention;
         if (textIntention.type != 'intention') throw new Error('type of object must be intention');
         const intention = new NetworkIntention(textIntention);
-        await storageLink._storage.add(intention);
+        return await storageLink._storage.addNetworkIntention(intention);
     }
 };
 
@@ -20,7 +20,7 @@ module.exports = class LinkedStorageAbstract {
         const key = `${data.version}:${data.command}`;
         const func = gCommandTable[key];
         if (func == null) throw new Error('command is not supported');
-        await func(this, data);
+        return await func(this, data);
     }
 
     sendObject(obj) {

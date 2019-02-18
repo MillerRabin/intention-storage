@@ -154,6 +154,7 @@ module.exports = class Intention {
     toObject() {
         return {
             id: this._id,
+            type: 'intention',
             createTime: this.createTime,
             updateTime: this.updateTime,
             key: this.getKey(),
