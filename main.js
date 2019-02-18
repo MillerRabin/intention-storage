@@ -1,5 +1,6 @@
 const intentionQuery = require('./intentionQuery.js');
 const IntentionStorage = require('./IntentionStorage.js');
+
 const uuid = require('./core/uuid.js');
 
 const main = new IntentionStorage({ onUpdateStorages, onUpdateIntentions });

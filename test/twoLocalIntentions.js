@@ -2,7 +2,7 @@ const assert = require('assert');
 const main = require('../main.js');
 const intentionQuery = require('../intentionQuery.js');
 
-describe('Intention Storage', function() {
+describe('Local intentions', function() {
     describe('Enable stats', function () {
         it ('should disable stats', function () {
             main.enableStats();

@@ -1,6 +1,7 @@
 const Intention = require('./Intention.js');
 const IntentionMap = require('./IntentionMap.js');
 const LinkedStorageClient = require('./LinkedStorageClient.js');
+const LinkedStorageServer = require('./LinkedStorageServer.js');
 const NetworkIntention = require('./NetworkIntention.js');
 
 function dispatchIntentions(storage, intention) {
@@ -150,8 +151,13 @@ module.exports = class IntentionStorage {
         if (value > 0)
             dispatchCycle(this);
     }
+
     get dispatchInterval() {
         return this._dispatchInterval;
+    }
+
+    createServer(port) {
+        return new LinkedStorageServer({ storage: this, port })
     }
 
     translate(intention) {

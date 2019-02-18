@@ -1,7 +1,7 @@
 const assert = require('assert');
 const main = require('../main.js');
 
-describe.only('Translate intentions', function() {
+describe('Translate intentions', function() {
     let iQuery = null;
     let target = null;
     let targetAccept = null;
@@ -78,6 +78,10 @@ describe.only('Translate intentions', function() {
     });
 
     describe('Delete query intention', function () {
+        it('delete target intention', function () {
+            main.delete(target, { message: 'target is deleted'});
+        });
+
         it('delete linked storage by parameters', function() {
             main.storage.deleteLink([{ type: 'WebAddress', value: 'localhost' }]);
             const linked = main.storage.links.get('localhost');
