@@ -157,7 +157,7 @@ describe('Intention Storage', function() {
     });
 
     describe('Delete query intention', function () {
-        it('should disable stats', function () {
+        it('should delete intention', function () {
             main.delete(iQuery, 'intention closed');
         })
     });

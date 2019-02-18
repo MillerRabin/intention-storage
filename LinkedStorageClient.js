@@ -1,5 +1,6 @@
 const WebSocket = require('./WebSocket.js');
-
+const NetworkIntention = require('./NetworkIntention.js');
+const LinkedStorageAbstract = require('./LinkedStorageAbstract.js');
 
 function connect(schema, origin, port) {
     return new Promise((resolve, reject) => {
@@ -13,7 +14,6 @@ function connect(schema, origin, port) {
         }
     });
 }
-
 
 async function select(storageLink) {
     let socket;
@@ -35,24 +35,18 @@ async function createSocket(storageLink) {
         socket = await select(storageLink);
     else
         socket = await connect(storageLink._schema, storageLink._origin, storageLink._port);
-
-    socket.onmessage = function (event) {
-        console.log(event.data);
-    };
-
     return socket;
 }
 
-module.exports = class LinkedStorage {
+module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
     constructor({ storage, origin, port = 10010, schema }) {
-        this._storage = storage;
+        super({ storage, port });
         this._origin = origin;
-        this._port =  port;
         this._schema = schema;
         createSocket(this).then((socket) => {
-           this._socket = socket;
+           this.socket = socket;
         }).catch(() => {
-            this._socket = null;
+            this.socket = null;
         });
     }
     get origin() {
@@ -61,13 +55,12 @@ module.exports = class LinkedStorage {
     get key() {
         return `${this._origin}:${this._port}`;
     }
-    get state() {
-        if (this._socket == null) return -1;
-        return this._socket.readyState;
-    }
-    offline() {
-        if (this._socket != null)
-            this._socket.close();
+    translate(intention) {
+        this.sendObject({
+            command: 'translate',
+            version: 1,
+            intention: intention.toObject()
+        })
     }
     toObject() {
         return {

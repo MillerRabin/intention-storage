@@ -1,32 +1,39 @@
 const Intention = require('./Intention.js');
 const IntentionMap = require('./IntentionMap.js');
-const LinkedStorage = require('./LinkedStorage.js');
+const LinkedStorageClient = require('./LinkedStorageClient.js');
+const NetworkIntention = require('./NetworkIntention.js');
 
-async function dispatchIntentions(intentions, intention) {
+function dispatchIntentions(storage, intention) {
     const rKey = intention.getKey(true);
-    const originMap = intentions.get(rKey);
-    if (originMap == null) return;
-    for (let [,origin] of originMap) {
-        for (let int of origin) {
-            try {
-                if (int == intention) continue;
-                int.accept(intention);
-            } catch (e) {
-                console.log(e);
+    const originMap = storage._intentions.get(rKey);
+    if (originMap != null) {
+        for (let [, origin] of originMap) {
+            for (let int of origin) {
+                try {
+                    if (int == intention) continue;
+                    int.accept(intention);
+                } catch (e) {
+                    console.log(e);
+                }
             }
         }
     }
+
+    if (intention.accepted.size == 0) {
+        storage.translate(intention);
+        return false;
+    }
+    return true;
 }
 
 function dispatchCycle(storage) {
     clearTimeout(storage._dispatchTimeout);
     storage._dispatchTimeout = setTimeout(() => {
         for (let intention of storage._dispatchWait) {
-            dispatchIntentions(storage._intentions, intention);
+            if (dispatchIntentions(storage, intention))
+                storage._dispatchWait.delete(intention);
         }
-        storage._dispatchWait.clear();
         dispatchCycle(storage);
-
     }, storage._dispatchInterval);
 }
 
@@ -62,7 +69,7 @@ module.exports = class IntentionStorage {
     addLink(origin) {
         const op = getParameter(origin, 'WebAddress');
         if (op == null) throw new Error('WebAddress parameter expected');
-        const link = new LinkedStorage({ storage: this, origin: op });
+        const link = new LinkedStorageClient({ storage: this, origin: op });
         this.links.set(link.key, link);
         updateStorages(this, link, 'created');
         return link;
@@ -79,6 +86,11 @@ module.exports = class IntentionStorage {
         return link;
     }
 
+    _add(intention) {
+        this.intentions.set(intention);
+        updateIntention(this, intention, 'created');
+        this._dispatchWait.add(intention);
+    }
     createIntention({
         title,
         description,
@@ -99,11 +111,20 @@ module.exports = class IntentionStorage {
             value,
             storage: this
         });
-        this.intentions.set(intention);
-        updateIntention(this, intention, 'created');
-        this._dispatchWait.add(intention);
+        this._add(intention);
         return intention;
     }
+
+    async addNetworkIntention(intention) {
+        if (!(intention instanceof NetworkIntention)) throw new Error('intention must be instance of NetworkIntention');
+        try {
+            await intention.send('translate', intention, this);
+            this._add(intention);
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
     get(key) {
         return this.intentions.get(key);
     }
@@ -132,4 +153,11 @@ module.exports = class IntentionStorage {
     get dispatchInterval() {
         return this._dispatchInterval;
     }
+
+    translate(intention) {
+        for (let [,link] of this._links) {
+            link.translate(intention);
+        }
+    }
+
 };

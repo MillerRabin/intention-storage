@@ -1,7 +1,11 @@
 const assert = require('assert');
 const main = require('../main.js');
 
-describe('Linked Storages', function() {
+describe.only('Translate intentions', function() {
+    let iQuery = null;
+    let target = null;
+    let targetAccept = null;
+
     describe('Enable stats', function () {
         it ('should disable stats', function () {
             main.enableStats();
@@ -10,10 +14,14 @@ describe('Linked Storages', function() {
         it ('Set dispatch interval', function () {
             main.storage.dispatchInterval = 500;
         });
+        it('add linked storage by parameters', function() {
+            const res = main.storage.addLink([{ type: 'WebAddress', value: 'localhost' }]);
+            const linked = main.storage.links.get('localhost:10010');
+            assert.strictEqual(linked.key, 'localhost:10010');
+            assert.strictEqual(res, linked);
+        });
     });
 
-    const updatedStorages = [];
-    let iQuery = null;
     describe('Query Intention', function() {
         let iStorage = null;
         it('Create query intention', function(done) {
@@ -24,15 +32,12 @@ describe('Linked Storages', function() {
                 value: 'test',
                 onData: async (status, intention, value) => {
                     if (status == 'accept') {
-                        if (iStorage == null) {
-                            iStorage = intention;
-                            done();
-                        }
+                        iStorage = intention;
+                        done();
                         return;
                     }
                     if (status == 'data') {
-                        if (value.updatedStorages != null)
-                            updatedStorages.push(...value.updatedStorages);
+
                     }
                 }
             });
@@ -45,34 +50,41 @@ describe('Linked Storages', function() {
         });
     });
 
+    describe('Translation', function() {
+        it('create counter translate intention', function () {
+            target = main.create({
+                title: 'test counter translate intention',
+                input: 'TranslateTestOut',
+                output: 'TranslateTestIn',
+                onData: async (status, intention, value) => {
+                    if (status == 'accept') {
+                        targetAccept = {
+                            intention: intention,
+                            value: value
+                        };
+                    }
 
-    describe('Linked storage by parameters', function() {
-        it('add linked storage by parameters', function() {
-            const res = main.storage.addLink([{ type: 'WebAddress', value: 'localhost' }]);
-            const linked = main.storage.links.get('localhost:10010');
-            assert.strictEqual(linked.key, 'localhost:10010');
-            assert.strictEqual(res, linked);
+                }
+            });
+            assert.ok(target != null, 'source must be created');
+            const intention = main.storage.get('TranslateTestOut - TranslateTestIn');
+            assert.ok(intention != null, 'Target must be exists in storage');
         });
-
-        it('Storage has been sended in stats', function (done) {
-            this.timeout(1000);
-            setTimeout(() => {
-                const loc = updatedStorages.find(v => v.storage.origin == 'localhost');
-                assert.strictEqual(loc.storage.origin, 'localhost');
-                updatedStorages.length = 0;
-                done();
-            }, 500);
+        it('Wait 1000 seconds', function (done) {
+           setTimeout(function () {
+               done();
+           },1000);
         });
+    });
 
+    describe('Delete query intention', function () {
         it('delete linked storage by parameters', function() {
             main.storage.deleteLink([{ type: 'WebAddress', value: 'localhost' }]);
             const linked = main.storage.links.get('localhost');
             assert.strictEqual(linked, undefined);
         });
-    });
 
-    describe('Delete query intention', function () {
-        it('should disable stats', function () {
+        it('should delete intention', function () {
             main.delete(iQuery, 'intention closed');
         })
     });
@@ -82,8 +94,9 @@ describe('Linked Storages', function() {
             main.disableStats();
         });
 
-        it ('disable dispatch interval', function () {
+        it('disable dispatch interval', function () {
             main.storage.dispatchInterval = 0;
         });
     });
+
 });
