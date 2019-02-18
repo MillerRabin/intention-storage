@@ -93,8 +93,13 @@ function setStatsInterval(interval) {
     enableStats();
 }
 
+function createServer(port = 10010) {
+    return main.createServer(port);
+}
+
 module.exports = {
     create: create,
+    createServer: createServer,
     delete: deleteIntention,
     storage: main,
     generateUUID: uuid.generate,

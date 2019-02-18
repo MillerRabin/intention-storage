@@ -43,6 +43,10 @@ module.exports = class LinkedStorageAbstract {
     get socket() {
         return this._socket;
     }
+
+    get port() {
+        return this._port;
+    }
     offline() {
         if (this._socket != null)
             this._socket.close();
