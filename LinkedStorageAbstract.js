@@ -1,7 +1,7 @@
 const NetworkIntention = require('./NetworkIntention.js');
 
 const gCommandTable = {
-    '01:translate':  async function (storageLink, message){
+    '1:translate':  async function (storageLink, message){
         if (message.intention == null) throw new Error('intention object expected');
         const textIntention = message.intention;
         if (textIntention.type != 'intention') throw new Error('type of object must be intention');
