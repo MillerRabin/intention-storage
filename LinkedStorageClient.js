@@ -1,5 +1,4 @@
 const WebSocket = require('./WebSocket.js');
-const NetworkIntention = require('./NetworkIntention.js');
 const LinkedStorageAbstract = require('./LinkedStorageAbstract.js');
 
 function connect(schema, origin, port) {
@@ -43,7 +42,7 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
         super({ storage, port });
         this._origin = origin;
         this._schema = schema;
-        createSocket(this).then((socket) => {
+        this._createSocketPromise = createSocket(this).then((socket) => {
            this.socket = socket;
         }).catch(() => {
             this.socket = null;
@@ -55,8 +54,8 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
     get key() {
         return `${this._origin}:${this._port}`;
     }
-    translate(intention) {
-        this.sendObject({
+    async translate(intention) {
+        return this.sendObject({
             command: 'translate',
             version: 1,
             intention: intention.toObject()

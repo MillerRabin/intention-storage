@@ -1,21 +1,27 @@
 const assert = require('assert');
-const main = require('../main.js');
-const intentionQuery = require('../intentionQuery.js');
+const { IntentionStorage } = require('../main.js');
 
 describe('Local intentions', function() {
-    describe('Enable stats', function () {
-        it ('should disable stats', function () {
-            main.enableStats();
-            main.setStatsInterval(500);
+    let intentionStorage = null;
+
+    describe('Prepare intention storage', function () {
+        it ('Create storage', function () {
+            intentionStorage = new IntentionStorage();
         });
+
         it ('Set dispatch interval', function () {
-            main.storage.dispatchInterval = 500;
+            intentionStorage.dispatchInterval = 500;
         });
+
+        it ('Set stats interval', function () {
+            intentionStorage.statsInterval = 500;
+        });
+
     });
 
     describe('Create Storage intention', function() {
         it('Should create', function() {
-            const intention = main.storage.get('None - StorageStats');
+            const intention = intentionStorage.get('None - StorageStats');
             assert.ok(intention != null, 'intention must be exists');
         });
     });
@@ -25,7 +31,7 @@ describe('Local intentions', function() {
     describe('Query Intention', function() {
         let iStorage = null;
         it('Create query intention', function(done) {
-            iQuery = main.create({
+            iQuery = intentionStorage.createIntention({
                 title: 'Test query intention',
                 input: 'StorageStats',
                 output: 'None',
@@ -58,7 +64,7 @@ describe('Local intentions', function() {
         let targetAccept = null;
         let sourceClose = null;
         it('create test intention', function() {
-            source = main.create({
+            source = intentionStorage.createIntention({
                title: 'test intention',
                input: 'TestIn',
                output: 'TestOut',
@@ -77,12 +83,13 @@ describe('Local intentions', function() {
                }
             });
             assert.ok(source != null, 'source must be created');
-            const intention = main.storage.get('TestIn - TestOut');
+            const intention = intentionStorage.get('TestIn - TestOut');
             assert.ok(intention != null, 'Source must be exists in storage');
         });
+
         it('create counter intention', function () {
             assert.ok(source != null);
-            target = main.create({
+            target = intentionStorage.createIntention({
                 title: 'test counter intention',
                 input: 'TestOut',
                 output: 'TestIn',
@@ -97,9 +104,10 @@ describe('Local intentions', function() {
                 }
             });
             assert.ok(target != null, 'source must be created');
-            const intention = main.storage.get('TestOut - TestIn');
+            const intention = intentionStorage.get('TestOut - TestIn');
             assert.ok(intention != null, 'Target must be exists in storage');
         });
+
         it('source must be accepted', function (done) {
             setTimeout(() => {
                 const key = sourceAccept.intention.getKey();
@@ -107,9 +115,11 @@ describe('Local intentions', function() {
                 done();
             }, 500);
         });
+
         it('target must be accepted', function () {
             assert.strictEqual(targetAccept.intention.getKey(),'TestIn - TestOut');
         });
+
         it('Stats has been sended accept status for source and target', function (done) {
             this.timeout(3000);
             setTimeout(() => {
@@ -123,15 +133,18 @@ describe('Local intentions', function() {
                 done();
             }, 2000);
         });
+
         it('intentions must exists', function () {
-            const list = intentionQuery.queryIntentions(main.storage, {});
+            const list = intentionStorage.queryIntentions({});
             assert.strictEqual(list.length, 4);
         });
+
         it('delete accepted target intention', function () {
-            main.delete(target, { message: 'target is deleted'});
-            const list = intentionQuery.queryIntentions(main.storage, {});
+            intentionStorage.deleteIntention(target, { message: 'target is deleted'});
+            const list = intentionStorage.queryIntentions(intentionStorage, {});
             assert.strictEqual(list.length, 3);
         });
+
         it('source must receive close message', function (done) {
             setTimeout(() => {
                 assert.strictEqual(sourceClose.value.message,'target is deleted');
@@ -158,17 +171,17 @@ describe('Local intentions', function() {
 
     describe('Delete query intention', function () {
         it('should delete intention', function () {
-            main.delete(iQuery, 'intention closed');
+            intentionStorage.deleteIntention(iQuery, 'intention closed');
         })
     });
 
     describe('Disable stats', function () {
-       it ('should disable stats', function () {
-           main.disableStats();
+       it ('disable dispatch', function () {
+           intentionStorage.dispatchInterval = 0;
        });
 
-       it ('disable dispatch interval', function () {
-           main.storage.dispatchInterval = 0;
-       });
+        it ('disable stats', function () {
+            intentionStorage.statsInterval = 0;
+        });
     });
 });

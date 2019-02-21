@@ -1,14 +1,19 @@
 const assert = require('assert');
-const main = require('../main.js');
+const { IntentionStorage } = require('../main.js');
 
 describe('Linked Storages', function() {
-    describe('Enable stats', function () {
-        it ('should disable stats', function () {
-            main.enableStats();
-            main.setStatsInterval(500);
+    let intentionStorage = null;
+    describe('Create intention storage', function () {
+        it ('Create storage', function () {
+            intentionStorage = new IntentionStorage();
         });
-        it ('Set dispatch interval', function () {
-            main.storage.dispatchInterval = 500;
+
+        it('should enable stats', function () {
+            intentionStorage.statsInterval = 500;
+        });
+
+        it('Set dispatch interval', function () {
+            intentionStorage.dispatchInterval = 500;
         });
     });
 
@@ -17,7 +22,7 @@ describe('Linked Storages', function() {
     describe('Query Intention', function() {
         let iStorage = null;
         it('Create query intention', function(done) {
-            iQuery = main.create({
+            iQuery = intentionStorage.createIntention({
                 title: 'Test query intention',
                 input: 'StorageStats',
                 output: 'None',
@@ -48,8 +53,8 @@ describe('Linked Storages', function() {
 
     describe('Linked storage by parameters', function() {
         it('add linked storage by parameters', function() {
-            const res = main.storage.addLink([{ type: 'WebAddress', value: 'localhost' }]);
-            const linked = main.storage.links.get('localhost:10010');
+            const res = intentionStorage.addLink([{ type: 'WebAddress', value: 'localhost' }]);
+            const linked = intentionStorage.links.get('localhost:10010');
             assert.strictEqual(linked.key, 'localhost:10010');
             assert.strictEqual(res, linked);
         });
@@ -65,25 +70,25 @@ describe('Linked Storages', function() {
         });
 
         it('delete linked storage by parameters', function() {
-            main.storage.deleteLink([{ type: 'WebAddress', value: 'localhost' }]);
-            const linked = main.storage.links.get('localhost');
+            intentionStorage.deleteLink([{ type: 'WebAddress', value: 'localhost' }]);
+            const linked = intentionStorage.links.get('localhost');
             assert.strictEqual(linked, undefined);
         });
     });
 
     describe('Delete query intention', function () {
         it('should disable stats', function () {
-            main.delete(iQuery, 'intention closed');
+            intentionStorage.deleteIntention(iQuery, 'intention closed');
         })
     });
 
     describe('Disable stats', function () {
         it ('should disable stats', function () {
-            main.disableStats();
+            intentionStorage.statsInterval = 0;
         });
 
         it ('disable dispatch interval', function () {
-            main.storage.dispatchInterval = 0;
+            intentionStorage.dispatchInterval = 0;
         });
     });
 });

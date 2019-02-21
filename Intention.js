@@ -12,11 +12,7 @@ function getOrigin() {
 
 function update(intention, status) {
     intention._updateTime = new Date();
-    try {
-        if (intention._onUpdate) intention._onUpdate(intention, status);
-    } catch (e) {
-        console.log(e);
-    }
+    intention._storage._query.updateIntention(intention, status);
 }
 
 async function accept(source, target) {
@@ -59,7 +55,6 @@ module.exports = class Intention {
         input,
         output,
         onData,
-        onUpdate,
         parameters = [],
         value,
         storage
@@ -82,7 +77,6 @@ module.exports = class Intention {
         this._parameters = parameters;
         this._id = uuid.generate();
         this._accepted = new AcceptedIntentions(this);
-        this._onUpdate = onUpdate;
         this._value = value;
         this._storage = storage;
     }

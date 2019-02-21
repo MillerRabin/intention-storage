@@ -10,7 +10,8 @@ module.exports = class NetworkIntention {
                      output,
                      origin,
                      parameters = [],
-                     value
+                     value,
+                     storageLink
                  }) {
         if (safe.isEmpty(title)) throw new Error('Network Intention must have a title');
         if (safe.isEmpty(input)) throw new Error('Network Intention must have an input parameter');
@@ -19,6 +20,7 @@ module.exports = class NetworkIntention {
         if (safe.isEmpty(id)) throw new Error('Network Intention must have an id');
         if (!Array.isArray(parameters)) throw new Error('Parameters must be array');
         if (input == output) throw new Error('Input and Output can`t be the same');
+        if (storageLink == null) throw new Error('Storage link must be exists');
 
         this._createTime = createTime;
         this._updateTime = this._createTime;
@@ -31,6 +33,7 @@ module.exports = class NetworkIntention {
         this._id = id;
         this._value = value;
         this._storage = null;
+        this._storageLink = storageLink;
     }
     getKey(reverse = false) {
         return (!reverse) ? `${ this._input } - ${ this._output }` : `${ this._output } - ${ this._input }`;
@@ -65,11 +68,17 @@ module.exports = class NetworkIntention {
     get value() {
         return this._value;
     }
+    get storageLink() {
+        return this._storageLink;
+    }
+
     async send(status, intention, data) {
         try {
-            return await this._storage.send(status, intention, data)
+            return await this._storageLink.send(status, intention, data)
         } catch (e) {
-            return await intention.send('error', this, e);
+            if (status != 'error')
+                return await intention.send('error', this, e);
+            console.log(e);
         }
     }
     async sendError(error) {
