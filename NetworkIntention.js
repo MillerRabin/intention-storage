@@ -1,4 +1,5 @@
 const safe = require('./core/safe.js');
+const AcceptedIntentions = require('./AcceptedIntentions.js');
 
 module.exports = class NetworkIntention {
     constructor ({
@@ -8,7 +9,6 @@ module.exports = class NetworkIntention {
                      description,
                      input,
                      output,
-                     origin,
                      parameters = [],
                      value,
                      storageLink
@@ -23,17 +23,19 @@ module.exports = class NetworkIntention {
         if (storageLink == null) throw new Error('Storage link must be exists');
 
         this._createTime = createTime;
-        this._updateTime = this._createTime;
+        this._updateTime = new Date();
         this._title = title;
         this._description = description;
         this._input = input;
         this._output = output;
-        this._origin = origin;
+        this._origin = storageLink._socket.url;
         this._parameters = parameters;
         this._id = id;
         this._value = value;
         this._storage = null;
         this._storageLink = storageLink;
+        this._accepted = new AcceptedIntentions(this);
+        this._type = 'NetworkIntention';
     }
     getKey(reverse = false) {
         return (!reverse) ? `${ this._input } - ${ this._output }` : `${ this._output } - ${ this._input }`;
@@ -72,12 +74,31 @@ module.exports = class NetworkIntention {
         return this._storageLink;
     }
 
+    get type() {
+        return this._type;
+    }
+
     async send(status, intention, data) {
+        if (intention.toObject == null) throw new Error('Intention must not be null');
         try {
-            return await this._storageLink.send(status, intention, data)
+            return await this._storageLink.sendObject({
+                command: 'message',
+                version: 1,
+                status: status,
+                id: this.id,
+                intention: intention.toObject(),
+                data: data
+            });
         } catch (e) {
             if (status != 'error')
-                return await intention.send('error', this, e);
+                return await this._storageLink.sendObject({
+                    command: 'message',
+                    version: 1,
+                    status: 'error',
+                    id: this.id,
+                    intention: intention.toObject(),
+                    data: e
+                });
             console.log(e);
         }
     }
@@ -85,7 +106,15 @@ module.exports = class NetworkIntention {
         return await this.send('error', this, error);
     }
     async accept(intention) {
-        return await this.send('accept', this, intention);
+        return await this.send('accept', intention);
+    }
+
+    async close(intention, message) {
+        return await this.send('close', intention, message);
+    }
+
+    get accepted() {
+        return this._accepted;
     }
 
     toObject() {
@@ -96,10 +125,10 @@ module.exports = class NetworkIntention {
             key: this.getKey(),
             input: this._input,
             output: this._output,
-            origin: this._origin,
             title: this._title,
             description: this._description,
-            value: this._value
+            value: this._value,
+            type: this._type
         }
     }
 };

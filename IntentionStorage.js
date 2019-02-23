@@ -4,7 +4,7 @@ const LinkedStorageClient = require('./LinkedStorageClient.js');
 const LinkedStorageServer = require('./IntentionStorageServer.js');
 const NetworkIntention = require('./NetworkIntention.js');
 const IntentionQuery = require('./IntentionQuery.js');
-
+const uuid = require('./core/uuid.js');
 
 function dispatchIntentions(storage, intention) {
     const rKey = intention.getKey(true);
@@ -22,7 +22,7 @@ function dispatchIntentions(storage, intention) {
         }
     }
 
-    if ((intention.accepted == null) || (intention.accepted.size == 0)) {
+    if (intention.accepted.size == 0) {
         storage.translate(intention);
         return false;
     }
@@ -57,14 +57,23 @@ module.exports = class IntentionStorage {
         this._dispatchTimeout = null;
         this._query = new IntentionQuery(this);
         this._storageServer = null;
+        this._id = uuid.generate();
+        this._type = 'IntentionStorage';
         dispatchCycle(this);
     }
+
+    addStorage(params) {
+        const link = new LinkedStorageClient(params);
+        this.links.set(link.key, link);
+        this._query.updateStorage(link, 'created');
+        return link;
+    }
+
     addLink(origin) {
         const op = getParameter(origin, 'WebAddress');
         if (op == null) throw new Error('WebAddress parameter expected');
-        const link = new LinkedStorageClient({ storage: this, origin: op });
-        this.links.set(link.key, link);
-        this._query.updateStorage(link, 'created');
+        const link = this.addStorage({ storage: this, origin: op, type: 'manual' });
+        link.connect();
         return link;
     }
 
@@ -111,12 +120,7 @@ module.exports = class IntentionStorage {
 
     async addNetworkIntention(intention) {
         if (!(intention instanceof NetworkIntention)) throw new Error('intention must be instance of NetworkIntention');
-        try {
-            await intention.storageLink.sendObject('translate', intention, this);
-            this._add(intention);
-        } catch (e) {
-            console.log(e);
-        }
+        this._add(intention);
     }
 
     get(key) {
@@ -138,6 +142,14 @@ module.exports = class IntentionStorage {
     get links() {
         return this._links;
     }
+    get id() {
+        return this._id;
+    }
+
+    get type() {
+        return this._type;
+    }
+
     set dispatchInterval(value) {
         if (typeof(value) != 'number') throw new Error('Value must be number');
         clearTimeout(this._dispatchTimeout);
@@ -174,12 +186,17 @@ module.exports = class IntentionStorage {
     }
 
     queryIntentions(params) {
-        return this._query.queryIntentions(this, params);
+        return this._query.queryIntentions(params);
     }
 
     queryLinkedStorage(params) {
-        return this._query.queryLinkedStorages(this, params);
+        return this._query.queryLinkedStorages(params);
     }
 
-
+    toObject() {
+        return {
+            id: this._id,
+            type: this._type
+        }
+    }
 };

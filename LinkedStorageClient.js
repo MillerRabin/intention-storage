@@ -28,7 +28,7 @@ async function select(storageLink) {
     return socket;
 }
 
-async function createSocket(storageLink) {
+async function connectSocket(storageLink) {
     let socket = null;
     if (storageLink._schema == null)
         socket = await select(storageLink);
@@ -38,22 +38,33 @@ async function createSocket(storageLink) {
 }
 
 module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
-    constructor({ storage, origin, port = 10010, schema }) {
-        super({ storage, port });
+    constructor({ storage, origin, port = 10010, schema, socket, request, type }) {
+        if (request != null) {
+            origin = request.connection.remoteAddress;
+            port = request.connection.remotePort;
+        }
+
+        super({ storage, port, type, socket });
         this._origin = origin;
         this._schema = schema;
-        this._createSocketPromise = createSocket(this).then((socket) => {
-           this.socket = socket;
-        }).catch(() => {
-            this.socket = null;
-        });
     }
+
+    async connect() {
+        try {
+            this.socket = await connectSocket(this);
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
     get origin() {
         return this._origin;
     }
+
     get key() {
         return `${this._origin}:${this._port}`;
     }
+
     async translate(intention) {
         return this.sendObject({
             command: 'translate',
@@ -61,6 +72,7 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
             intention: intention.toObject()
         })
     }
+
     toObject() {
         return {
             origin: this._origin,

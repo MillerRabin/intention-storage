@@ -49,12 +49,20 @@ function disableStats(intentionQuery) {
     clearTimeout(this._statsTimeout);
 }
 
+function addIntention(query, intention) {
+    query._intentionIdMap.set(intention.id, intention);
+}
+
+function deleteIntention(query, intention) {
+    query._intentionIdMap.delete(intention.id);
+}
 
 module.exports = class IntentionQuery {
     constructor (storage) {
         this._storage = storage;
         this._updatedIntentions = new Map();
         this._updatedStorages = new Map();
+        this._intentionIdMap = new Map();
         this.sendStats = true;
         this._statsInterval = 5000;
         this._statsTimeout = null;
@@ -63,8 +71,10 @@ module.exports = class IntentionQuery {
         });
     }
 
-    queryIntentions(query) {
-        return this.formatIntentions(query)
+    queryIntentions(query = {}) {
+        if (query.id != null)
+            return this._intentionIdMap.get(query.id);
+        return this.formatIntentions()
     }
 
     queryLinkedStorages(query) {
@@ -75,7 +85,9 @@ module.exports = class IntentionQuery {
         this._updatedIntentions.set(intention.id, {
             intention: intention.toObject(),
             status: status
-        })
+        });
+        if (status == 'created') addIntention(this, intention);
+        if (status == 'deleted') deleteIntention(this, intention);
     }
 
     updateStorage(storage, status) {
@@ -89,6 +101,10 @@ module.exports = class IntentionQuery {
         disableStats(this);
         this._statsInterval = interval;
         enableStats(this);
+    }
+
+    get statsInterval() {
+        return this._statsInterval;
     }
 
     get sendStats() {

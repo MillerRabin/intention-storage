@@ -79,6 +79,7 @@ module.exports = class Intention {
         this._accepted = new AcceptedIntentions(this);
         this._value = value;
         this._storage = storage;
+        this._type = 'Intention';
     }
     getKey(reverse = false) {
         return (!reverse) ? `${ this._input } - ${ this._output }` : `${ this._output } - ${ this._input }`;
@@ -116,6 +117,9 @@ module.exports = class Intention {
     get value() {
         return this._value;
     }
+    get type() {
+        return this._type;
+    }
     async send(status, intention, data) {
         try {
             return await this._onData(status, intention, data);
@@ -148,7 +152,7 @@ module.exports = class Intention {
     toObject() {
         return {
             id: this._id,
-            type: 'intention',
+            type: this._type,
             createTime: this.createTime,
             updateTime: this.updateTime,
             key: this.getKey(),

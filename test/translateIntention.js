@@ -3,7 +3,11 @@ const { IntentionStorage } = require('../main.js');
 
 describe.only('Translate intentions', function() {
     let iQuery = null;
+    let source = null;
     let target = null;
+    let sourceTranslate = null;
+    let sourceAccept = null;
+    let targetTranslate = null;
     let targetAccept = null;
     let intentionStorage = null;
     let intentionStorageServer = null;
@@ -46,6 +50,17 @@ describe.only('Translate intentions', function() {
             assert.strictEqual(linked.key, 'localhost:10010');
             assert.strictEqual(res, linked);
         });
+
+        it('automatic linked storage should be appeared at server', function(done) {
+            setTimeout(() => {
+                const links = [...intentionStorageServer.links.values()];
+                const target = links.find(l => l.origin == '::ffff:127.0.0.1');
+                assert.ok(target != null, 'storage must exists');
+                assert.strictEqual(target.type,'auto');
+                done();
+            }, 1000);
+        });
+
     });
 
     describe('Query Intention', function() {
@@ -58,6 +73,7 @@ describe.only('Translate intentions', function() {
                 value: 'test',
                 onData: async (status, intention) => {
                     if (status == 'accept') {
+                        if (intention.type != 'Intention') return;
                         iStorage = intention;
                         done();
                         return;
@@ -77,6 +93,27 @@ describe.only('Translate intentions', function() {
     });
 
     describe('Translation', function() {
+        it('create test translate intention at server', function () {
+            source = intentionStorageServer.createIntention({
+                title: 'test translate intention',
+                input: 'TranslateTestIn',
+                output: 'TranslateTestOut',
+                onData: async (status, intention, value) => {
+                    console.log(status);
+                    if (status == 'accept') {
+                        console.log(intention);
+                        sourceAccept = {
+                            intention: intention,
+                            value: value
+                        };
+                    }
+                }
+            });
+            assert.ok(source != null, 'Source must be created');
+            const intention = intentionStorageServer.get('TranslateTestIn - TranslateTestOut');
+            assert.ok(intention != null, 'Source must be exists in storage');
+        });
+
         it('create counter translate intention', function () {
             target = intentionStorage.createIntention({
                 title: 'test counter translate intention',
@@ -91,15 +128,23 @@ describe.only('Translate intentions', function() {
                     }
                 }
             });
-            assert.ok(target != null, 'source must be created');
+            assert.ok(target != null, 'Target must be created');
             const intention = intentionStorage.get('TranslateTestOut - TranslateTestIn');
             assert.ok(intention != null, 'Target must be exists in storage');
         });
+
         it('Wait 1000 seconds', function (done) {
             setTimeout(function () {
                done();
            },1000);
         });
+    });
+
+    describe('Check statuses', function () {
+       it('Translate intention must be accepted by counter intention', function () {
+            assert.ok(targetAccept != null, 'Target must be accepted');
+            assert.strictEqual(targetAccept.intention.origin, 'ws://localhost:10010');
+       });
     });
 
     describe('Delete query intention', function () {
