@@ -5,9 +5,7 @@ describe.only('Translate intentions', function() {
     let iQuery = null;
     let source = null;
     let target = null;
-    let sourceTranslate = null;
     let sourceAccept = null;
-    let targetTranslate = null;
     let targetAccept = null;
     let intentionStorage = null;
     let intentionStorageServer = null;
@@ -99,9 +97,7 @@ describe.only('Translate intentions', function() {
                 input: 'TranslateTestIn',
                 output: 'TranslateTestOut',
                 onData: async (status, intention, value) => {
-                    console.log(status);
                     if (status == 'accept') {
-                        console.log(intention);
                         sourceAccept = {
                             intention: intention,
                             value: value
@@ -110,7 +106,7 @@ describe.only('Translate intentions', function() {
                 }
             });
             assert.ok(source != null, 'Source must be created');
-            const intention = intentionStorageServer.get('TranslateTestIn - TranslateTestOut');
+            const intention = intentionStorageServer.intentions.byKey('TranslateTestIn - TranslateTestOut');
             assert.ok(intention != null, 'Source must be exists in storage');
         });
 
@@ -129,7 +125,7 @@ describe.only('Translate intentions', function() {
                 }
             });
             assert.ok(target != null, 'Target must be created');
-            const intention = intentionStorage.get('TranslateTestOut - TranslateTestIn');
+            const intention = intentionStorage.intentions.byKey('TranslateTestOut - TranslateTestIn');
             assert.ok(intention != null, 'Target must be exists in storage');
         });
 
@@ -141,9 +137,14 @@ describe.only('Translate intentions', function() {
     });
 
     describe('Check statuses', function () {
-       it('Translate intention must be accepted by counter intention', function () {
-            assert.ok(targetAccept != null, 'Target must be accepted');
-            assert.strictEqual(targetAccept.intention.origin, 'ws://localhost:10010');
+        it('Intention must be accepted at serverStorage', function () {
+            assert.ok(sourceAccept != null, 'Source must be accepted');
+            assert.ok(sourceAccept.intention.origin != null);
+        });
+
+       it('Intention must be accepted at clientStorage', function () {
+           assert.ok(targetAccept != null, 'Target must be accepted');
+           assert.strictEqual(targetAccept.intention.origin, 'ws://localhost:10010');
        });
     });
 

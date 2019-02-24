@@ -1,24 +1,38 @@
 const NetworkIntention = require('./NetworkIntention.js');
 
+async function translate(storageLink, textIntention) {
+    if (textIntention.id == null) throw new Error('Intention id must exists');
+    const target =  storageLink._storage.intentions.byId(textIntention.id);
+    if (target != null) return target;
+    textIntention.storageLink = storageLink;
+    const intention = new NetworkIntention(textIntention);
+    await storageLink._storage.addNetworkIntention(intention);
+    return intention;
+}
+
 const gCommandTable = {
     '1:translate':  async function (storageLink, message){
         if (message.intention == null) throw new Error('intention object expected');
         const textIntention = message.intention;
         if ((textIntention.type != 'Intention') && (textIntention.type != 'NetworkIntention'))
-            throw new Error('type of object must be NetworkIntention');
-        textIntention.storageLink = storageLink;
-        const intention = new NetworkIntention(textIntention);
-        return await storageLink._storage.addNetworkIntention(intention);
+            throw new Error('type of object must be Intention or NetworkIntention');
+        try {
+            return await translate(storageLink, textIntention);
+        } catch (e) {
+            return null;
+        }
     },
     '1:message':  async function (storageLink, message){
         if (message.status == null) throw new Error('message status is expected');
         const id = message.id;
         if (id == null) throw new Error('Intention id must exists');
-        const intention = storageLink._storage.queryIntentions({ id: id });
+        const intention = storageLink._storage.intentions.byId(id);
         if (intention == null) throw new Error('Intention not found at origin');
         if (message.intention == null) throw new Error('Intention expected');
+        const target = await translate(storageLink, message.intention);
+        if (target == null) throw new Error('Intention is not found');
         if (intention.type == 'Intention') {
-            intention.send(message.status, message.intention, message.data);
+            intention.send(message.status, target, message.data);
         }
     }
 };
@@ -44,12 +58,9 @@ module.exports = class LinkedStorageAbstract {
     }
 
     async sendObject(obj) {
-        try {
-            if (this._socket == null) return false;
-            return this._socket.send(JSON.stringify(obj));
-        } catch (e) {
-            console.log(e);
-        }
+        if (this._socket == null) return false;
+        if (this._socket.readyState != 1) return false;
+        return this._socket.send(JSON.stringify(obj));
     }
 
     set socket(value) {

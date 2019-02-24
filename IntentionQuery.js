@@ -49,20 +49,11 @@ function disableStats(intentionQuery) {
     clearTimeout(this._statsTimeout);
 }
 
-function addIntention(query, intention) {
-    query._intentionIdMap.set(intention.id, intention);
-}
-
-function deleteIntention(query, intention) {
-    query._intentionIdMap.delete(intention.id);
-}
-
 module.exports = class IntentionQuery {
     constructor (storage) {
         this._storage = storage;
         this._updatedIntentions = new Map();
         this._updatedStorages = new Map();
-        this._intentionIdMap = new Map();
         this.sendStats = true;
         this._statsInterval = 5000;
         this._statsTimeout = null;
@@ -71,14 +62,12 @@ module.exports = class IntentionQuery {
         });
     }
 
-    queryIntentions(query = {}) {
-        if (query.id != null)
-            return this._intentionIdMap.get(query.id);
+    queryIntentions() {
         return this.formatIntentions()
     }
 
-    queryLinkedStorages(query) {
-        return this.formatLinkedStorages(query)
+    queryLinkedStorages() {
+        return this.formatLinkedStorages()
     }
 
     updateIntention(intention, status) {
@@ -86,8 +75,6 @@ module.exports = class IntentionQuery {
             intention: intention.toObject(),
             status: status
         });
-        if (status == 'created') addIntention(this, intention);
-        if (status == 'deleted') deleteIntention(this, intention);
     }
 
     updateStorage(storage, status) {
@@ -119,12 +106,8 @@ module.exports = class IntentionQuery {
 
     formatIntentions() {
         const res = [];
-        for (let [, originMap] of this._storage.intentions) {
-            for (let [, intentions] of originMap) {
-                for (let intention of intentions) {
-                    res.push(intention.toObject());
-                }
-            }
+        for (let [, intention] of this._storage.intentions.byId()) {
+            res.push(intention.toObject());
         }
         return res;
     }

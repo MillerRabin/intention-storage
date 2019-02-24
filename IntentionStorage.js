@@ -8,12 +8,13 @@ const uuid = require('./core/uuid.js');
 
 function dispatchIntentions(storage, intention) {
     const rKey = intention.getKey(true);
-    const originMap = storage._intentions.get(rKey);
+    const originMap = storage._intentions.byKey(rKey);
     if (originMap != null) {
         for (let [, origin] of originMap) {
-            for (let int of origin) {
+            for (let [, int] of origin) {
                 try {
                     if (int == intention) continue;
+                    if (int.type == 'NetworkIntention') continue;
                     int.accept(intention);
                 } catch (e) {
                     console.log(e);
@@ -123,9 +124,6 @@ module.exports = class IntentionStorage {
         this._add(intention);
     }
 
-    get(key) {
-        return this.intentions.get(key);
-    }
     deleteIntention(intention, data) {
         try {
             intention.accepted.close(intention, data);

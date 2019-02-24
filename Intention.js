@@ -127,12 +127,15 @@ module.exports = class Intention {
             return await intention.send('error', this, e);
         }
     }
+
     async sendError(error) {
         return await this._onData('error', this, error);
     }
+
     async accept(intention) {
         return await accept(this, intention);
     }
+
     async close(intention, info) {
         try {
             return await this._onData('close', intention, info);
