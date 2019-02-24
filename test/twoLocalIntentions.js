@@ -21,7 +21,7 @@ describe('Local intentions', function() {
 
     describe('Create Storage intention', function() {
         it('Should create', function() {
-            const intention = intentionStorage.get('None - StorageStats');
+            const intention = intentionStorage.intentions.byKey('None - StorageStats');
             assert.ok(intention != null, 'intention must be exists');
         });
     });
@@ -83,7 +83,7 @@ describe('Local intentions', function() {
                }
             });
             assert.ok(source != null, 'source must be created');
-            const intention = intentionStorage.get('TestIn - TestOut');
+            const intention = intentionStorage.intentions.byKey('TestIn - TestOut');
             assert.ok(intention != null, 'Source must be exists in storage');
         });
 
@@ -104,7 +104,7 @@ describe('Local intentions', function() {
                 }
             });
             assert.ok(target != null, 'source must be created');
-            const intention = intentionStorage.get('TestOut - TestIn');
+            const intention = intentionStorage.intentions.byKey('TestOut - TestIn');
             assert.ok(intention != null, 'Target must be exists in storage');
         });
 

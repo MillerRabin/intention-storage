@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { IntentionStorage } = require('../main.js');
 
-describe.only('Translate intentions', function() {
+describe('Translate intentions', function() {
     let iQuery = null;
     let source = null;
     let target = null;
