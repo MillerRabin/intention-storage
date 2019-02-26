@@ -18,7 +18,6 @@ function sendStats() {
         if (this._updatedIntentions.size == 0) return;
         this._iObj.updatedIntentions = [...this._updatedIntentions.values()];
         this._iObj.updatedStorages = [...this._updatedStorages.values()];
-
         this._iQuery.accepted.send(this._iObj);
     } catch(e) {
         console.log(e);

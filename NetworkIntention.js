@@ -128,7 +128,8 @@ module.exports = class NetworkIntention {
             title: this._title,
             description: this._description,
             value: this._value,
-            type: this._type
+            type: this._type,
+            origin: this._origin
         }
     }
 };
