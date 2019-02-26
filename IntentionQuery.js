@@ -7,10 +7,7 @@ function createQueryIntention(query) {
         input: 'None',
         output: 'StorageStats',
         onData: async function onData(status) {
-            if (status == 'accept') return {
-                queryIntentions: query.queryIntentions,
-                queryLinkedStorages: query.queryLinkedStorages
-            };
+            if (status == 'accept') return query._iObj;
         }
     });
 }
@@ -19,12 +16,10 @@ function sendStats() {
     try {
         if (this._iQuery == null) return;
         if (this._updatedIntentions.size == 0) return;
-        this._iQuery.accepted.send({
-            updatedIntentions: [...this._updatedIntentions.values()],
-            updatedStorages: [...this._updatedStorages.values()],
-            queryIntentions: this._queryIntention,
-            queryLinkedStorages: this._queryLinkedStorages
-        });
+        this._iObj.updatedIntentions = [...this._updatedIntentions.values()];
+        this._iObj.updatedStorages = [...this._updatedStorages.values()];
+
+        this._iQuery.accepted.send(this._iObj);
     } catch(e) {
         console.log(e);
     } finally {
@@ -58,6 +53,10 @@ module.exports = class IntentionQuery {
         this.sendStats = true;
         this._statsInterval = 5000;
         this._statsTimeout = null;
+        this._iObj = {
+            queryIntentions: this.queryIntentions.bind(this),
+            queryLinkedStorages: this.queryLinkedStorages.bind(this)
+        };
         setTimeout(() => {
             this._iQuery = createQueryIntention(this)
         });
