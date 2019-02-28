@@ -149,7 +149,6 @@ describe('Translate intentions', function() {
     describe('Check statuses', function () {
         it('Intention must be accepted at serverStorage', function () {
             assert.ok(sourceAccept != null, 'Source must be accepted');
-            assert.ok(sourceAccept.intention.origin != null);
         });
 
        it('Intention must be accepted at clientStorage', function () {

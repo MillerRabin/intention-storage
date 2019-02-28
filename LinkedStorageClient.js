@@ -67,6 +67,7 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
     }
 
     async translate(intention) {
+        if (intention.origin == null) return null;
         return this.sendObject({
             command: 'translate',
             version: 1,
