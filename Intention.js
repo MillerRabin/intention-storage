@@ -2,14 +2,6 @@ const safe = require('./core/safe.js');
 const uuid = require('./core/uuid.js');
 const AcceptedIntentions = require('./AcceptedIntentions.js');
 
-function getOrigin() {
-    try {
-        return window.location.host;
-    } catch (e) {
-        return 'local';
-    }
-}
-
 function update(intention, status) {
     intention._updateTime = new Date();
     intention._storage._query.updateIntention(intention, status);
@@ -72,7 +64,7 @@ module.exports = class Intention {
         this._description = description;
         this._input = input;
         this._output = output;
-        this._origin = getOrigin();
+        this._origin = null;
         this._onData = onData;
         this._parameters = parameters;
         this._id = uuid.generate();

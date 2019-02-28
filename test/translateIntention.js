@@ -9,6 +9,9 @@ describe('Translate intentions', function() {
     let targetAccept = null;
     let intentionStorage = null;
     let intentionStorageServer = null;
+    let sourceData = null;
+    let targetData = null;
+
 
     describe('Create Storage Server', function () {
         it ('Create storage', function () {
@@ -24,7 +27,7 @@ describe('Translate intentions', function() {
         });
 
         it('Create server', function() {
-            intentionStorageServer.createServer();
+            intentionStorageServer.createServer({ address: 'localhost'});
         });
     });
 
@@ -44,8 +47,8 @@ describe('Translate intentions', function() {
 
         it('add linked storage by parameters', function() {
             const res = intentionStorage.addLink([{ type: 'WebAddress', value: 'localhost' }]);
-            const linked = intentionStorage.links.get('localhost:10010');
-            assert.strictEqual(linked.key, 'localhost:10010');
+            const linked = intentionStorage.links.get('ws://localhost:10010');
+            assert.strictEqual(linked.key, 'ws://localhost:10010');
             assert.strictEqual(res, linked);
         });
 
@@ -54,7 +57,7 @@ describe('Translate intentions', function() {
                 const links = [...intentionStorageServer.links.values()];
                 const target = links.find(l => l.origin == '::ffff:127.0.0.1');
                 assert.ok(target != null, 'storage must exists');
-                assert.strictEqual(target.type,'auto');
+                assert.strictEqual(target.handling,'auto');
                 done();
             }, 1000);
         });
@@ -74,10 +77,6 @@ describe('Translate intentions', function() {
                         if (intention.type != 'Intention') return;
                         iStorage = intention;
                         done();
-                        return;
-                    }
-                    if (status == 'data') {
-
                     }
                 }
             });
@@ -102,6 +101,11 @@ describe('Translate intentions', function() {
                             intention: intention,
                             value: value
                         };
+                        return;
+                    }
+
+                    if (status == 'data') {
+                        sourceData = value;
                     }
                 }
             });
@@ -121,6 +125,11 @@ describe('Translate intentions', function() {
                             intention: intention,
                             value: value
                         };
+                        return;
+                    }
+
+                    if (status == 'data') {
+                        targetData = value;
                     }
                 }
             });
@@ -146,6 +155,30 @@ describe('Translate intentions', function() {
            assert.ok(targetAccept != null, 'Target must be accepted');
            assert.strictEqual(targetAccept.intention.origin, 'ws://localhost:10010');
        });
+    });
+
+    describe('Send data between intentions', function () {
+        it('Send data from server', function () {
+            source.accepted.send({ message: 'Test from server'});
+        });
+
+        it('Check at the client', function (done) {
+            setTimeout(() => {
+                assert.strictEqual(targetData.message, 'Test from server');
+                done();
+            }, 500);
+        });
+
+        it('Send data from client', function () {
+            target.accepted.send({ message: 'Test from client'});
+        });
+
+        it('Check at the server', function (done) {
+            setTimeout(() => {
+                assert.strictEqual(sourceData.message, 'Test from client');
+                done();
+            }, 500);
+        });
     });
 
     describe('Delete query intention', function () {

@@ -39,12 +39,12 @@ const gCommandTable = {
 
 
 module.exports = class LinkedStorageAbstract {
-    constructor({ storage, port = 10010, type, socket }) {
+    constructor({ storage, port = 10010, handling, socket }) {
         if (storage == null) throw new Error('Storage must be exists');
-        if (type == null) throw new Error('Type must be defined');
+        if (handling == null) throw new Error('Manage type must be defined');
         this._storage = storage;
         this._port = port;
-        this._type = type;
+        this._handling = handling;
         this.socket = socket;
     }
 
@@ -93,6 +93,10 @@ module.exports = class LinkedStorageAbstract {
 
     get type() {
         return this._type;
+    }
+
+    get handling() {
+        return this._handling;
     }
 
     get port() {

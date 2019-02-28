@@ -3,7 +3,7 @@ const LinkedStorageAbstract = require('./LinkedStorageAbstract.js');
 
 function connect(schema, origin, port) {
     return new Promise((resolve, reject) => {
-        const socket =  new WebSocket(`${schema}${origin}:${port}`);
+        const socket =  new WebSocket(`${schema}://${origin}:${port}`);
         socket.onerror = function (error) {
             return reject(error);
         };
@@ -16,13 +16,13 @@ function connect(schema, origin, port) {
 
 async function select(storageLink) {
     let socket;
-    let schema = 'wss://';
+    let schema = 'wss';
     try {
         socket = await connect(schema, storageLink._origin, storageLink._port);
         storageLink._schema = schema;
         return socket
     } catch (e) {}
-    schema = 'ws://';
+    schema = 'ws';
     socket = await connect(schema, storageLink._origin, storageLink._port);
     storageLink._schema = schema;
     return socket;
@@ -38,15 +38,16 @@ async function connectSocket(storageLink) {
 }
 
 module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
-    constructor({ storage, origin, port = 10010, schema, socket, request, type }) {
+    constructor({ storage, origin, port = 10010, schema = 'ws', socket, request, handling }) {
         if (request != null) {
             origin = request.connection.remoteAddress;
             port = request.connection.remotePort;
         }
 
-        super({ storage, port, type, socket });
+        super({ storage, port, handling, socket });
         this._origin = origin;
         this._schema = schema;
+        this._type = 'LinkedStorageClient';
     }
 
     async connect() {
@@ -62,7 +63,7 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
     }
 
     get key() {
-        return `${this._origin}:${this._port}`;
+        return `${this._schema}://${this._origin}:${this._port}`;
     }
 
     async translate(intention) {
@@ -77,7 +78,8 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
         return {
             origin: this._origin,
             port: this._port,
-            key: `${this._origin}:${this._port}`
+            key: `${this._origin}:${this._port}`,
+            type: this._type
         }
     }
 };

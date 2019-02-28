@@ -7,6 +7,7 @@ module.exports = class NetworkIntention {
                      createTime,
                      title,
                      description,
+                     origin,
                      input,
                      output,
                      parameters = [],
@@ -28,7 +29,7 @@ module.exports = class NetworkIntention {
         this._description = description;
         this._input = input;
         this._output = output;
-        this._origin = (storageLink._socket.url != null) ? storageLink._socket.url : storageLink.key;
+        this._origin = storageLink.key;
         this._parameters = parameters;
         this._id = id;
         this._value = value;
