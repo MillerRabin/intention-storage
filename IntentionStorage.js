@@ -172,7 +172,7 @@ module.exports = class IntentionStorage {
         return this._storageServer;
     }
 
-    createServer(address, port = 10010) {
+    createServer({address, port = 10010}) {
         this._storageServer = new LinkedStorageServer({ storage: this, address: address, port });
         return this._storageServer;
     }

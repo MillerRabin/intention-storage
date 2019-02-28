@@ -86,6 +86,8 @@ module.exports = class Intention {
         return this._output;
     }
     get origin() {
+        if (this._storage._storageServer != null)
+            return this._storage._storageServer.key;
         return this._origin;
     }
     get description() {
@@ -153,7 +155,7 @@ module.exports = class Intention {
             key: this.getKey(),
             input: this._input,
             output: this._output,
-            origin: this._origin,
+            origin: this.origin,
             title: this._title,
             description: this._description,
             accepted: this._accepted.toObject(),

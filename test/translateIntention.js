@@ -110,6 +110,7 @@ describe('Translate intentions', function() {
                 }
             });
             assert.ok(source != null, 'Source must be created');
+            assert.strictEqual(source.origin, 'ws://localhost:10010');
             const intention = intentionStorageServer.intentions.byKey('TranslateTestIn - TranslateTestOut');
             assert.ok(intention != null, 'Source must be exists in storage');
         });
