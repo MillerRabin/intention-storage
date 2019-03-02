@@ -60,6 +60,7 @@ module.exports = class Intention {
         if (input == output) throw new Error('Input and Output can`t be the same');
 
         this._createTime = new Date();
+        this._updateTime = new Date();
         this._title = title;
         this._description = description;
         this._input = input;
@@ -114,6 +115,7 @@ module.exports = class Intention {
     get type() {
         return this._type;
     }
+
     async send(status, intention, data) {
         try {
             return await this._onData(status, intention, data);

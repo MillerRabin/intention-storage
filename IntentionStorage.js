@@ -23,10 +23,7 @@ function dispatchIntentions(storage, intention) {
         }
     }
 
-    if (intention.accepted.size == 0) {
-        storage.translate(intention);
-        return false;
-    }
+    storage.translate(intention);
     return true;
 }
 
@@ -34,8 +31,8 @@ function dispatchCycle(storage) {
     clearTimeout(storage._dispatchTimeout);
     storage._dispatchTimeout = setTimeout(() => {
         for (let intention of storage._dispatchWait) {
-            if (dispatchIntentions(storage, intention))
-                storage._dispatchWait.delete(intention);
+            dispatchIntentions(storage, intention);
+            storage._dispatchWait.delete(intention);
         }
         dispatchCycle(storage);
     }, storage._dispatchInterval);
@@ -182,9 +179,11 @@ module.exports = class IntentionStorage {
     }
 
     translate(intention) {
+        if (intention.origin == null) return false;
         for (let [,link] of this._links) {
             link.translate(intention);
         }
+        return true;
     }
 
     queryIntentions(params) {
