@@ -93,11 +93,11 @@ module.exports = class LinkedStorageAbstract {
     }
 
     addIntention(intention) {
-        return this._intentions.set(intention.key, intention);
+        return this._intentions.set(intention.id, intention);
     }
 
     deleteIntention(intention) {
-        return this._intentions.delete(intention.key);
+        return this._intentions.delete(intention.id);
     }
 
     get socket() {
