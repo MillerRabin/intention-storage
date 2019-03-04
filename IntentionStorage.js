@@ -45,7 +45,6 @@ function getParameter(params, type) {
     return par[0].value;
 }
 
-
 module.exports = class IntentionStorage {
     constructor () {
         this._intentions = new IntentionMap(this);
