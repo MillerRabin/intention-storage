@@ -7,7 +7,10 @@ module.exports = class IntentionStorageServer extends LinkedStorageAbstract {
         if (address == null) throw new Error('address is not defined');
         this._listenSocket = new WebSocket.Server({ port: port });
         this._listenSocket.on('connection', (ws, req) => {
-            this._storage.addStorage({ storage: this._storage, socket: ws, request: req, handling: 'auto' });
+            const link = this._storage.addStorage({ storage: this._storage, socket: ws, request: req, handling: 'auto' });
+            ws.on('close', () => {
+                this._storage.deleteStorage(link);
+            });
         });
         this._type = 'IntentionStorageServer';
         this._address = address;

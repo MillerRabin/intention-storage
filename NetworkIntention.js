@@ -35,6 +35,7 @@ module.exports = class NetworkIntention {
         this._value = value;
         this._storage = null;
         this._storageLink = storageLink;
+        this._storageLink.addIntention(this);
         this._accepted = new AcceptedIntentions(this);
         this._type = 'NetworkIntention';
     }
@@ -91,7 +92,8 @@ module.exports = class NetworkIntention {
                 data: data
             });
         } catch (e) {
-            if (status != 'error')
+            if ((status != 'error') && (status != 'close')) {
+                console.log(e);
                 return await this._storageLink.sendObject({
                     command: 'message',
                     version: 1,
@@ -100,7 +102,7 @@ module.exports = class NetworkIntention {
                     intention: intention.toObject(),
                     data: e
                 });
-            console.log(e);
+            }
         }
     }
     async sendError(error) {

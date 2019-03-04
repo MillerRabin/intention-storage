@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { IntentionStorage } = require('../main.js');
 
-describe('Translate intentions', function() {
+describe('Translate intentions server offline', function() {
     let iQuery = null;
     let source = null;
     let target = null;
@@ -164,6 +164,11 @@ describe('Translate intentions', function() {
             assert.strictEqual(intention.type, 'NetworkIntention');
         });
 
+        it('Intention from server must be appeared at client as NetworkIntention', function () {
+            const intention = intentionStorage.intentions.byId(source.id);
+            assert.strictEqual(intention.type, 'NetworkIntention');
+        });
+
         it('Send data from server', function () {
             source.accepted.send({ message: 'Test from server'});
         });
@@ -187,21 +192,14 @@ describe('Translate intentions', function() {
         });
     });
 
-    describe('Shutdown client storage', function () {
-        it('Terminate client linked storage socket', function () {
-            const linked = intentionStorage.links.get('ws://localhost:10010');
-            linked._socket.terminate();
+    describe('Shutdown server storage', function () {
+        it('Terminate server linked storage socket', function () {
+            const [link] = [...intentionStorageServer.links.values()];
+            link.socket.terminate();
         });
 
-        it('Appropriate linked storage at server must be deleted', function (done) {
-            setTimeout(() => {
-                assert.strictEqual(intentionStorageServer.links.size, 0);
-                done();
-            }, 500);
-        });
-
-        it('Intention from client must be disappeared from then server', function () {
-            const intention = intentionStorageServer.intentions.byId(target.id);
+        it('Intention from server must be disappeared at client', function () {
+            const intention = intentionStorage.intentions.byId(source.id);
             assert.strictEqual(intention, undefined);
         });
 

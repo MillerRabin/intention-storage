@@ -37,15 +37,16 @@ const gCommandTable = {
     }
 };
 
-
 module.exports = class LinkedStorageAbstract {
     constructor({ storage, port = 10010, handling, socket }) {
         if (storage == null) throw new Error('Storage must be exists');
         if (handling == null) throw new Error('Manage type must be defined');
+        this._intentions = new Map();
         this._storage = storage;
         this._port = port;
         this._handling = handling;
         this.socket = socket;
+        this._disposed = false;
     }
 
     async dispatchMessage(data) {
@@ -57,10 +58,13 @@ module.exports = class LinkedStorageAbstract {
         return await func(this, data);
     }
 
-    async sendObject(obj) {
-        if (this._socket == null) return false;
-        if (this._socket.readyState != 1) return false;
-        return this._socket.send(JSON.stringify(obj));
+    sendObject(obj) {
+        if ((this._socket == null) || (this._socket.readyState != 1)) {
+            const err = new Error('Connection lost');
+            err.dispose = true;
+            throw err;
+        }
+        this._socket.send(JSON.stringify(obj));
     }
 
     set socket(value) {
@@ -87,6 +91,15 @@ module.exports = class LinkedStorageAbstract {
             }
         };
     }
+
+    addIntention(intention) {
+        return this._intentions.set(intention.key, intention);
+    }
+
+    deleteIntention(intention) {
+        return this._intentions.delete(intention.key);
+    }
+
     get socket() {
         return this._socket;
     }
@@ -102,8 +115,21 @@ module.exports = class LinkedStorageAbstract {
     get port() {
         return this._port;
     }
+
+    get disposed() {
+        return this._disposed;
+    }
+
     offline() {
-        this._socket = null;
+        for(let [,intention] of this._intentions) {
+            this._storage.deleteIntention(intention, 'Linked storage is offline');
+        }
+    }
+
+    dispose() {
+        this._disposed = true;
+        this.offline();
+        this.socket = null;
     }
 
     async sendError(error) {

@@ -67,6 +67,12 @@ module.exports = class IntentionStorage {
         return link;
     }
 
+    deleteStorage(link) {
+        this.links.delete(link.key);
+        link.dispose();
+        this._query.updateStorage(link, 'deleted');
+    }
+
     addLink(origin) {
         const op = getParameter(origin, 'WebAddress');
         if (op == null) throw new Error('WebAddress parameter expected');
@@ -80,9 +86,7 @@ module.exports = class IntentionStorage {
         if (op == null) throw new Error('WebAddress parameter expected');
         const link = this.links.get(`ws://${op}:10010`);
         if (link == null) throw new Error(`${ op } does not exists in linked storages`);
-        this.links.delete(link.key);
-        link.offline();
-        this._query.updateStorage(link, 'deleted');
+        this.deleteStorage(link);
         return link;
     }
 
@@ -129,8 +133,11 @@ module.exports = class IntentionStorage {
         }
 
         this.intentions.delete(intention);
+        if (intention._storageLink != null)
+            intention._storageLink.deleteIntention(intention);
         this._query.updateIntention(intention, 'deleted');
     }
+
     get intentions() {
         return this._intentions;
     }
@@ -181,7 +188,15 @@ module.exports = class IntentionStorage {
     translate(intention) {
         if (intention.origin == null) return false;
         for (let [,link] of this._links) {
-            link.translate(intention);
+            try {
+                link.translate(intention);
+            } catch (e) {
+                if (!e.dispose) {
+                    console.log(e);
+                    return;
+                }
+                this.deleteStorage(link);
+            }
         }
         return true;
     }
