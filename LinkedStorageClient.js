@@ -74,8 +74,8 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
         return `${this._schema}://${this._origin}:${this._port}`;
     }
 
-    translate(intention) {
-        this.sendObject({
+    async translate(intention) {
+        await this.sendObject({
             command: 'translate',
             version: 1,
             intention: intention.toObject()

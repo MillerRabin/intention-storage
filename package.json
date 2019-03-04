@@ -1,6 +1,6 @@
 {
   "name": "intention-storage",
-  "version": "0.0.27",
+  "version": "0.0.28",
   "description": "Intention Storage project",
   "main": "main.js",
   "scripts": {

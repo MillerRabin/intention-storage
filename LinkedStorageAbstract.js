@@ -58,13 +58,13 @@ module.exports = class LinkedStorageAbstract {
         return await func(this, data);
     }
 
-    sendObject(obj) {
+    async sendObject(obj) {
         if ((this._socket == null) || (this._socket.readyState != 1)) {
             const err = new Error('Connection lost');
             err.dispose = true;
             throw err;
         }
-        this._socket.send(JSON.stringify(obj));
+        return this._socket.send(JSON.stringify(obj));
     }
 
     set socket(value) {
