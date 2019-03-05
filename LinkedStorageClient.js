@@ -5,18 +5,24 @@ function connect({ schema, storageLink }) {
     return new Promise((resolve, reject) => {
         const socket =  new WebSocket(`${schema}://${storageLink._origin}:${storageLink._port}`);
         socket.onerror = function (error) {
+            storageLink._storage._query.updateStorage(storageLink, 'error');
             return reject(error);
         };
 
         socket.onopen = function () {
-            if (storageLink.disposed)
+            if (storageLink.disposed) {
+                storageLink._storage._query.updateStorage(storageLink, 'error');
                 socket.close();
+                return reject(new Error('StorageLink is disposed'));
+            }
+            storageLink._storage._query.updateStorage(storageLink, 'connected');
             return resolve(socket);
         };
 
         socket.onclose = function() {
             storageLink._socket = null;
             storageLink.offline();
+            storageLink._storage._query.updateStorage(storageLink, 'closed');
             if (storageLink.handling == 'manual') {
                 storageLink.waitForServer();
             }
@@ -74,6 +80,11 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
         return `${this._schema}://${this._origin}:${this._port}`;
     }
 
+    get status() {
+        if (this._socket == null) return 0;
+        return this._socket.readyState;
+    }
+
     async translate(intention) {
         await this.sendObject({
             command: 'translate',
@@ -103,7 +114,8 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
             origin: this._origin,
             port: this._port,
             key: `${this._origin}:${this._port}`,
-            type: this._type
+            type: this._type,
+            status: this.status
         }
     }
 };
