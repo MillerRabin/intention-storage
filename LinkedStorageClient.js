@@ -81,7 +81,7 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
     }
 
     get status() {
-        if (this._socket == null) return 0;
+        if (this._socket == null) return -1;
         return this._socket.readyState;
     }
 
@@ -114,6 +114,7 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
             origin: this._origin,
             port: this._port,
             key: `${this._origin}:${this._port}`,
+            schema: this._schema,
             type: this._type,
             status: this.status
         }
