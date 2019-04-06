@@ -132,7 +132,8 @@ module.exports = class NetworkIntention {
             description: this._description,
             value: this._value,
             type: this._type,
-            origin: this._origin
+            origin: this._origin,
+            parameters: this._parameters
         }
     }
 };

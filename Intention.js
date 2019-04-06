@@ -161,7 +161,8 @@ module.exports = class Intention {
             title: this._title,
             description: this._description,
             accepted: this._accepted.toObject(),
-            value: this._value
+            value: this._value,
+            parameters: this._parameters
         }
     }
 };
