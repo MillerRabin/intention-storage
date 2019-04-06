@@ -14,7 +14,7 @@ function dispatchIntentions(storage, intention) {
             for (let [, int] of origin) {
                 try {
                     if (int == intention) continue;
-                    if (int.type == 'NetworkIntention') continue;
+                    if ((int.type == 'NetworkIntention') && (intention.type == 'NetworkIntention'))  continue;
                     int.accept(intention);
                 } catch (e) {
                     console.log(e);

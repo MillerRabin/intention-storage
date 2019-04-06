@@ -27,7 +27,7 @@ const gCommandTable = {
         const id = message.id;
         if (id == null) throw new Error('Intention id must exists');
         const intention = storageLink._storage.intentions.byId(id);
-        if (intention == null) throw new Error('Intention not found at origin');
+        if (intention == null) throw { message: `The Intention is not found at the origin`, operation: 'delete', id: id };
         if (message.intention == null) throw new Error('Intention expected');
         const target = await translate(storageLink, message.intention);
         if (target == null) throw new Error('Intention is not found');
@@ -80,14 +80,14 @@ module.exports = class LinkedStorageAbstract {
             try {
                 const data = JSON.parse(event.data);
                 this.dispatchMessage(data).catch((e) => {
-                    console.log(data);
-                    console.log(e);
+                    const eobj = (e instanceof Error) ? { message: e.message } : e;
                     if (data.command != 'error')
-                        this.sendError(e)
+                        this.sendError(eobj)
                 });
             } catch (e) {
+                const eobj = (e instanceof Error) ? { message: e.message } : e;
                 if (data.command != 'error')
-                    this.sendError(e)
+                    this.sendError(eobj)
             }
         };
     }
