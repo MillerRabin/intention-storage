@@ -81,6 +81,8 @@ module.exports = class LinkedStorageAbstract {
                 const data = JSON.parse(event.data);
                 this.dispatchMessage(data).catch((e) => {
                     const eobj = (e instanceof Error) ? { message: e.message } : e;
+                    console.log(data);
+                    console.log(e);
                     if (data.command != 'error')
                         this.sendError(eobj)
                 });
