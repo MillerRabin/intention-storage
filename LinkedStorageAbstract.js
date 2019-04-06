@@ -11,7 +11,7 @@ async function translate(storageLink, textIntention) {
 }
 
 const gCommandTable = {
-    '1:translate':  async function (storageLink, message){
+    '1:translate':  async function (storageLink, message) {
         if (message.intention == null) throw new Error('intention object expected');
         const textIntention = message.intention;
         if ((textIntention.type != 'Intention') && (textIntention.type != 'NetworkIntention'))
@@ -22,7 +22,7 @@ const gCommandTable = {
             return null;
         }
     },
-    '1:message':  async function (storageLink, message){
+    '1:message':  async function (storageLink, message) {
         if (message.status == null) throw new Error('message status is expected');
         const id = message.id;
         if (id == null) throw new Error('Intention id must exists');
@@ -33,6 +33,25 @@ const gCommandTable = {
         if (target == null) throw new Error('Intention is not found');
         if (intention.type == 'Intention') {
             intention.send(message.status, target, message.data);
+        }
+    },
+    '1:error': async function (storageLink, message) {
+        const error = message.error;
+        if (error == null) {
+            console.log(message);
+            throw new Error('message error is expected');
+        }
+        const id = error.id;
+        const operation = error.operation;
+        if ((id == null) || (operation == null)) {
+            console.log(message);
+            return;
+        }
+
+        if (operation == 'delete') {
+            const intention = storageLink._storage.intentions.byId(id);
+            if (intention == null) return;
+            storageLink._storage.deleteIntention(intention);
         }
     }
 };
@@ -80,16 +99,12 @@ module.exports = class LinkedStorageAbstract {
             try {
                 const data = JSON.parse(event.data);
                 this.dispatchMessage(data).catch((e) => {
-                    const eobj = (e instanceof Error) ? { message: e.message } : e;
-                    console.log(data);
-                    console.log(e);
                     if (data.command != 'error')
-                        this.sendError(eobj)
+                        this.sendError(e)
                 });
             } catch (e) {
-                const eobj = (e instanceof Error) ? { message: e.message } : e;
                 if (data.command != 'error')
-                    this.sendError(eobj)
+                    this.sendError(e)
             }
         };
     }
@@ -135,10 +150,11 @@ module.exports = class LinkedStorageAbstract {
     }
 
     async sendError(error) {
+        const eobj = (error instanceof Error) ? { message: error.message } : error;
         return await this.sendObject({
             command: 'error',
             version: 1,
-            error: error.message
+            error: eobj
         });
     }
 };
