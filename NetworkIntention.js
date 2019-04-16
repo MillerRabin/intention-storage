@@ -108,6 +108,7 @@ module.exports = class NetworkIntention {
     async sendError(error) {
         return await this.send('error', this, error);
     }
+
     async accept(intention) {
         return await this.send('accept', intention);
     }

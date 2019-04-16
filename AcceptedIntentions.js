@@ -13,10 +13,10 @@ module.exports = class AcceptedIntentions {
     delete(value) {
         this.accepted.delete(value.id);
     }
-    send(data, status = 'data') {
+    send(data) {
         for (let [, intention] of this.accepted) {
             try {
-                intention.send(status, this.intention, data);
+                intention.send('data', this.intention, data);
             } catch (e) {
                 console.log(e);
             }
