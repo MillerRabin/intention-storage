@@ -15,7 +15,7 @@ function createQueryIntention(query) {
 function sendStats() {
     try {
         if (this._iQuery == null) return;
-        if (this._updatedIntentions.size == 0) return;
+        if ((this._updatedIntentions.size == 0) && (this._updatedStorages.size == 0)) return;
         this._iObj.updatedIntentions = [...this._updatedIntentions.values()];
         this._iObj.updatedStorages = [...this._updatedStorages.values()];
         this._iQuery.accepted.send(this._iObj);

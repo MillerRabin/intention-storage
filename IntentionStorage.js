@@ -81,18 +81,23 @@ module.exports = class IntentionStorage {
     }
 
     addLink(origin) {
-        const op = getParameter(origin, 'WebAddress');
-        if (op == null) throw new Error('WebAddress parameter expected');
-        const link = this.addStorage({ storage: this, origin: op, handling: 'manual' });
+        const address = getParameter(origin, ['WebAddress', 'IPAddress']);
+        if (address == null) throw new Error('WebAddress or IPAddress parameter expected');
+        let port = getParameter(origin, ['IPPort']);
+        port = (port == null) ? undefined : port;
+        const link = this.addStorage({ storage: this, origin: address, handling: 'manual', port: port });
         link.connect();
         return link;
     }
 
     deleteLink(origin) {
-        const op = getParameter(origin, 'WebAddress');
-        if (op == null) throw new Error('WebAddress parameter expected');
-        const link = this.links.get(`ws://${op}:10010`);
-        if (link == null) throw new Error(`${ op } does not exists in linked storages`);
+        const address = getParameter(origin, ['WebAddress', 'IPAddress']);
+        if (address == null) throw new Error('WebAddress or IPAddress parameter expected');
+        let port = getParameter(origin, ['IPPort']);
+        port = (port == null) ? 10010 : port;
+        const path = `ws://${address}:${port}`;
+        const link = this.links.get(path);
+        if (link == null) throw new Error(`${ path } does not exists in linked storages`);
         this.deleteStorage(link);
         return link;
     }

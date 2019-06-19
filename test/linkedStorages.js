@@ -51,8 +51,8 @@ describe('Linked Storages', function() {
     });
 
 
-    describe('Linked storage by parameters', function() {
-        it('add linked storage by parameters', function() {
+    describe('Linked storage by webaddress', function() {
+        it('add linked storage by webaddress', function() {
             const res = intentionStorage.addLink([{ type: 'WebAddress', value: 'localhost' }]);
             const linked = intentionStorage.links.get('ws://localhost:10010');
             linked.waitForServerInterval = 500;
@@ -70,8 +70,34 @@ describe('Linked Storages', function() {
             }, 500);
         });
 
-        it('delete linked storage by parameters', function() {
+        it('delete linked storage by webaddress', function() {
             intentionStorage.deleteLink([{ type: 'WebAddress', value: 'localhost' }]);
+            const linked = intentionStorage.links.get('localhost');
+            assert.strictEqual(linked, undefined);
+        });
+    });
+
+    describe('Linked storage by ipaddress and port', function() {
+        it('add linked storage by ipaddress', function() {
+            const res = intentionStorage.addLink([{ type: 'IPAddress', value: '192.168.1.5' }, { type: 'IPPort', value: '1515'}]);
+            const linked = intentionStorage.links.get('ws://192.168.1.5:1515');
+            linked.waitForServerInterval = 500;
+            assert.strictEqual(linked.key, 'ws://192.168.1.5:1515');
+            assert.strictEqual(res, linked);
+        });
+
+        it('Storage has been sended in stats', function (done) {
+            this.timeout(1000);
+            setTimeout(() => {
+                const loc = updatedStorages.find(v => v.storage.origin == '192.168.1.5');
+                assert.strictEqual(loc.storage.origin, '192.168.1.5');
+                updatedStorages.length = 0;
+                done();
+            }, 500);
+        });
+
+        it('delete linked storage by ipaddress and port', function() {
+            intentionStorage.deleteLink([{ type: 'IPAddress', value: '192.168.1.5' }, { type: 'IPPort', value: '1515'}]);
             const linked = intentionStorage.links.get('localhost');
             assert.strictEqual(linked, undefined);
         });
