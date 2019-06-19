@@ -193,7 +193,7 @@ describe('Translate intentions', function() {
             linked._socket.terminate();
         });
 
-        it('Appropriate linked storage at server must be deleted', function (done) {
+        it.skip('Appropriate linked storage at server must be deleted', function (done) {
             setTimeout(() => {
                 assert.strictEqual(intentionStorageServer.links.size, 0);
                 done();
