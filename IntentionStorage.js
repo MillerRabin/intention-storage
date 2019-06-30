@@ -53,6 +53,14 @@ function getParameter(params, type) {
     return par[0].value;
 }
 
+function hasStorage(storages, keys) {
+    for (let key of keys) {
+        const link = storages.get(key);
+        if (link != null) return link;
+    }
+    return null;
+}
+
 module.exports = class IntentionStorage {
     constructor () {
         this._intentions = new IntentionMap(this);
@@ -68,6 +76,9 @@ module.exports = class IntentionStorage {
     }
 
     addStorage(params) {
+        const keys = LinkedStorageClient.getKeys(params.origin, params.port);
+        const tLink = hasStorage(this.links, keys);
+        if (tLink != null) return tLink;
         const link = new LinkedStorageClient(params);
         this.links.set(link.key, link);
         this._query.updateStorage(link, 'created');
@@ -85,6 +96,9 @@ module.exports = class IntentionStorage {
         if (address == null) throw new Error('WebAddress or IPAddress parameter expected');
         let port = getParameter(origin, ['IPPort']);
         port = (port == null) ? undefined : port;
+        const keys = LinkedStorageClient.getKeys(address, port);
+        const tLink = hasStorage(this.links, keys);
+        if (tLink != null) return tLink;
         const link = this.addStorage({ storage: this, origin: address, handling: 'manual', port: port });
         link.connect();
         return link;

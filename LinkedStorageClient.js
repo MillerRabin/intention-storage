@@ -80,6 +80,13 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
         return `${this._schema}://${this._origin}:${this._port}`;
     }
 
+    static getKeys(origin, port) {
+        return [
+            `ws://${origin}:${port}`,
+            `wss://${origin}:${port}`
+        ];
+    }
+
     get status() {
         if (this._socket == null) return -1;
         return this._socket.readyState;
