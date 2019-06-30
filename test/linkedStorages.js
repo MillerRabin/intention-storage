@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { IntentionStorage } = require('../main.js');
 
-describe('Linked Storages', function() {
+describe.only('Linked Storages', function() {
     let intentionStorage = null;
     describe('Create intention storage', function () {
         it ('Create storage', function () {
@@ -85,6 +85,16 @@ describe('Linked Storages', function() {
             assert.strictEqual(linked.key, 'ws://192.168.1.5:1515');
             assert.strictEqual(res, linked);
         });
+
+        it('add linked storage with same parameters must fails', function() {
+            try {
+                intentionStorage.addLink([{ type: 'IPAddress', value: '192.168.1.5' }, { type: 'IPPort', value: '1515'}]);
+                assert.fail('Storage must not created');
+            } catch (e) {
+                assert.strictEqual(e.link.key, 'ws://192.168.1.5:1515');
+            }
+        });
+
 
         it('Storage has been sended in stats', function (done) {
             this.timeout(1000);
