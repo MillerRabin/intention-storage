@@ -5,7 +5,7 @@ const LinkedStorageClient = require('./LinkedStorageClient.js');
 const LinkedStorageServer = require('./IntentionStorageServer.js');
 const NetworkIntention = require('./NetworkIntention.js');
 const IntentionQuery = require('./IntentionQuery.js');
-const IntentionError = require('./IntentionError');
+const IntentionError = require('./IntentionError.js');
 const uuid = require('./core/uuid.js');
 
 const errorCodes = {
