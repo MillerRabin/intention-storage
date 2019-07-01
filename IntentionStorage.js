@@ -1,10 +1,17 @@
+//${time}
 const Intention = require('./Intention.js');
 const IntentionMap = require('./IntentionMap.js');
 const LinkedStorageClient = require('./LinkedStorageClient.js');
 const LinkedStorageServer = require('./IntentionStorageServer.js');
 const NetworkIntention = require('./NetworkIntention.js');
 const IntentionQuery = require('./IntentionQuery.js');
+const IntentionError = require('./IntentionError');
 const uuid = require('./core/uuid.js');
+
+const errorCodes = {
+    linkAlreadyExists: 'LNK-0001'
+};
+
 
 function dispatchIntentions(storage, intention) {
     const rKey = intention.getKey(true);
@@ -78,11 +85,12 @@ module.exports = class IntentionStorage {
     addStorage(params) {
         const keys = LinkedStorageClient.getKeys(params.origin, params.port);
         const tLink = hasStorage(this.links, keys);
-        if (tLink != null) {
-            const err = new Error(`Storage already exists ${tLink.key}`);
-            err.link = tLink;
-            throw err;
-        }
+        if (tLink != null)
+            throw new IntentionError({
+                message: `Storage already exists ${tLink.key}`,
+                code: errorCodes.linkAlreadyExists,
+                detail: { link: tLink}
+            });
         const link = new LinkedStorageClient(params);
         this.links.set(link.key, link);
         this._query.updateStorage(link, 'created');
@@ -102,11 +110,12 @@ module.exports = class IntentionStorage {
         port = (port == null) ? undefined : port;
         const keys = LinkedStorageClient.getKeys(address, port);
         const tLink = hasStorage(this.links, keys);
-        if (tLink != null) {
-            const err = new Error(`Storage already exists ${tLink.key}`);
-            err.link = tLink;
-            throw err;
-        }
+        if (tLink != null)
+            throw new IntentionError({
+                message: `Storage already exists ${tLink.key}`,
+                code: errorCodes.linkAlreadyExists,
+                detail: { link: tLink}
+            });
         const link = this.addStorage({ storage: this, origin: address, handling: 'manual', port: port });
         link.connect();
         return link;
