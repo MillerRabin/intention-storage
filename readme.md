@@ -1,11 +1,11 @@
 **Intention Storage**
-Through a network of intentions, devices can communicate with users and with each other.<br/>
-When a device needs to interact with the outside world, it creates an <b>Intention</b><br/>
-<b>Intention</b> is the need to provide or receive a service.<br/>
-It is broadcast between devices for search of devices with counter intentions.<br/>
+Through a network of intentions, devices can communicate with users and with each other.
+When a device needs to interact with the outside world, it creates an Intention
+Intention is the need to provide or receive a service.
+It is broadcast between devices for search of devices with counter intentions.
 Once a device with a counter intent is found, the negotiation process begins. Each of the devices accepts
 or rejects the counter intention. If the intention is accepted on both sides, a data link is established
-and the devices can communicate with each other<br/>
+and the devices can communicate with each other.
 
 ## Dependencies
     NodeJS 11.x or above
