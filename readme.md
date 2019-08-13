@@ -1,5 +1,5 @@
 **Intention Storage**
-Through a network of intentions, devices can communicate with users and with each other.
+Through a network of intentions, devices can communicate with users and with each other.  
 When a device needs to interact with the outside world, it creates an Intention
 Intention is the need to provide or receive a service.
 It is broadcast between devices for search of devices with counter intentions.
