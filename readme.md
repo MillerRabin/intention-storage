@@ -1,7 +1,7 @@
-**Intention Storage**
+## Intention Storage
 Through a network of intentions, devices can communicate with users and with each other.  
 When a device needs to interact with the outside world, it creates an Intention.  
-Intention is the need to provide or receive a service.  
+**Intention** is the need to provide or receive a service.  
 It is broadcasts between devices for search of devices with counter intentions.
 Once a device with a counter intention is found, the negotiation process begins.  
 Each of the devices accepts or rejects the counter intention.
