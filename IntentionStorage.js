@@ -84,6 +84,8 @@ module.exports = class IntentionStorage {
 
     addStorage(params) {
         params.storage = this;
+        if (params.handling == null)
+            params.handling = 'manual';
         const keys = LinkedStorageClient.getKeys(params.origin, params.port);
         const tLink = hasStorage(this.links, keys);
         if (tLink != null)
