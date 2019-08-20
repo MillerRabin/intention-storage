@@ -83,6 +83,7 @@ module.exports = class IntentionStorage {
     }
 
     addStorage(params) {
+        params.storage = this;
         const keys = LinkedStorageClient.getKeys(params.origin, params.port);
         const tLink = hasStorage(this.links, keys);
         if (tLink != null)
@@ -116,7 +117,7 @@ module.exports = class IntentionStorage {
                 code: errorCodes.linkAlreadyExists,
                 detail: { link: tLink}
             });
-        const link = this.addStorage({ storage: this, origin: address, handling: 'manual', port: port });
+        const link = this.addStorage({ origin: address, handling: 'manual', port: port });
         link.connect();
         return link;
     }
