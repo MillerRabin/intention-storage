@@ -231,11 +231,11 @@ module.exports = class IntentionStorage {
         this._storageServer.close();
     }
 
-    translate(intention) {
+    async translate(intention) {
         if (intention.origin == null) return false;
         for (let [,link] of this._links) {
             try {
-                link.translate(intention);
+                await link.translate(intention);
             } catch (e) {
                 if (!e.dispose) {
                     console.log(e);
