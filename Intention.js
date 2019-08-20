@@ -21,7 +21,7 @@ async function accept(source, target) {
             source._accepted.delete(target);
             target._accepted.delete(source);
             target.sendError(e);
-            throw e;
+            return;
         }
         try {
             tData = await target.send('accept', source);
@@ -29,7 +29,7 @@ async function accept(source, target) {
             source._accepted.delete(target);
             target._accepted.delete(source);
             source.sendError(e);
-            throw e;
+            return;
         }
         update(source, 'accept');
         update(target, 'accept');
