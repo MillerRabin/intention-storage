@@ -44,7 +44,7 @@ module.exports = class IntentionStorageServer extends LinkedStorageAbstract {
         if (options.cert == null)
             createSimpleServer(this, port);
         else
-            createSecureServer(this, options.cert, port);
+            createSecureServer(this, port, options.cert);
 
         this._listenSocket.on('connection', (ws, req) => {
             const link = this._storage.addStorage({ storage: this._storage, socket: ws, request: req, handling: 'auto' });
