@@ -25,18 +25,14 @@ function createSimpleServer(storage, port) {
     storage._listenSocket = new WebSocket.Server({ port });
 }
 
-async function createSecureServer(storage, port, cert) {
+function createSecureServer(storage, port, cert) {
     function createHttpsServer(cert, port) {
-        return new Promise((resolve, reject) => {
-            const server = https.createServer(cert);
-            server.listen(port, (err) => {
-                if (err != null) return reject(err);
-                return resolve(server);
-            });
-        });
+        const server = https.createServer(cert);
+        server.listen(port);
+        return server;
     }
 
-    const server = await createHttpsServer(cert, port);
+    const server = createHttpsServer(cert, port);
     storage._schema = 'wss';
     storage._listenSocket = new WebSocket.Server({ server });
 }
