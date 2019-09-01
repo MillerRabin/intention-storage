@@ -1,5 +1,8 @@
 const WebSocket = require('./WebSocket.js');
 const LinkedStorageAbstract = require('./LinkedStorageAbstract.js');
+const fs = require('fs');
+const path = require('path');
+const https = require('https')
 
 function translateIntentionsToLink(storage, link) {
     const intentions = storage.intentions.byId();
@@ -17,11 +20,36 @@ function translateIntentionsToLink(storage, link) {
     return true;
 }
 
+function createSimpleServer(storage, port) {
+    storage._schema = 'ws';
+    storage._listenSocket = new WebSocket.Server({ port });
+}
+
+async function createSecureServer(storage, port, cert) {
+    function createHttpsServer(cert, port) {
+        return new Promise((resolve, reject) => {
+            const server = https.createServer(cert);
+            server.listen(port, (err) => {
+                if (err != null) return reject(err);
+                return resolve(server);
+            });
+        });
+    }
+
+    const server = await createHttpsServer(cert, port);
+    storage._schema = 'wss';
+    storage._listenSocket = new WebSocket.Server({ server });
+}
+
 module.exports = class IntentionStorageServer extends LinkedStorageAbstract {
-    constructor({ storage, address, port = 10010 }) {
+    constructor({ storage, address, port = 10010, options = {}}) {
         super({ storage, port, handling: 'manual' });
         if (address == null) throw new Error('address is not defined');
-        this._listenSocket = new WebSocket.Server({ port: port });
+        if (options.cert == null)
+            createSimpleServer(this, port);
+        else
+            createSecureServer(this, options.cert, port);
+
         this._listenSocket.on('connection', (ws, req) => {
             const link = this._storage.addStorage({ storage: this._storage, socket: ws, request: req, handling: 'auto' });
             translateIntentionsToLink(storage, link);
@@ -31,7 +59,6 @@ module.exports = class IntentionStorageServer extends LinkedStorageAbstract {
         });
         this._type = 'IntentionStorageServer';
         this._address = address;
-        this._schema = 'ws';
     }
 
     close() {
