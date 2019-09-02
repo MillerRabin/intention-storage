@@ -1,3 +1,4 @@
+//${time}
 const WebSocket = require('./WebSocket.js');
 const LinkedStorageAbstract = require('./LinkedStorageAbstract.js');
 
@@ -54,7 +55,7 @@ async function connectSocket(storageLink) {
 }
 
 module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
-    constructor({ storage, origin, port = 10010, schema = 'ws', socket, request, handling }) {
+    constructor({ storage, origin, port = 10010, schema, socket, request, handling }) {
         if (request != null) {
             origin = request.connection.remoteAddress;
             port = request.connection.remotePort;
