@@ -77,6 +77,8 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
     }
 
     get key() {
+        if (this._schema == null)
+            return `${this._origin}:${this._port}`;
         return `${this._schema}://${this._origin}:${this._port}`;
     }
 
