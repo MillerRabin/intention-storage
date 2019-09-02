@@ -2,7 +2,7 @@
 const Intention = require('./Intention.js');
 const IntentionMap = require('./IntentionMap.js');
 const LinkedStorageClient = require('./LinkedStorageClient.js');
-const LinkedStorageServer = require('./IntentionStorageServer.js');
+const LinkedStorageServer = require('./IntentionStorageServer.js'); //Delete for Browser environment
 const NetworkIntention = require('./NetworkIntention.js');
 const IntentionQuery = require('./IntentionQuery.js');
 const IntentionError = require('./IntentionError.js');

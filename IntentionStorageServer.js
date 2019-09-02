@@ -2,7 +2,7 @@ const WebSocket = require('./WebSocket.js');
 const LinkedStorageAbstract = require('./LinkedStorageAbstract.js');
 const fs = require('fs');
 const path = require('path');
-const https = require('https')
+const https = require('https');
 
 function translateIntentionsToLink(storage, link) {
     const intentions = storage.intentions.byId();

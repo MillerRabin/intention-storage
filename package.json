@@ -1,6 +1,6 @@
 {
   "name": "intention-storage",
-  "version": "0.0.51",
+  "version": "0.0.52",
   "description": "Intention Storage project",
   "main": "main.js",
   "scripts": {
@@ -15,7 +15,7 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/intentionteam/intentionstorage#readme",
   "devDependencies": {
-    "intention-builder": "0.0.7",
+    "intention-builder": "0.0.8",
     "mocha": "^5.2.0"
   },
   "dependencies": {
