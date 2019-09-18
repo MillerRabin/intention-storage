@@ -17,7 +17,7 @@ each other.
 npm i intention-storage
 ```
 
-#Use in NodeJS environment
+##Use in NodeJS environment
 
 ```javascript
     const { IntentionStorage } = require('intention-storage');
@@ -26,7 +26,7 @@ npm i intention-storage
     console.log(`Server listens on port ${storageServer.port}`);   
 ```
 
-#Use in Browser environment
+##Use in Browser environment
 
 ```javascript
     import IS from '/node_modules/intention-storage/browser/main.js';
