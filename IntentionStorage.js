@@ -6,6 +6,7 @@ const LinkedStorageServer = require('./IntentionStorageServer.js'); //Delete for
 const NetworkIntention = require('./NetworkIntention.js');
 const IntentionQuery = require('./IntentionQuery.js');
 const IntentionError = require('./IntentionError.js');
+const Signal = require('./webRtc/Signal.js');
 const uuid = require('./core/uuid.js');
 
 const errorCodes = {
@@ -17,8 +18,8 @@ function dispatchIntentions(storage, intention) {
     const rKey = intention.getKey(true);
     const originMap = storage._intentions.byKey(rKey);
     if (originMap != null) {
-        for (let [, origin] of originMap) {
-            for (let [, int] of origin) {
+        for (const [, origin] of originMap) {
+            for (const [, int] of origin) {
                 try {
                     if (int == intention) continue;
                     if ((int.type == 'NetworkIntention') && (intention.type == 'NetworkIntention'))  continue;
@@ -222,9 +223,14 @@ module.exports = class IntentionStorage {
         return this._storageServer;
     }
 
-    createServer({address, port = 10010, options}) {
+    createServer({address, port = 10010, options }) {
         this._storageServer = new LinkedStorageServer({ storage: this, address: address, port, options });
-        return this._storageServer;
+        this._webRTCServer = new Signal();
+        this._webRTCServer.connect(options.address);
+        return {
+            storageServer: this._storageServer,
+            webRTCServer: this._webRTCServer
+        };
     }
 
     closeServer() {
