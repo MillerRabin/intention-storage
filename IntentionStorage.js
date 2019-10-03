@@ -6,7 +6,7 @@ const LinkedStorageServer = require('./IntentionStorageServer.js'); //Delete for
 const NetworkIntention = require('./NetworkIntention.js');
 const IntentionQuery = require('./IntentionQuery.js');
 const IntentionError = require('./IntentionError.js');
-const Signal = require('./webRtc/Signal.js');
+const WebRTC = require('./WebRtc.js');
 const uuid = require('./core/uuid.js');
 
 const errorCodes = {
@@ -223,10 +223,10 @@ module.exports = class IntentionStorage {
         return this._storageServer;
     }
 
-    createServer({address, port = 10010, options }) {
+    async createServer({address, port = 10010, options }) {
         this._storageServer = new LinkedStorageServer({ storage: this, address: address, port, options });
-        this._webRTCServer = new Signal();
-        this._webRTCServer.connect(options.address);
+        this._webRTCServer = new WebRTC();
+        await this._webRTCServer.connectToSignal(options.address);
         return {
             storageServer: this._storageServer,
             webRTCServer: this._webRTCServer
