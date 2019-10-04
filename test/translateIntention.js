@@ -47,9 +47,9 @@ describe('Translate intentions', function() {
 
         it('add linked storage by parameters', function() {
             const res = intentionStorage.addLink([{ type: 'WebAddress', value: 'localhost' }]);
-            const linked = intentionStorage.links.get('ws://localhost:10010');
+            const linked = intentionStorage.links.get('localhost:10010');
             linked.waitForServerInterval = 500;
-            assert.strictEqual(linked.key, 'ws://localhost:10010');
+            assert.strictEqual(linked.key, 'localhost:10010');
             assert.strictEqual(res, linked);
         });
 
@@ -189,7 +189,7 @@ describe('Translate intentions', function() {
 
     describe('Shutdown client storage', function () {
         it('Terminate client linked storage socket', function () {
-            const linked = intentionStorage.links.get('ws://localhost:10010');
+            const linked = intentionStorage.links.get('localhost:10010');
             linked._socket.terminate();
         });
 

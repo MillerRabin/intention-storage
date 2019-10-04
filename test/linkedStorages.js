@@ -54,9 +54,9 @@ describe('Linked Storages', function() {
     describe('Linked storage by webaddress', function() {
         it('add linked storage by webaddress', function() {
             const res = intentionStorage.addLink([{ type: 'WebAddress', value: 'localhost' }]);
-            const linked = intentionStorage.links.get('ws://localhost:10010');
+            const linked = intentionStorage.links.get('localhost:10010');
             linked.waitForServerInterval = 500;
-            assert.strictEqual(linked.key, 'ws://localhost:10010');
+            assert.strictEqual(linked.key, 'localhost:10010');
             assert.strictEqual(res, linked);
         });
 
@@ -80,9 +80,9 @@ describe('Linked Storages', function() {
     describe('Linked storage by ipaddress and port', function() {
         it('add linked storage by ipaddress', function() {
             const res = intentionStorage.addLink([{ type: 'IPAddress', value: '192.168.1.5' }, { type: 'IPPort', value: '1515'}]);
-            const linked = intentionStorage.links.get('ws://192.168.1.5:1515');
+            const linked = intentionStorage.links.get('192.168.1.5:1515');
             linked.waitForServerInterval = 500;
-            assert.strictEqual(linked.key, 'ws://192.168.1.5:1515');
+            assert.strictEqual(linked.key, '192.168.1.5:1515');
             assert.strictEqual(res, linked);
         });
 
@@ -91,7 +91,7 @@ describe('Linked Storages', function() {
                 intentionStorage.addLink([{ type: 'IPAddress', value: '192.168.1.5' }, { type: 'IPPort', value: '1515'}]);
                 assert.fail('Storage must not created');
             } catch (e) {
-                assert.strictEqual(e.detail.link.key, 'ws://192.168.1.5:1515');
+                assert.strictEqual(e.detail.link.key, '192.168.1.5:1515');
             }
         });
 

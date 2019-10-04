@@ -85,8 +85,7 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
 
     static getKeys(origin, port) {
         return [
-            `ws://${origin}:${port}`,
-            `wss://${origin}:${port}`
+            `${origin}:${port}`
         ];
     }
 

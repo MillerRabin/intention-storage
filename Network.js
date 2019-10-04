@@ -53,7 +53,7 @@ class BrowserRequest {
         });
     }
 
-    async static browserJson(url, options) {
+    static async browserJson(url, options) {
         const data = Object.assign({}, options);
         if (data.headers == null)
             data.headers = { 'Content-Type': 'application/json; charset=UTF-8' };
@@ -120,7 +120,7 @@ class Request {
         });
     }
 
-    async static json(url, { options = 'GET', headers = {}, data }) {
+    static async json(url, { options = 'GET', headers = {}, data }) {
         try {
             const sData = JSON.stringify(data);
             const sHeaders = Object.assign({ 'Content-Type': 'application/json' }, headers);

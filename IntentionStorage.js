@@ -78,6 +78,7 @@ module.exports = class IntentionStorage {
         this._dispatchTimeout = null;
         this._query = new IntentionQuery(this);
         this._storageServer = null;
+        this._webRTCAnswer = null;
         this._id = uuid.generate();
         this._type = 'IntentionStorage';
         dispatchCycle(this);
@@ -130,7 +131,7 @@ module.exports = class IntentionStorage {
         if (address == null) throw new Error('WebAddress or IPAddress parameter expected');
         let port = getParameter(origin, ['IPPort']);
         port = (port == null) ? 10010 : port;
-        const path = `ws://${address}:${port}`;
+        const path = `${address}:${port}`;
         const link = this.links.get(path);
         if (link == null) throw new Error(`${ path } does not exists in linked storages`);
         this.deleteStorage(link);
@@ -223,18 +224,24 @@ module.exports = class IntentionStorage {
         return this._storageServer;
     }
 
-    async createServer({address, port = 10010, options }) {
-        this._storageServer = new LinkedStorageServer({ storage: this, address: address, port, options });
-        this._webRTCServer = new WebRTC();
-        await this._webRTCServer.connectToSignal(options.address);
-        return {
-            storageServer: this._storageServer,
-            webRTCServer: this._webRTCServer
-        };
+    async createServer({address, port = 10010, options, useSocket = true, useWebRTC = false }) {
+        const rObj = {};
+        if (useSocket) {
+            this._storageServer = new LinkedStorageServer({ storage: this, address: address, port, options });
+            rObj.socketServer = this._storageServer;
+        }
+
+        if (useWebRTC) {
+            this._webRTCAnswer = new WebRTC();
+            await this._webRTCAnswer.connectToSignal(options.address);
+            rObj.webRTCAnswer = this._webRTCAnswer;
+        }
+        return rObj;
     }
 
     closeServer() {
-        this._storageServer.close();
+        if (this._storageServer != null)
+            this._storageServer.close();
     }
 
     async translate(intention) {
