@@ -233,7 +233,7 @@ module.exports = class IntentionStorage {
 
         if (useWebRTC) {
             this._webRTCAnswer = new WebRTC();
-            await this._webRTCAnswer.connectToSignal(options.address);
+            await this._webRTCAnswer.connectToSignal(address);
             rObj.webRTCAnswer = this._webRTCAnswer;
         }
         return rObj;

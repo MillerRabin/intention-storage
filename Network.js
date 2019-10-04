@@ -120,11 +120,11 @@ class Request {
         });
     }
 
-    static async json(url, { options = 'GET', headers = {}, data }) {
+    static async json(url, { method = 'GET', headers = {}, data }) {
         try {
             const sData = JSON.stringify(data);
             const sHeaders = Object.assign({ 'Content-Type': 'application/json' }, headers);
-            const results = await Request.request(url, { options, headers: sHeaders, data: sData });
+            const results = await Request.request(url, { method, headers: sHeaders, data: sData });
             return JSON.parse(results);
         } catch (err) {
             throw getJsonData(err);

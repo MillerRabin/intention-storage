@@ -2,6 +2,11 @@ const WebSocket = require('ws');
 const Network = require('./Network.js');
 const wrtc = getWRTC();
 
+const signalServerHttp = 'https://signal.intention.tech:8086';
+//const signalServerHttp = 'http://localhost:8086';
+const signalServerSocket = 'wss://signal.intention.tech:8086';
+//const signalServerSocket = 'ws://localhost:8086';
+
 const gConfig = {
     iceServers: []
 };
@@ -15,9 +20,6 @@ function getWRTC() {
         return require('wrtc');
     }
 }
-
-
-const WebRtc = require('./WebRtc.js');
 
 const gTranslationTable = {
     getAnswer
@@ -37,7 +39,7 @@ function getTranslation(socket, data) {
 function connectSignalSocket(webRTC, label) {
     const socket = new WebSocket(webRTC.signalServer);
     socket.onopen = function () {
-        webRTC.sendSignal(socket, {
+        sendData(socket, {
             command: 'setDescription',
             label: label
         });
@@ -61,8 +63,8 @@ function createSignalSocket(webRTC, label) {
     }
     return new Promise((resolve) => {
         try {
-            webRTC.socket = connectSignalSocket(webRTC, label);
-            webRTC.socket.onclose = function () {
+            webRTC.signalSocket = connectSignalSocket(webRTC, label);
+            webRTC.signalSocket.onclose = function () {
                 restart();
             };
             return resolve(webRTC);
@@ -79,13 +81,13 @@ function sendData(socket, data) {
 
 async function getAnswer(socket, data) {
     if (data.offer == null) throw new Error('offer expected');
-    const peer = new WebRtc();
-    await peer.setOffer(data.offer);
+    const peer = new wrtc.RTCPeerConnection();
+    await setOffer(peer, data.offer);
     sendData(socket, { command: 'setAnswer', answer: peer.localDescription.sdp });
 }
 
 async function sendOffer(address, sdp) {
-    return await Network.json('https://signal.intention.tech:8086/api/offers', {
+    return await Network.json(`${signalServerHttp}/api/offers`, {
         method: 'POST',
         data: {
             offer: sdp,
@@ -94,12 +96,45 @@ async function sendOffer(address, sdp) {
     });
 }
 
+async function setOffer(peer, offer) {
+    peer.onicecandidate = function ({candidate}) {
+        console.log(candidate);
+    };
+
+    peer.oniceconnectionstatechange = function () {
+        console.log(this.iceConnectionState);
+    };
+
+    peer.ondatachannel = function ({ channel }) {
+        channel.onmessage = function (event) {
+            console.log(event.data);
+        }
+    };
+
+    await peer.setRemoteDescription({type: "offer", sdp: offer});
+    await peer.setLocalDescription(await peer.createAnswer());
+    await waitForCandidates(peer);
+}
+
+function waitForCandidates(peer, timeout = 5000) {
+    return new Promise((resolve, reject) => {
+        const timer = setTimeout(function () {
+            reject({ message: 'Wait for candidate time is out'});
+        }, timeout);
+        peer.onicecandidate = async ({candidate}) => {
+            if (!candidate) {
+                clearTimeout(timer);
+                return resolve(null);
+            }
+        };
+    });
+}
 
 module.exports = class WebRTC {
     constructor () {
         this._peer = new wrtc.RTCPeerConnection(gConfig);
         this._dc = null;
-        this._signalServer = 'wss://signal.intention.tech:8086';
+        this._signalServer = signalServerSocket;
     }
 
     get peer() {
@@ -118,7 +153,7 @@ module.exports = class WebRTC {
     waitForDataChannel({channelName, channel, timeout = 5000}) {
         return new Promise((resolve, reject) => {
             const timer = setTimeout(function () {
-                reject({ message: 'Time is out'});
+                reject({ message: 'Data channel time is out'});
             }, timeout);
 
             if (channel == null)
@@ -136,44 +171,11 @@ module.exports = class WebRTC {
         });
     }
 
-    async setOffer(offer) {
-        this.peer.onicecandidate = function ({candidate}) {
-            console.log(candidate);
-        };
 
-        this.peer.oniceconnectionstatechange = function () {
-            console.log(this.iceConnectionState);
-        };
-
-        this.peer.ondatachannel = function ({ channel }) {
-            channel.onmessage = function (event) {
-                console.log(event.data);
-            }
-        };
-
-        await this.peer.setRemoteDescription({type: "offer", sdp: offer});
-        await this.peer.setLocalDescription(await this.peer.createAnswer());
-        await this.waitForCandidates(this.peer);
-    };
-
-    waitForCandidates(timeout = 5000) {
-        return new Promise((resolve, reject) => {
-            const timer = setTimeout(function () {
-                reject({ message: 'time is out'});
-            }, timeout);
-            this.peer.onicecandidate = async ({candidate}) => {
-                if (!candidate) {
-                    clearTimeout(timer);
-                    return resolve(null);
-                }
-            };
-        });
-    }
-
-    async setAnswer(label, channelName) {
+    async sendOffer(label, channelName) {
         this._dc = this.peer.createDataChannel(channelName);
         await this.peer.setLocalDescription(await this.peer.createOffer());
-        await this.waitForCandidates(this.peer);
+        await waitForCandidates(this.peer);
         const data = await sendOffer(label, this.peer.localDescription.sdp);
         await this.peer.setRemoteDescription({type: "answer", sdp: data.answer});
     };

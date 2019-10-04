@@ -1,6 +1,7 @@
 //${time}
 const WebSocket = require('./WebSocket.js');
 const LinkedStorageAbstract = require('./LinkedStorageAbstract.js');
+const WebRTC = require('./WebRtc.js');
 
 function connect({ schema, storageLink }) {
     return new Promise((resolve, reject) => {
@@ -55,7 +56,7 @@ async function connectSocket(storageLink) {
 }
 
 module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
-    constructor({ storage, origin, port = 10010, schema, socket, request, handling }) {
+    constructor({ storage, origin, port = 10010, schema, socket, request, handling, useSocket = true, useWebRTC = true }) {
         if (request != null) {
             origin = request.connection.remoteAddress;
             port = request.connection.remotePort;
@@ -66,11 +67,22 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
         this._schema = schema;
         this._type = 'LinkedStorageClient';
         this.waitForServerInterval = 15000;
-        this._waitForServerTimeout = null
+        this._waitForServerTimeout = null;
+        this._useSocket = useSocket;
+        this._useWebRTC = useWebRTC;
+        if (this._useWebRTC) {
+            this._webRTCPeer = new WebRTC();
+        }
     }
 
     async connect() {
-        this.socket = await connectSocket(this);
+        try {
+            if (this._useSocket)
+                this.socket = await connectSocket(this);
+        } catch (e) {
+            if (this._useWebRTC)
+                await this._webRTCPeer.sendOffer(this._origin, 'intentions');
+        }
     }
 
     get origin() {
@@ -83,7 +95,7 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
         return `${this._schema}://${this._origin}:${this._port}`;
     }
 
-    static getKeys(origin, port) {
+    static getKeys(origin, port = 10010) {
         return [
             `${origin}:${port}`
         ];
