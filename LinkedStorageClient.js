@@ -56,13 +56,13 @@ async function connectSocket(storageLink) {
 }
 
 module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
-    constructor({ storage, origin, port = 10010, schema, socket, request, handling, useSocket = true, useWebRTC = true }) {
+    constructor({ storage, origin, port = 10010, schema, socket, channel, request, handling, useSocket = true, useWebRTC = true }) {
         if (request != null) {
             origin = request.connection.remoteAddress;
             port = request.connection.remotePort;
         }
 
-        super({ storage, port, handling, socket });
+        super({ storage, port, handling, socket, channel });
         this._origin = origin;
         this._schema = schema;
         this._type = 'LinkedStorageClient';
@@ -71,7 +71,7 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
         this._useSocket = useSocket;
         this._useWebRTC = useWebRTC;
         if (this._useWebRTC) {
-            this._webRTCPeer = new WebRTC();
+            this._webRTCPeer = new WebRTC({ storage });
         }
     }
 

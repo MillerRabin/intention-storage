@@ -3,9 +3,7 @@ const Network = require('./Network.js');
 const wrtc = getWRTC();
 
 const signalServerHttp = 'https://signal.intention.tech:8086';
-//const signalServerHttp = 'http://localhost:8086';
 const signalServerSocket = 'wss://signal.intention.tech:8086';
-//const signalServerSocket = 'ws://localhost:8086';
 
 const gConfig = {
     iceServers: []
@@ -38,6 +36,7 @@ function getTranslation(socket, data) {
 
 function connectSignalSocket(webRTC, label) {
     const socket = new WebSocket(webRTC.signalServer);
+    socket.webRTC = webRTC;
     socket.onopen = function () {
         sendData(socket, {
             command: 'setDescription',
@@ -82,7 +81,8 @@ function sendData(socket, data) {
 async function getAnswer(socket, data) {
     if (data.offer == null) throw new Error('offer expected');
     const peer = new wrtc.RTCPeerConnection();
-    await setOffer(peer, data.offer);
+    peer.webRTC = socket.webRTC;
+    await setOffer(socket, peer, data.offer);
     sendData(socket, { command: 'setAnswer', answer: peer.localDescription.sdp });
 }
 
@@ -96,24 +96,46 @@ async function sendOffer(address, sdp) {
     });
 }
 
-async function setOffer(peer, offer) {
+function getAddressFromOffer(offer) {
+    const reg = new RegExp('IN IP4 (.*)\r', 'im');
+    const match = reg.exec(offer);
+    if (match == null) return undefined;
+    return match[1];
+}
+
+async function setOffer(socket, peer, offer) {
+    let link = null;
     peer.onicecandidate = function ({candidate}) {
         console.log(candidate);
     };
 
     peer.oniceconnectionstatechange = function () {
+        if ((link != null) && (this.iceConnectionState == 'disconnected') && (this.iceConnectionState == 'failed'))
+            peer.webRTC.storage.deleteStorage(link);
         console.log(this.iceConnectionState);
     };
 
     peer.ondatachannel = function ({ channel }) {
-        channel.onmessage = function (event) {
-            console.log(event.data);
+        const webRTC = socket.webRTC;
+        if (webRTC == null) throw new Error('webRTC is not defined');
+        const storage = webRTC.storage;
+        if (storage == null) throw new Error('webRTC storage is not defined');
+        const address = getAddressFromOffer(offer);
+        link = storage.addStorage({ channel: channel, handling: 'auto', origin: address });
+        storage.translateIntentionsToLink(link);
+
+        channel.onclose = function(event) {
+            console.log('close', event);
+            if (link == null)
+                throw new Error('Link is not defined');
+            storage.deleteStorage(link);
         }
     };
 
     await peer.setRemoteDescription({type: "offer", sdp: offer});
     await peer.setLocalDescription(await peer.createAnswer());
     await waitForCandidates(peer);
+    console.log('wait finished');
 }
 
 function waitForCandidates(peer, timeout = 5000) {
@@ -131,10 +153,13 @@ function waitForCandidates(peer, timeout = 5000) {
 }
 
 module.exports = class WebRTC {
-    constructor () {
+    constructor ({ storage, key }) {
         this._peer = new wrtc.RTCPeerConnection(gConfig);
         this._dc = null;
         this._signalServer = signalServerSocket;
+        if (storage == null) throw new Error('Storage is not defined');
+        this._storage = storage;
+        this._key = key;
     }
 
     get peer() {
@@ -182,6 +207,14 @@ module.exports = class WebRTC {
 
     get signalServer() {
         return this._signalServer;
+    }
+
+    get storage() {
+        return this._storage;
+    }
+
+    get key() {
+        return this._key;
     }
 };
 

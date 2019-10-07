@@ -56,8 +56,18 @@ const gCommandTable = {
     }
 };
 
+function getChannel(link) {
+    if (link.channel != null) return link.channel;
+    if ((link.socket == null) || (link.socket.readyState != 1)) {
+        const err = new Error('Connection lost');
+        err.dispose = true;
+        throw err;
+    }
+    return link.socket;
+}
+
 module.exports = class LinkedStorageAbstract {
-    constructor({ storage, port = 10010, handling, socket }) {
+    constructor({ storage, port = 10010, handling, socket, channel }) {
         if (storage == null) throw new Error('Storage must be exists');
         if (handling == null) throw new Error('Manage type must be defined');
         this._intentions = new Map();
@@ -66,6 +76,7 @@ module.exports = class LinkedStorageAbstract {
         this._handling = handling;
         this.socket = socket;
         this._disposed = false;
+        this.channel = channel;
     }
 
     async dispatchMessage(data) {
@@ -78,12 +89,8 @@ module.exports = class LinkedStorageAbstract {
     }
 
     async sendObject(obj) {
-        if ((this._socket == null) || (this._socket.readyState != 1)) {
-            const err = new Error('Connection lost');
-            err.dispose = true;
-            throw err;
-        }
-        return this._socket.send(JSON.stringify(obj));
+        const channel = getChannel(this);
+        return channel.send(JSON.stringify(obj));
     }
 
     set socket(value) {
@@ -96,6 +103,29 @@ module.exports = class LinkedStorageAbstract {
         }
 
         this._socket.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                this.dispatchMessage(data).catch((e) => {
+                    if (data.command != 'error')
+                        this.sendError(e)
+                });
+            } catch (e) {
+                if (data.command != 'error')
+                    this.sendError(e)
+            }
+        };
+    }
+
+    set channel(value) {
+        if (this._channel != null)
+            this._channel.close();
+
+        this._channel = value;
+        if (value == null) {
+            return;
+        }
+
+        this._channel.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
                 this.dispatchMessage(data).catch((e) => {
@@ -135,6 +165,10 @@ module.exports = class LinkedStorageAbstract {
 
     get disposed() {
         return this._disposed;
+    }
+
+    get channel() {
+        return this._channel;
     }
 
     offline() {

@@ -4,22 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 
-function translateIntentionsToLink(storage, link) {
-    const intentions = storage.intentions.byId();
-    for (let [,intention] of intentions) {
-        try {
-            link.translate(intention);
-        } catch (e) {
-            if (!e.dispose) {
-                console.log(e);
-                return;
-            }
-            storage.deleteStorage(link);
-        }
-    }
-    return true;
-}
-
 function createSimpleServer(storage, port) {
     storage._schema = 'ws';
     storage._listenSocket = new WebSocket.Server({ port });
@@ -48,7 +32,7 @@ module.exports = class IntentionStorageServer extends LinkedStorageAbstract {
 
         this._listenSocket.on('connection', (ws, req) => {
             const link = this._storage.addStorage({ storage: this._storage, socket: ws, request: req, handling: 'auto' });
-            translateIntentionsToLink(storage, link);
+            this._storage.translateIntentionsToLink(link);
             ws.on('close', () => {
                 this._storage.deleteStorage(link);
             });

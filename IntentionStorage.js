@@ -232,7 +232,7 @@ module.exports = class IntentionStorage {
         }
 
         if (useWebRTC) {
-            this._webRTCAnswer = new WebRTC();
+            this._webRTCAnswer = new WebRTC({ storage: this, key: address });
             await this._webRTCAnswer.connectToSignal(address);
             rObj.webRTCAnswer = this._webRTCAnswer;
         }
@@ -266,6 +266,22 @@ module.exports = class IntentionStorage {
 
     queryLinkedStorage(params) {
         return this._query.queryLinkedStorages(params);
+    }
+
+    translateIntentionsToLink(link) {
+        const intentions = this.intentions.byId();
+        for (let [,intention] of intentions) {
+            try {
+                link.translate(intention);
+            } catch (e) {
+                if (!e.dispose) {
+                    console.log(e);
+                    return;
+                }
+                this.deleteStorage(link);
+            }
+        }
+        return true;
     }
 
     toObject() {

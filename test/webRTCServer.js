@@ -57,9 +57,10 @@ describe.only('Intention WebRTC Server ', function() {
         });
 
         it('automatic linked storage should be appeared at server', function(done) {
+            this.timeout(6000);
             setTimeout(() => {
                 const links = [...intentionStorageServer.links.values()];
-                const target = links.find(l => l.origin == '::ffff:127.0.0.1');
+                const target = links.find(l => l.origin == '127.0.0.1');
                 assert.notStrictEqual(target, null, 'storage must exists');
                 assert.strictEqual(target.handling,'auto');
                 done();
@@ -68,7 +69,7 @@ describe.only('Intention WebRTC Server ', function() {
 
     });
 
-    describe.skip('Query Intention', function() {
+    describe('Query Intention', function() {
         let iStorage = null;
         it('Create query intention', function(done) {
             iQuery = intentionStorage.createIntention({
@@ -93,7 +94,7 @@ describe.only('Intention WebRTC Server ', function() {
         });
     });
 
-    describe.skip('Translation', function() {
+    describe('Translation', function() {
         it('create test translate intention at server', function () {
             source = intentionStorageServer.createIntention({
                 title: 'test translate intention',
@@ -114,7 +115,7 @@ describe.only('Intention WebRTC Server ', function() {
                 }
             });
             assert.ok(source != null, 'Source must be created');
-            assert.strictEqual(source.origin, 'ws://localhost:10010');
+            assert.strictEqual(source.origin, 'localhost');
             const intention = intentionStorageServer.intentions.byKey('TranslateTestIn - TranslateTestOut');
             assert.ok(intention != null, 'Source must be exists in storage');
         });
@@ -150,7 +151,7 @@ describe.only('Intention WebRTC Server ', function() {
         });
     });
 
-    describe.skip('Check statuses', function () {
+    describe('Check statuses', function () {
         it('Intention must be accepted at serverStorage', function () {
             assert.ok(sourceAccept != null, 'Source must be accepted');
         });

@@ -89,6 +89,8 @@ module.exports = class Intention {
     get origin() {
         if (this._storage._storageServer != null)
             return this._storage._storageServer.key;
+        if (this._storage._webRTCAnswer != null)
+            return this._storage._webRTCAnswer.key;
         return this._origin;
     }
     get description() {
