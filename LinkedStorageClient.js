@@ -32,6 +32,35 @@ function connect({ schema, storageLink }) {
     });
 }
 
+function connectChannel(storageLink) {
+    return new Promise(async (resolve, reject) => {
+        const { channel } = await storageLink.peer.sendOffer(storageLink.origin, 'intentions');
+        channel.onerror = function (error) {
+            storageLink.storage.query.updateStorage(storageLink, 'error');
+            return reject(error);
+        };
+
+        channel.onopen = function () {
+            if (storageLink.disposed) {
+                storageLink.storage.query.updateStorage(storageLink, 'error');
+                channel.close();
+                return reject(new Error('StorageLink is disposed'));
+            }
+            storageLink.storage.query.updateStorage(storageLink, 'connected');
+            return resolve(channel);
+        };
+
+        channel.onclose = function() {
+            storageLink.channel = null;
+            storageLink.offline();
+            storageLink.storage.query.updateStorage(storageLink, 'closed');
+            if (storageLink.handling == 'manual') {
+                storageLink.waitForServer();
+            }
+        };
+    });
+}
+
 async function select(storageLink) {
     let socket;
     let schema = 'wss';
@@ -81,12 +110,20 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
                 this.socket = await connectSocket(this);
         } catch (e) {
             if (this._useWebRTC)
-                await this._webRTCPeer.sendOffer(this._origin, 'intentions');
+                this.channel = await connectChannel(this);
         }
     }
 
     get origin() {
         return this._origin;
+    }
+
+    get port() {
+        return this._port;
+    }
+
+    get storage() {
+        return this._storage;
     }
 
     get key() {
@@ -106,6 +143,10 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
         return this._socket.readyState;
     }
 
+    get peer() {
+        return this._webRTCPeer;
+    }
+
     async translate(intention) {
         await this.sendObject({
             command: 'translate',
@@ -118,6 +159,7 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
         const wait = async () => {
             if (this.disposed) return;
             if (this.socket != null) return;
+            if (this.channel != null) return;
             try {
                 this.socket = await connectSocket(this);
             } catch (e) {

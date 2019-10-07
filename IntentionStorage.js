@@ -200,6 +200,10 @@ module.exports = class IntentionStorage {
         return this._type;
     }
 
+    get query() {
+        return this._query;
+    }
+
     set dispatchInterval(value) {
         if (typeof(value) != 'number') throw new Error('Value must be number');
         clearTimeout(this._dispatchTimeout);

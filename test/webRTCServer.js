@@ -5,7 +5,7 @@ process.on('unhandledRejection', function(reason, p) {
     console.log("Possibly Unhandled Rejection at: Promise ", p, " reason: ", reason);
 });
 
-describe.only('Intention WebRTC Server ', function() {
+describe('Intention WebRTC Server ', function() {
     let iQuery = null;
     let source = null;
     let target = null;
@@ -153,16 +153,17 @@ describe.only('Intention WebRTC Server ', function() {
 
     describe('Check statuses', function () {
         it('Intention must be accepted at serverStorage', function () {
-            assert.ok(sourceAccept != null, 'Source must be accepted');
+            assert.notStrictEqual(sourceAccept, null, 'Source must be accepted');
         });
 
         it('Intention must be accepted at clientStorage', function () {
-            assert.ok(targetAccept != null, 'Target must be accepted');
-            assert.strictEqual(targetAccept.intention.origin, 'ws://localhost:10010');
+            assert.notStrictEqual(targetAccept, null, 'Target must be accepted');
+            assert.strictEqual(targetAccept.intention.origin, 'localhost');
+            assert.strictEqual(target.accepted.size, 1);
         });
     });
 
-    describe.skip('Send data between intentions', function () {
+    describe('Send data between intentions', function () {
         it('Intention from client must be appeared at server as NetworkIntention', function () {
             const intention = intentionStorageServer.intentions.byId(target.id);
             assert.strictEqual(intention.type, 'NetworkIntention');
@@ -181,10 +182,11 @@ describe.only('Intention WebRTC Server ', function() {
             setTimeout(() => {
                 assert.strictEqual(targetData.message, 'Test from server');
                 done();
-            }, 500);
+            }, 1000);
         });
 
         it('Send data from client', function () {
+            assert.strictEqual(target.accepted.size, 1);
             target.accepted.send({ message: 'Test from client'});
         });
 
@@ -192,24 +194,27 @@ describe.only('Intention WebRTC Server ', function() {
             setTimeout(() => {
                 assert.strictEqual(sourceData.message, 'Test from client');
                 done();
-            }, 500);
+            }, 1000);
         });
     });
 
-    describe.skip('Shutdown server storage', function () {
-        it('Terminate server linked storage socket', function () {
+    describe('Shutdown server storage', function () {
+        it('Close server linked storage channel', function () {
             const [link] = [...intentionStorageServer.links.values()];
-            link.socket.terminate();
+            link.channel.close()
         });
 
-        it('Intention from server must be disappeared at client', function () {
-            const intention = intentionStorage.intentions.byId(source.id);
-            assert.strictEqual(intention, undefined);
+        it('Intention from server must be disappeared at client', function (done) {
+            setTimeout(function () {
+                const intention = intentionStorage.intentions.byId(source.id);
+                assert.strictEqual(intention, undefined);
+                done();
+            }, 500)
         });
 
     });
 
-    describe.skip('Delete query intention', function () {
+    describe('Delete query intention', function () {
         it('delete target intention', function () {
             intentionStorage.deleteIntention(target, { message: 'target is deleted'});
         });
@@ -225,7 +230,7 @@ describe.only('Intention WebRTC Server ', function() {
         })
     });
 
-    describe.skip('Disable stats at client', function () {
+    describe('Disable stats at client', function () {
         it ('should disable stats', function () {
             intentionStorage.statsInterval = 0;
         });
@@ -235,7 +240,7 @@ describe.only('Intention WebRTC Server ', function() {
         });
     });
 
-    describe.skip('Disable stats at server', function () {
+    describe('Disable stats at server', function () {
         it ('should disable stats', function () {
             intentionStorageServer.statsInterval = 0;
         });

@@ -105,14 +105,9 @@ function getAddressFromOffer(offer) {
 
 async function setOffer(socket, peer, offer) {
     let link = null;
-    peer.onicecandidate = function ({candidate}) {
-        console.log(candidate);
-    };
-
     peer.oniceconnectionstatechange = function () {
         if ((link != null) && (this.iceConnectionState == 'disconnected') && (this.iceConnectionState == 'failed'))
             peer.webRTC.storage.deleteStorage(link);
-        console.log(this.iceConnectionState);
     };
 
     peer.ondatachannel = function ({ channel }) {
@@ -125,7 +120,6 @@ async function setOffer(socket, peer, offer) {
         storage.translateIntentionsToLink(link);
 
         channel.onclose = function(event) {
-            console.log('close', event);
             if (link == null)
                 throw new Error('Link is not defined');
             storage.deleteStorage(link);
@@ -135,7 +129,6 @@ async function setOffer(socket, peer, offer) {
     await peer.setRemoteDescription({type: "offer", sdp: offer});
     await peer.setLocalDescription(await peer.createAnswer());
     await waitForCandidates(peer);
-    console.log('wait finished');
 }
 
 function waitForCandidates(peer, timeout = 5000) {
@@ -203,6 +196,7 @@ module.exports = class WebRTC {
         await waitForCandidates(this.peer);
         const data = await sendOffer(label, this.peer.localDescription.sdp);
         await this.peer.setRemoteDescription({type: "answer", sdp: data.answer});
+        return { channel: this._dc };
     };
 
     get signalServer() {
