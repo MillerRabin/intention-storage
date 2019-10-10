@@ -172,6 +172,10 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
         this._waitForServerTimeout = setTimeout(wait, this.waitForServerInterval);
     }
 
+    async waitForChannel(timeout) {
+        await this._webRTCPeer.waitForDataChannel({channel: this._channel, timeout});
+    }
+
     toObject() {
         return {
             origin: this._origin,

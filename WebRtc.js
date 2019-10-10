@@ -34,6 +34,22 @@ function getTranslation(socket, data) {
     }
 }
 
+function getSDPMaxMessage(sdp) {
+    const match = sdp.match(/a=max-message-size:\s*(\d+)/);
+    if (match == null || match.length < 1) return;
+    return parseInt(match[1]);
+
+}
+
+function getMaxMessage(offer, answer) {
+    const oSize = getSDPMaxMessage(offer);
+    const aSize = getSDPMaxMessage(answer);
+    let mSize = (oSize < aSize) ? oSize : aSize;
+    if (mSize == null) mSize = 65535;
+    return mSize;
+}
+
+
 function connectSignalSocket(webRTC, label) {
     const socket = new WebSocket(webRTC.signalServer);
     socket.webRTC = webRTC;
@@ -106,6 +122,7 @@ function getAddressFromOffer(offer) {
 async function setOffer(socket, peer, offer) {
     let link = null;
     peer.oniceconnectionstatechange = function () {
+        console.log(this.iceConnectionState);
         if ((link != null) && (this.iceConnectionState == 'disconnected') && (this.iceConnectionState == 'failed'))
             peer.webRTC.storage.deleteStorage(link);
     };
@@ -118,8 +135,9 @@ async function setOffer(socket, peer, offer) {
         const address = getAddressFromOffer(offer);
         link = storage.addStorage({ channel: channel, handling: 'auto', origin: address });
         storage.translateIntentionsToLink(link);
+        channel.maxMessageSize = peer.maxMessageSize;
 
-        channel.onclose = function(event) {
+        channel.onclose = function() {
             if (link == null)
                 throw new Error('Link is not defined');
             storage.deleteStorage(link);
@@ -128,6 +146,7 @@ async function setOffer(socket, peer, offer) {
 
     await peer.setRemoteDescription({type: "offer", sdp: offer});
     await peer.setLocalDescription(await peer.createAnswer());
+    peer.maxMessageSize = getMaxMessage(offer, peer.localDescription.sdp);
     await waitForCandidates(peer);
 }
 
@@ -148,7 +167,7 @@ function waitForCandidates(peer, timeout = 5000) {
 module.exports = class WebRTC {
     constructor ({ storage, key }) {
         this._peer = new wrtc.RTCPeerConnection(gConfig);
-        this._dc = null;
+
         this._signalServer = signalServerSocket;
         if (storage == null) throw new Error('Storage is not defined');
         this._storage = storage;
@@ -157,10 +176,6 @@ module.exports = class WebRTC {
 
     get peer() {
         return this._peer;
-    }
-
-    get dataChannel() {
-        return this._dc;
     }
 
     async connectToSignal(address) {
@@ -191,12 +206,14 @@ module.exports = class WebRTC {
 
 
     async sendOffer(label, channelName) {
-        this._dc = this.peer.createDataChannel(channelName);
+        const dc = this.peer.createDataChannel(channelName);
         await this.peer.setLocalDescription(await this.peer.createOffer());
         await waitForCandidates(this.peer);
         const data = await sendOffer(label, this.peer.localDescription.sdp);
         await this.peer.setRemoteDescription({type: "answer", sdp: data.answer});
-        return { channel: this._dc };
+        this.peer.maxMessageSize = getMaxMessage(this.peer.localDescription.sdp, this.peer.remoteDescription.sdp);
+        dc.maxMessageSize = this.peer.maxMessageSize;
+        return { channel: dc };
     };
 
     get signalServer() {

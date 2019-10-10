@@ -1,4 +1,5 @@
 const NetworkIntention = require('./NetworkIntention.js');
+const Stream = require('./Stream.js');
 
 async function translate(storageLink, textIntention) {
     if (textIntention.id == null) throw new Error('Intention id must exists');
@@ -66,6 +67,13 @@ function getChannel(link) {
     return link.socket;
 }
 
+function send(channel, obj) {
+    const maxLength = (channel.maxMessageSize == undefined) ? 65535 : channel.maxMessageSize;
+    const msg = JSON.stringify(obj);
+    const stream = new Stream(msg, maxLength);
+    stream.send(channel);
+}
+
 module.exports = class LinkedStorageAbstract {
     constructor({ storage, port = 10010, handling, socket, channel }) {
         if (storage == null) throw new Error('Storage must be exists');
@@ -88,9 +96,9 @@ module.exports = class LinkedStorageAbstract {
         return await func(this, data);
     }
 
-    async sendObject(obj) {
+    sendObject(obj) {
         const channel = getChannel(this);
-        return channel.send(JSON.stringify(obj));
+        return send(channel, obj);
     }
 
     set socket(value) {
@@ -102,16 +110,18 @@ module.exports = class LinkedStorageAbstract {
             return;
         }
 
-        this._socket.onmessage = (event) => {
+        const stream = Stream.from(value);
+        stream.onmessage = (message) => {
+            let data = null;
             try {
-                const data = JSON.parse(event.data);
+                data = JSON.parse(message);
                 this.dispatchMessage(data).catch((e) => {
                     if (data.command != 'error')
                         this.sendError(e)
                 });
             } catch (e) {
-                if (data.command != 'error')
-                    this.sendError(e)
+                if ((data != null) && (data.command != 'error'))
+                    this.sendError(e);
             }
         };
     }
@@ -125,16 +135,20 @@ module.exports = class LinkedStorageAbstract {
             return;
         }
 
-        this._channel.onmessage = (event) => {
+        const stream = Stream.from(value);
+        stream.onmessage = (message) => {
+            let data = null;
             try {
-                const data = JSON.parse(event.data);
+                const dec = new TextDecoder();
+                const text = dec.decode(message);
+                data = JSON.parse(text);
                 this.dispatchMessage(data).catch((e) => {
                     if (data.command != 'error')
                         this.sendError(e)
                 });
             } catch (e) {
-                if (data.command != 'error')
-                    this.sendError(e)
+                if ((data != null) && (data.command != 'error'))
+                    this.sendError(e);
             }
         };
     }
@@ -183,9 +197,9 @@ module.exports = class LinkedStorageAbstract {
         this.socket = null;
     }
 
-    async sendError(error) {
+    sendError(error) {
         const eobj = (error instanceof Error) ? { message: error.message } : error;
-        return await this.sendObject({
+        return this.sendObject({
             command: 'error',
             version: 1,
             error: eobj

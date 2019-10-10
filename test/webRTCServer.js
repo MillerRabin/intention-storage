@@ -1,11 +1,13 @@
 const assert = require('assert');
 const { IntentionStorage } = require('../main.js');
+const fs = require('fs');
+const path = require('path');
 
 process.on('unhandledRejection', function(reason, p) {
     console.log("Possibly Unhandled Rejection at: Promise ", p, " reason: ", reason);
 });
 
-describe('Intention WebRTC Server ', function() {
+describe.only('Intention WebRTC Server ', function() {
     let iQuery = null;
     let source = null;
     let target = null;
@@ -15,7 +17,8 @@ describe('Intention WebRTC Server ', function() {
     let intentionStorageServer = null;
     let sourceData = null;
     let targetData = null;
-
+    console.log(__dirname);
+    const largeData = fs.readFileSync(path.resolve( __dirname, 'testFiles/musicCache.json')).toString();
 
     describe('Create Storage Server', function () {
         it ('Create storage server', async function () {
@@ -57,14 +60,14 @@ describe('Intention WebRTC Server ', function() {
         });
 
         it('automatic linked storage should be appeared at server', function(done) {
-            this.timeout(6000);
+            this.timeout(4000);
             setTimeout(() => {
                 const links = [...intentionStorageServer.links.values()];
                 const target = links.find(l => l.origin == '127.0.0.1');
                 assert.notStrictEqual(target, null, 'storage must exists');
                 assert.strictEqual(target.handling,'auto');
                 done();
-            }, 5000);
+            }, 3000);
         });
 
     });
@@ -195,6 +198,33 @@ describe('Intention WebRTC Server ', function() {
                 assert.strictEqual(sourceData.message, 'Test from client');
                 done();
             }, 1000);
+        });
+    });
+
+    describe('Send large data between intentions', function () {
+        it('Send data from server', function () {
+            source.accepted.send({ data: largeData });
+        });
+
+        it('Check at the client', function (done) {
+            this.timeout(11000);
+            setTimeout(() => {
+                assert.strictEqual(targetData.data, largeData);
+                done();
+            }, 10000);
+        });
+
+        it('Send data from client', function () {
+            assert.strictEqual(target.accepted.size, 1);
+            target.accepted.send({ data: largeData });
+        });
+
+        it('Check at the server', function (done) {
+            this.timeout(11000);
+            setTimeout(() => {
+                assert.strictEqual(sourceData.data, largeData);
+                done();
+            }, 10000);
         });
     });
 
