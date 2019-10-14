@@ -7,7 +7,7 @@ process.on('unhandledRejection', function(reason, p) {
     console.log("Possibly Unhandled Rejection at: Promise ", p, " reason: ", reason);
 });
 
-describe.only('Intention WebRTC Server ', function() {
+describe('Intention WebRTC Server ', function() {
     let iQuery = null;
     let source = null;
     let target = null;
@@ -188,9 +188,12 @@ describe.only('Intention WebRTC Server ', function() {
             }, 1000);
         });
 
-        it('Send data from client', function () {
-            assert.strictEqual(target.accepted.size, 1);
-            target.accepted.send({ message: 'Test from client'});
+        it('Send data from client', function (done) {
+            setTimeout(function () {
+                assert.strictEqual(target.accepted.size, 1);
+                target.accepted.send({ message: 'Test from client'});
+                done();
+            }, 1000);
         });
 
         it('Check at the server', function (done) {

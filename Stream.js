@@ -103,12 +103,14 @@ function getMessage(stream, id, buffer, length, start, end) {
     return msg;
 }
 
-function parseStructure(stream, data) {
-    const id = new Uint32Array(data, 0, 4).join('-');
-    const start = new Uint32Array(data, 16, 1)[0];
-    const end = new Uint32Array(data, 20, 1)[0];
-    const length = new Uint32Array(data, 24, 1)[0];
-    const buffer = new Uint8Array(data, 28, end - start);
+function parseStructure(stream, message) {
+    const data = new Uint8Array(message);
+    const idA = new Uint32Array(data.buffer, 0, 4);
+    const id = idA.join('-');
+    const start = new Uint32Array(data.buffer, 16, 1)[0];
+    const end = new Uint32Array(data.buffer, 20, 1)[0];
+    const length = new Uint32Array(data.buffer, 24, 1)[0];
+    const buffer = new Uint8Array(data.buffer, 28, end - start);
     const msg = getMessage(stream, id, buffer, length, start, end);
     checkMessage(msg);
 }

@@ -111,16 +111,18 @@ module.exports = class LinkedStorageAbstract {
         }
 
         const stream = Stream.from(value);
-        stream.onmessage = (message) => {
-            let data = null;
+        stream.onmessage = (data) => {
+            let obj = null;
             try {
-                data = JSON.parse(message);
-                this.dispatchMessage(data).catch((e) => {
-                    if (data.command != 'error')
+                const dec = new TextDecoder();
+                const message = dec.decode(data);
+                obj = JSON.parse(message);
+                this.dispatchMessage(obj).catch((e) => {
+                    if (obj.command != 'error')
                         this.sendError(e)
                 });
             } catch (e) {
-                if ((data != null) && (data.command != 'error'))
+                if ((obj != null) && (obj.command != 'error'))
                     this.sendError(e);
             }
         };
@@ -195,6 +197,7 @@ module.exports = class LinkedStorageAbstract {
         this._disposed = true;
         this.offline();
         this.socket = null;
+        this.channel = null;
     }
 
     sendError(error) {
