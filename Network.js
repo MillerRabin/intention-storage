@@ -53,32 +53,14 @@ class BrowserRequest {
         });
     }
 
-    static async browserJson(url, options) {
-        const data = Object.assign({}, options);
-        if (data.headers == null)
-            data.headers = { 'Content-Type': 'application/json; charset=UTF-8' };
-
-        if ((data.data) &&
-            (data.method == 'POST') || (data.method == 'PUT') ||
-            (data.method == 'DELETE')) {
-            data.data = JSON.stringify(data.data);
-            if (data.headers['Content-Encoding'] == null)
-                data.headers['Content-Encoding'] = 'identity';
-        }
-
+    static async json(url, { method = 'GET', headers = {}, data }) {
+        const sHeaders = Object.assign({ 'Content-Type': 'application/json', 'Content-Encoding': 'identity' }, headers);
+        const sData = (data == null) ? null : JSON.stringify(data);
         try {
-            const result = await BrowserRequest.request(url, data);
+            const result = await BrowserRequest.request(url, { method, headers: sHeaders, data: sData });
             return JSON.parse(result.text);
         } catch(err) {
-            let msg = { error: 'There was a technical failure. Please try again in a few minutes.' };
-            if (err.text == null) return msg;
-            try {
-                msg = JSON.parse(err.text);
-            }
-            catch(e) {
-                throw msg;
-            }
-            throw msg;
+            throw getJsonData(err);
         }
     }
 }
@@ -122,7 +104,7 @@ class Request {
 
     static async json(url, { method = 'GET', headers = {}, data }) {
         try {
-            const sData = JSON.stringify(data);
+            const sData = (data == null) ? null : JSON.stringify(data);
             const sHeaders = Object.assign({ 'Content-Type': 'application/json' }, headers);
             const results = await Request.request(url, { method, headers: sHeaders, data: sData });
             return JSON.parse(results);

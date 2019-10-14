@@ -1,8 +1,8 @@
 const WebSocket = require('./WebSocket.js');
 const LinkedStorageAbstract = require('./LinkedStorageAbstract.js');
-const fs = require('fs');
-const path = require('path');
-const https = require('https');
+const fs = require('fs'); //Delete for Browser environment
+const path = require('path'); //Delete for Browser environment
+const https = require('https'); //Delete for Browser environment
 
 function createSimpleServer(storage, port) {
     storage._schema = 'ws';

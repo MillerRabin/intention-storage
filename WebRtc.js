@@ -1,4 +1,4 @@
-const WebSocket = require('ws');
+const WebSocket = require('ws'); //Delete for Browser environment
 const Network = require('./Network.js');
 const wrtc = getWRTC();
 
