@@ -139,8 +139,12 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
     }
 
     get status() {
-        if (this._socket == null) return -1;
-        return this._socket.readyState;
+        if ((this._socket == null) && (this._channel == null)) return -1;
+        if (this._socket != null)
+            return this._socket.readyState;
+        if (this._channel != null)
+            return this._channel.readyState;
+        return -1;
     }
 
     get peer() {
