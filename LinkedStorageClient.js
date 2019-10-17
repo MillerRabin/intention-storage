@@ -3,74 +3,48 @@ const WebSocket = require('./WebSocket.js');
 const LinkedStorageAbstract = require('./LinkedStorageAbstract.js');
 const WebRTC = require('./WebRtc.js');
 
-function connect({ schema, storageLink }) {
+function addListeners(storageLink, socket, resolve, reject) {
+    socket.onerror = function (error) {
+        storageLink._storage._query.updateStorage(storageLink, 'error');
+        return reject(error);
+    };
+
+    socket.onopen = function () {
+        if (storageLink.disposed) {
+            storageLink._storage._query.updateStorage(storageLink, 'error');
+            socket.close();
+            return reject(new Error('StorageLink is disposed'));
+        }
+        storageLink._storage._query.updateStorage(storageLink, 'connected');
+        return resolve(socket);
+    };
+}
+
+function connectSchemaSocket({ schema, storageLink }) {
     return new Promise((resolve, reject) => {
         const socket =  new WebSocket(`${schema}://${storageLink._origin}:${storageLink._port}`);
-        socket.onerror = function (error) {
-            storageLink._storage._query.updateStorage(storageLink, 'error');
-            return reject(error);
-        };
-
-        socket.onopen = function () {
-            if (storageLink.disposed) {
-                storageLink._storage._query.updateStorage(storageLink, 'error');
-                socket.close();
-                return reject(new Error('StorageLink is disposed'));
-            }
-            storageLink._storage._query.updateStorage(storageLink, 'connected');
-            return resolve(socket);
-        };
-
-        socket.onclose = function() {
-            storageLink._socket = null;
-            storageLink.offline();
-            storageLink._storage._query.updateStorage(storageLink, 'closed');
-            if (storageLink.handling == 'manual') {
-                storageLink.waitForServer();
-            }
-        };
+        addListeners(storageLink, socket, resolve, reject);
     });
 }
 
 function connectChannel(storageLink) {
     return new Promise(async (resolve, reject) => {
+        if (storageLink.peer == null) return reject('Peer is not created');
         const { channel } = await storageLink.peer.sendOffer(storageLink.origin, 'intentions');
-        channel.onerror = function (error) {
-            storageLink.storage.query.updateStorage(storageLink, 'error');
-            return reject(error);
-        };
-
-        channel.onopen = function () {
-            if (storageLink.disposed) {
-                storageLink.storage.query.updateStorage(storageLink, 'error');
-                channel.close();
-                return reject(new Error('StorageLink is disposed'));
-            }
-            storageLink.storage.query.updateStorage(storageLink, 'connected');
-            return resolve(channel);
-        };
-
-        channel.onclose = function() {
-            storageLink.channel = null;
-            storageLink.offline();
-            storageLink.storage.query.updateStorage(storageLink, 'closed');
-            if (storageLink.handling == 'manual') {
-                storageLink.waitForServer();
-            }
-        };
+        addListeners(storageLink, channel, resolve, reject);
     });
 }
 
-async function select(storageLink) {
+async function selectSchemaSocket(storageLink) {
     let socket;
     let schema = 'wss';
     try {
-        socket = await connect({schema, storageLink });
+        socket = await connectSchemaSocket({schema, storageLink });
         storageLink._schema = schema;
         return socket
     } catch (e) {}
     schema = 'ws';
-    socket = await connect({ schema, storageLink });
+    socket = await connectSchemaSocket({ schema, storageLink });
     storageLink._schema = schema;
     return socket;
 }
@@ -78,10 +52,37 @@ async function select(storageLink) {
 async function connectSocket(storageLink) {
     let socket = null;
     if (storageLink._schema == null)
-        socket = await select(storageLink);
+        socket = await selectSchemaSocket(storageLink);
     else
-        socket = await connect({ schema: storageLink._schema, storageLink });
+        socket = await connectSchemaSocket({ schema: storageLink._schema, storageLink });
     return socket;
+}
+
+async function tryConnectSocket(storageLink) {
+    if (storageLink.useSocket == false) throw Error('Socket is disabled');
+    return await connectSocket(storageLink);
+}
+
+async function tryConnectChannel(storageLink) {
+    if (storageLink.useWebRTC == false) throw Error('WebRTC data channel is disabled');
+    return await connectChannel(storageLink);
+}
+
+async function tryConnect(storageLink) {
+    try {
+        storageLink.socket = await tryConnectSocket(storageLink);
+    } catch (e) {
+        storageLink.channel = await tryConnectChannel(storageLink);
+    }
+    const channel = storageLink.getChannel();
+    channel.onclose = function() {
+        storageLink._socket = null;
+        storageLink.offline();
+        storageLink._storage._query.updateStorage(storageLink, 'closed');
+        if (storageLink.handling == 'manual') {
+            storageLink.waitForServer();
+        }
+    };
 }
 
 module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
@@ -105,13 +106,9 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
     }
 
     async connect() {
-        try {
-            if (this._useSocket)
-                this.socket = await connectSocket(this);
-        } catch (e) {
-            if (this._useWebRTC)
-                this.channel = await connectChannel(this);
-        }
+        await tryConnect(this);
+        this.startPinging();
+        this.setAlive();
     }
 
     get origin() {
@@ -165,7 +162,7 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
             if (this.socket != null) return;
             if (this.channel != null) return;
             try {
-                this.socket = await connectSocket(this);
+                await this.connect();
             } catch (e) {
                 this._waitForServerTimeout = setTimeout(wait, this.waitForServerInterval);
             }
@@ -178,6 +175,14 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
 
     async waitForChannel(timeout) {
         await this._webRTCPeer.waitForDataChannel({channel: this._channel, timeout});
+    }
+
+    get useSocket() {
+        return this._useSocket;
+    }
+
+    get useWebRTC() {
+        return this._useWebRTC;
     }
 
     toObject() {

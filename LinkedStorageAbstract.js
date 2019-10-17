@@ -54,18 +54,18 @@ const gCommandTable = {
             if (intention == null) return;
             storageLink._storage.deleteIntention(intention);
         }
+    },
+    '1:ping': async function (storageLink) {
+        storageLink.sendObject({
+            command: 'pong',
+            version: 1
+        });
+    },
+    '1:pong': async function (storageLink) {
+        storageLink.setAlive();
     }
 };
 
-function getChannel(link) {
-    if (link.channel != null) return link.channel;
-    if ((link.socket == null) || (link.socket.readyState != 1)) {
-        const err = new Error('Connection lost');
-        err.dispose = true;
-        throw err;
-    }
-    return link.socket;
-}
 
 function send(channel, obj) {
     const maxLength = (channel.maxMessageSize == undefined) ? 65535 : channel.maxMessageSize;
@@ -85,6 +85,9 @@ module.exports = class LinkedStorageAbstract {
         this.socket = socket;
         this._disposed = false;
         this.channel = channel;
+        this._lifeTimeout = null;
+        this._lifeTime = storage.lifeTime;
+        this._pingTimeout = null;
     }
 
     async dispatchMessage(data) {
@@ -97,7 +100,7 @@ module.exports = class LinkedStorageAbstract {
     }
 
     sendObject(obj) {
-        const channel = getChannel(this);
+        const channel = this.getChannel();
         return send(channel, obj);
     }
 
@@ -163,6 +166,25 @@ module.exports = class LinkedStorageAbstract {
         return this._intentions.delete(intention.id);
     }
 
+    getChannel() {
+        if (this.channel != null) return this.channel;
+        if ((this.socket == null) || (this.socket.readyState != 1)) {
+            const err = new Error('Connection lost');
+            err.dispose = true;
+            throw err;
+        }
+        return this.socket;
+    }
+
+    setAlive() {
+        if (this._lifeTimeout != null)
+            clearTimeout(this._lifeTimeout);
+        this._lifeTimeout = setTimeout(() => {
+            console.log('dispose', this.handling);
+            this.dispose();
+        }, this._lifeTime + 1000);
+    }
+
     get socket() {
         return this._socket;
     }
@@ -187,6 +209,15 @@ module.exports = class LinkedStorageAbstract {
         return this._channel;
     }
 
+    get lifeTime() {
+        return this._lifeTime;
+    }
+
+    set lifeTime(value) {
+        this._lifeTime = value;
+        this.setAlive();
+    }
+
     offline() {
         for(let [,intention] of this._intentions) {
             this._storage.deleteIntention(intention, 'Linked storage is offline');
@@ -194,10 +225,13 @@ module.exports = class LinkedStorageAbstract {
     }
 
     dispose() {
+        if (this._lifeTimeout != null)
+            clearTimeout(this._lifeTimeout);
         this._disposed = true;
         this.offline();
         this.socket = null;
         this.channel = null;
+
     }
 
     sendError(error) {
@@ -207,5 +241,20 @@ module.exports = class LinkedStorageAbstract {
             version: 1,
             error: eobj
         });
+    }
+
+    startPinging() {
+        if (this._pingTimeout != null) clearTimeout(this._pingTimeout);
+        this._pingTimeout = setTimeout(() => {
+            try {
+                this.sendObject({
+                    command: 'ping',
+                    version: '1'
+                });
+                this.startPinging(this);
+            } catch (e) {
+                this.dispose();
+            }
+        }, this.lifeTime);
     }
 };

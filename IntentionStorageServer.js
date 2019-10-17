@@ -1,7 +1,5 @@
 const WebSocket = require('./WebSocket.js');
 const LinkedStorageAbstract = require('./LinkedStorageAbstract.js');
-const fs = require('fs'); //Delete for Browser environment
-const path = require('path'); //Delete for Browser environment
 const https = require('https'); //Delete for Browser environment
 
 function createSimpleServer(storage, port) {
@@ -36,6 +34,8 @@ module.exports = class IntentionStorageServer extends LinkedStorageAbstract {
             ws.on('close', () => {
                 this._storage.deleteStorage(link);
             });
+            link.startPinging();
+            link.setAlive();
         });
         this._type = 'IntentionStorageServer';
         this._address = address;

@@ -26,6 +26,10 @@ describe('Translate intentions', function() {
             intentionStorageServer.dispatchInterval = 500;
         });
 
+        it ('Set dispatch interval', function () {
+            intentionStorageServer.lifeTime = 500;
+        });
+
         it('Create server', function() {
             intentionStorageServer.createServer({ address: 'localhost'});
         });
@@ -43,6 +47,10 @@ describe('Translate intentions', function() {
 
         it ('Set dispatch interval', function () {
             intentionStorage.dispatchInterval = 500;
+        });
+
+        it ('Set dispatch interval', function () {
+            intentionStorage.lifeTime = 500;
         });
 
         it('add linked storage by parameters', function() {
@@ -185,26 +193,6 @@ describe('Translate intentions', function() {
                 done();
             }, 500);
         });
-    });
-
-    describe('Shutdown client storage', function () {
-        it('Terminate client linked storage socket', function () {
-            const linked = intentionStorage.links.get('localhost:10010');
-            linked._socket.terminate();
-        });
-
-        it.skip('Appropriate linked storage at server must be deleted', function (done) {
-            setTimeout(() => {
-                assert.strictEqual(intentionStorageServer.links.size, 0);
-                done();
-            }, 500);
-        });
-
-        it('Intention from client must be disappeared from then server', function () {
-            const intention = intentionStorageServer.intentions.byId(target.id);
-            assert.strictEqual(intention, undefined);
-        });
-
     });
 
     describe('Delete query intention', function () {

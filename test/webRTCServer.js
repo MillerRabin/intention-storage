@@ -17,7 +17,6 @@ describe('Intention WebRTC Server ', function() {
     let intentionStorageServer = null;
     let sourceData = null;
     let targetData = null;
-    console.log(__dirname);
     const largeData = fs.readFileSync(path.resolve( __dirname, 'testFiles/musicCache.json')).toString();
 
     describe('Create Storage Server', function () {
@@ -182,10 +181,11 @@ describe('Intention WebRTC Server ', function() {
         });
 
         it('Check at the client', function (done) {
+            this.timeout(3000);
             setTimeout(() => {
                 assert.strictEqual(targetData.message, 'Test from server');
                 done();
-            }, 1000);
+            }, 2000);
         });
 
         it('Send data from client', function (done) {

@@ -79,6 +79,7 @@ module.exports = class IntentionStorage {
         this._query = new IntentionQuery(this);
         this._storageServer = null;
         this._webRTCAnswer = null;
+        this._lifeTime = 5000;
         this._id = uuid.generate();
         this._type = 'IntentionStorage';
         dispatchCycle(this);
@@ -90,12 +91,13 @@ module.exports = class IntentionStorage {
             params.handling = 'manual';
         const keys = LinkedStorageClient.getKeys(params.origin, params.port);
         const tLink = hasStorage(this.links, keys);
-        if (tLink != null)
+        if ((tLink != null) && (tLink.handling == 'auto'))
             throw new IntentionError({
                 message: `Storage already exists ${tLink.key}`,
                 code: errorCodes.linkAlreadyExists,
                 detail: { link: tLink}
             });
+        if (tLink != null) return tLink;
         const link = new LinkedStorageClient(params);
         this.links.set(link.key, link);
         this._query.updateStorage(link, 'created');
@@ -202,6 +204,14 @@ module.exports = class IntentionStorage {
 
     get query() {
         return this._query;
+    }
+
+    get lifeTime() {
+        return this._lifeTime;
+    }
+
+    set lifeTime(value) {
+        this._lifeTime = value;
     }
 
     set dispatchInterval(value) {

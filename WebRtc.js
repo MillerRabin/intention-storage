@@ -122,7 +122,6 @@ function getAddressFromOffer(offer) {
 async function setOffer(socket, peer, offer) {
     let link = null;
     peer.oniceconnectionstatechange = function () {
-        console.log(this.iceConnectionState);
         if ((link != null) && (this.iceConnectionState == 'disconnected') && (this.iceConnectionState == 'failed'))
             peer.webRTC.storage.deleteStorage(link);
     };
@@ -213,9 +212,6 @@ module.exports = class WebRTC {
         await this.peer.setRemoteDescription({type: "answer", sdp: data.answer});
         this.peer.maxMessageSize = getMaxMessage(this.peer.localDescription.sdp, this.peer.remoteDescription.sdp);
         dc.maxMessageSize = this.peer.maxMessageSize;
-        dc.onclose = function () {
-            console.log('channel closed');
-        };
         return { channel: dc };
     };
 
