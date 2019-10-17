@@ -91,7 +91,7 @@ module.exports = class IntentionStorage {
             params.handling = 'manual';
         const keys = LinkedStorageClient.getKeys(params.origin, params.port);
         const tLink = hasStorage(this.links, keys);
-        if ((tLink != null) && (tLink.handling == 'auto'))
+        if ((tLink != null) && (tLink.handling != 'auto'))
             throw new IntentionError({
                 message: `Storage already exists ${tLink.key}`,
                 code: errorCodes.linkAlreadyExists,
