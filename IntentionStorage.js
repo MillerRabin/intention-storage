@@ -97,7 +97,8 @@ module.exports = class IntentionStorage {
                 code: errorCodes.linkAlreadyExists,
                 detail: { link: tLink}
             });
-        if (tLink != null) return tLink;
+        if (tLink != null)
+            this.deleteStorage(tLink);
         const link = new LinkedStorageClient(params);
         this.links.set(link.key, link);
         this._query.updateStorage(link, 'created');
