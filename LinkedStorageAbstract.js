@@ -181,7 +181,7 @@ module.exports = class LinkedStorageAbstract {
             clearTimeout(this._lifeTimeout);
         this._lifeTimeout = setTimeout(() => {
             console.log('dispose', this.handling);
-            this.dispose();
+            this.close();
         }, this._lifeTime + 1000);
     }
 
@@ -224,14 +224,16 @@ module.exports = class LinkedStorageAbstract {
         }
     }
 
-    dispose() {
+    close() {
         if (this._lifeTimeout != null)
             clearTimeout(this._lifeTimeout);
-        this._disposed = true;
         this.offline();
         this.socket = null;
         this.channel = null;
+    }
 
+    dispose() {
+        this._disposed = true;
     }
 
     sendError(error) {
@@ -243,6 +245,7 @@ module.exports = class LinkedStorageAbstract {
         });
     }
 
+
     startPinging() {
         if (this._pingTimeout != null) clearTimeout(this._pingTimeout);
         this._pingTimeout = setTimeout(() => {
@@ -253,7 +256,7 @@ module.exports = class LinkedStorageAbstract {
                 });
                 this.startPinging(this);
             } catch (e) {
-                this.dispose();
+                this.close();
             }
         }, this.lifeTime);
     }

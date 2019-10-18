@@ -185,6 +185,12 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
         return this._useWebRTC;
     }
 
+    close() {
+        super.close();
+        if (this.handling != 'manual')
+            this.dispose();
+    }
+
     toObject() {
         return {
             origin: this._origin,
