@@ -30,8 +30,12 @@ function connectSchemaSocket({ schema, storageLink }) {
 function connectChannel(storageLink) {
     return new Promise(async (resolve, reject) => {
         if (storageLink.peer == null) return reject('Peer is not created');
-        const { channel } = await storageLink.peer.sendOffer(storageLink.origin, 'intentions');
-        addListeners(storageLink, channel, resolve, reject);
+        try {
+            const { channel } = await storageLink.peer.sendOffer(storageLink.origin, 'intentions');
+            addListeners(storageLink, channel, resolve, reject);
+        } catch (e) {
+            reject(e);
+        }
     });
 }
 
