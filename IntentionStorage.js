@@ -125,7 +125,7 @@ module.exports = class IntentionStorage {
                 detail: { link: tLink}
             });
         const link = this.addStorage({ origin: address, handling: 'manual', port: port });
-        link.connect();
+        link.waitConnection();
         return link;
     }
 

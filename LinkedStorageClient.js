@@ -80,7 +80,7 @@ async function tryConnect(storageLink) {
         storageLink.offline();
         storageLink._storage._query.updateStorage(storageLink, 'closed');
         if (storageLink.handling == 'manual') {
-            storageLink.waitForServer();
+            storageLink.waitConnection();
         }
     };
 }
@@ -156,7 +156,7 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
         })
     }
 
-    waitForServer() {
+    waitConnection() {
         const wait = async () => {
             if (this.disposed) return;
             if (this.socket != null) return;
@@ -170,7 +170,7 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
         if (this.disposed) return;
         if (this.socket != null) return;
         clearTimeout(this._waitForServerTimeout);
-        this._waitForServerTimeout = setTimeout(wait, this.waitForServerInterval);
+        wait();
     }
 
     async waitForChannel(timeout) {
@@ -189,6 +189,8 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
         super.close();
         if (this.handling != 'manual')
             this.dispose();
+        else
+            this.waitConnection();
     }
 
     toObject() {
