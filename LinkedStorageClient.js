@@ -167,7 +167,7 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
         const wait = async () => {
             if (this.disposed) return;
             if (this.socket != null) return;
-            if ((this.channel != null) && (this.channel.readyState != 'connecting')) return;
+            if ((this.channel != null) && (this.channel.readyState != 'connecting') && (this.channel.readyState != 'open')) return;
             try {
                 await this.connect();
             } catch (e) {
