@@ -89,6 +89,10 @@ async function tryConnect(storageLink) {
     };
 }
 
+function isChannelOpen(channel) {
+    return (channel != null) && (channel.readyState == 'open')
+}
+
 module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
     constructor({ storage, origin, port = 10010, schema, socket, channel, request, handling, useSocket = true, useWebRTC = true }) {
         if (request != null) {
@@ -140,10 +144,10 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
     }
 
     get status() {
-        if ((this._socket == null) && (this._channel == null)) return -1;
+        if ((this._socket == null) && !isChannelOpen(this._channel)) return -1;
         if (this._socket != null)
             return this._socket.readyState;
-        if (this._channel != null)
+        if (isChannelOpen(this._channel))
             return this._channel.readyState;
         return -1;
     }
@@ -164,7 +168,7 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
         const wait = async () => {
             if (this.disposed) return;
             if (this.socket != null) return;
-            if (this.channel != null) return;
+            if ((this.channel != null) && (this.channel.readyState != 'connecting')) return;
             try {
                 await this.connect();
             } catch (e) {
