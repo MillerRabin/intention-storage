@@ -33,11 +33,10 @@ function connectChannel(storageLink) {
         try {
             if ((storageLink.channel == null) || (storageLink.channel.readyState != 'connecting')) {
                 storageLink.channel = await storageLink.peer.createChannel('intentions');
-                addListeners(storageLink, storageLink.channel, resolve, reject);
             }
             await storageLink.peer.sendOffer(storageLink.origin);
             storageLink.channel.maxMessageSize = storageLink.peer.maxMessageSize;
-
+            addListeners(storageLink, storageLink.channel, resolve, reject);
         } catch (e) {
             reject(e);
         }
