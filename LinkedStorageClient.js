@@ -16,6 +16,8 @@ function addListeners(storageLink, socket, resolve, reject) {
             return reject(new Error('StorageLink is disposed'));
         }
         storageLink._storage._query.updateStorage(storageLink, 'connected');
+        storageLink.startPinging();
+        storageLink.setAlive();
         return resolve(socket);
     };
 }
@@ -114,8 +116,6 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
 
     async connect() {
         await tryConnect(this);
-        this.startPinging();
-        this.setAlive();
     }
 
     get origin() {
