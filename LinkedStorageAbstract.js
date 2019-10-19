@@ -169,9 +169,7 @@ module.exports = class LinkedStorageAbstract {
     getChannel() {
         if (this.channel != null) return this.channel;
         if ((this.socket == null) || (this.socket.readyState != 1)) {
-            const err = new Error('Connection lost');
-            err.dispose = true;
-            throw err;
+            throw new Error('Connection lost');
         }
         return this.socket;
     }
