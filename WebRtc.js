@@ -185,7 +185,11 @@ module.exports = class WebRTC {
     async createChannel(channelName) {
         const channel = this.peer.createDataChannel(channelName);
         await this.peer.setLocalDescription(await this.peer.createOffer());
-        await waitForCandidates(this.peer);
+        try {
+            await waitForCandidates(this.peer);
+        } catch (e) {
+            console.log(e);
+        }
         return channel;
     }
 

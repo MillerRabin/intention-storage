@@ -180,7 +180,6 @@ module.exports = class LinkedStorageAbstract {
         if (this._lifeTimeout != null)
             clearTimeout(this._lifeTimeout);
         this._lifeTimeout = setTimeout(() => {
-            console.log('dispose', this.handling);
             this.close();
         }, this._lifeTime + 1000);
     }
