@@ -31,7 +31,11 @@ function connectChannel(storageLink) {
     return new Promise(async (resolve, reject) => {
         if (storageLink.peer == null) return reject('Peer is not created');
         try {
-            const { channel } = await storageLink.peer.sendOffer(storageLink.origin, 'intentions');
+            const channel = ((storageLink.channel != null) && (storageLink.channel.readyState == 'connecting')) ?
+                            storageLink.channel :
+                            await storageLink.peer.createChannel('intentions');
+            await storageLink.peer.sendOffer(storageLink.origin);
+            channel.maxMessageSize = storageLink.peer.maxMessageSize;
             addListeners(storageLink, channel, resolve, reject);
         } catch (e) {
             reject(e);
@@ -80,12 +84,7 @@ async function tryConnect(storageLink) {
     }
     const channel = storageLink.getChannel();
     channel.onclose = function() {
-        storageLink._socket = null;
-        storageLink.offline();
-        storageLink._storage._query.updateStorage(storageLink, 'closed');
-        if (storageLink.handling == 'manual') {
-            storageLink.waitConnection();
-        }
+        storageLink.close();
     };
 }
 

@@ -225,6 +225,7 @@ module.exports = class LinkedStorageAbstract {
     }
 
     close() {
+        this._storage._query.updateStorage(this, 'closed');
         if (this._lifeTimeout != null)
             clearTimeout(this._lifeTimeout);
         this.offline();

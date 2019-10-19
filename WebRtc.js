@@ -182,37 +182,17 @@ module.exports = class WebRTC {
         await createSignalSocket(this, address);
     };
 
-    waitForDataChannel({channelName, channel, timeout = 5000}) {
-        return new Promise((resolve, reject) => {
-            const timer = setTimeout(function () {
-                reject({ message: 'Data channel time is out'});
-            }, timeout);
-
-            if (channel == null)
-                channel = this.peer.createDataChannel(channelName);
-
-            channel.onopen = function () {
-                clearTimeout(timer);
-                return resolve(channel);
-            };
-
-            channel.onerror = function (e) {
-                clearTimeout(timer);
-                return reject(e);
-            }
-        });
-    }
-
-
-    async sendOffer(label, channelName) {
-        const dc = this.peer.createDataChannel(channelName);
+    async createChannel(channelName) {
+        const channel = this.peer.createDataChannel(channelName);
         await this.peer.setLocalDescription(await this.peer.createOffer());
         await waitForCandidates(this.peer);
+        return channel;
+    }
+
+    async sendOffer(label) {
         const data = await sendOffer(label, this.peer.localDescription.sdp);
         await this.peer.setRemoteDescription({type: "answer", sdp: data.answer});
         this.peer.maxMessageSize = getMaxMessage(this.peer.localDescription.sdp, this.peer.remoteDescription.sdp);
-        dc.maxMessageSize = this.peer.maxMessageSize;
-        return { channel: dc };
     };
 
     get signalServer() {
