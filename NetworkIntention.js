@@ -80,6 +80,10 @@ module.exports = class NetworkIntention {
         return this._type;
     }
 
+    get storage() {
+        return this._storage;
+    }
+
     async send(status, intention, data) {
         if (intention.toObject == null) throw new Error('Intention must not be null');
         try {
