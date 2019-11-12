@@ -164,23 +164,26 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
     }
 
     waitConnection() {
-        const wait = async () => {
+        return new Promise((resolve) => {
+            const wait = async () => {
+                if (this.disposed) return;
+                if (this.socket != null) return;
+                if ((this.channel != null) && (this.channel.readyState != 'connecting')) {
+                    this.startPinging();
+                    return;
+                }
+                try {
+                    await this.connect();
+                    resolve(this);
+                } catch (e) {
+                    this._waitForServerTimeout = setTimeout(wait, this.waitForServerInterval);
+                }
+            };
             if (this.disposed) return;
             if (this.socket != null) return;
-            if ((this.channel != null) && (this.channel.readyState != 'connecting')) {
-                this.startPinging();
-                return;
-            }
-            try {
-                await this.connect();
-            } catch (e) {
-                this._waitForServerTimeout = setTimeout(wait, this.waitForServerInterval);
-            }
-        };
-        if (this.disposed) return;
-        if (this.socket != null) return;
-        clearTimeout(this._waitForServerTimeout);
-        wait();
+            clearTimeout(this._waitForServerTimeout);
+            wait();
+        });
     }
 
     async waitForChannel(timeout) {
