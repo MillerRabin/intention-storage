@@ -166,10 +166,13 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
     waitConnection() {
         return new Promise((resolve) => {
             const wait = async () => {
-                if (this.disposed) return;
-                if (this.socket != null) return;
+                if ((this.disposed) || (this.socket != null)) {
+                    resolve(this);
+                    return;
+                }
                 if ((this.channel != null) && (this.channel.readyState != 'connecting')) {
                     this.startPinging();
+                    resolve(this);
                     return;
                 }
                 try {
@@ -179,8 +182,10 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
                     this._waitForServerTimeout = setTimeout(wait, this.waitForServerInterval);
                 }
             };
-            if (this.disposed) return;
-            if (this.socket != null) return;
+            if ((this.disposed) || (this.socket != null)) {
+                resolve(this);
+                return;
+            }
             clearTimeout(this._waitForServerTimeout);
             wait();
         });
