@@ -122,7 +122,8 @@ module.exports = class Intention {
         try {
             return await this._onData(status, intention, data);
         } catch (e) {
-            return await intention.send('error', this, e);
+            await intention.send('error', this, e);
+            throw e;
         }
     }
 
