@@ -37,9 +37,11 @@ describe('Local intentions', function() {
                 output: 'None',
                 value: 'test',
                 onData: async (status, intention, value) => {
-                    if (status == 'accept') {
-                        iStorage = intention;
-                        done();
+                    if (status == 'accepted') {
+                        if (iStorage == null) {
+                            iStorage = intention;
+                            done();
+                        }
                         return;
                     }
                     if (status == 'data') {

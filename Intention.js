@@ -10,31 +10,25 @@ function update(intention, status) {
 async function accept(source, target) {
     if (source._accepted.has(target)) return;
     if (target._accepted.has(source)) return;
-    source._accepted.set(target);
-    target._accepted.set(source);
-    let tData = null;
-    let sData = null;
     try {
         try {
-            sData = await source.send('accept', target);
+            await source.send('accept', target);
         } catch (e) {
-            source._accepted.delete(target);
-            target._accepted.delete(source);
             target.sendError(e);
             return;
         }
         try {
-            tData = await target.send('accept', source);
+            await target.send('accept', source);
         } catch (e) {
-            source._accepted.delete(target);
-            target._accepted.delete(source);
             source.sendError(e);
             return;
         }
+        source._accepted.set(target);
+        target._accepted.set(source);
         update(source, 'accept');
         update(target, 'accept');
-        if (tData != null) await source.send('data', target, tData);
-        if (sData != null) await target.send('data', source, sData);
+        source.send('accepted', target);
+        target.send('accepted', source);
     } catch (e) {
         console.log(e);
     }
