@@ -82,7 +82,6 @@ module.exports = class IntentionStorage {
         this._lifeTime = 5000;
         this._id = uuid.generate();
         this._type = 'IntentionStorage';
-        this._name = null;
         dispatchCycle(this);
     }
 
@@ -212,14 +211,6 @@ module.exports = class IntentionStorage {
         return this._lifeTime;
     }
 
-    get name() {
-        return this._name;
-    }
-
-    set name(value) {
-        this._name = value;
-    }
-
     set lifeTime(value) {
         this._lifeTime = value;
     }
@@ -311,8 +302,7 @@ module.exports = class IntentionStorage {
     toObject() {
         return {
             id: this._id,
-            type: this._type,
-            name: this._name
+            type: this._type
         }
     }
 };
