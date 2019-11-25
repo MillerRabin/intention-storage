@@ -13,6 +13,13 @@ const errorCodes = {
     linkAlreadyExists: 'LNK-0001'
 };
 
+function typeIntentions(source, target) {
+    if (source.type == 'Intention')
+        return { local: source, network: target };
+    if (target.type == 'Intention')
+        return { local: target, network: target };
+    return null;
+}
 
 function dispatchIntentions(storage, intention) {
     const rKey = intention.getKey(true);
@@ -22,8 +29,9 @@ function dispatchIntentions(storage, intention) {
             for (const [, int] of origin) {
                 try {
                     if (int == intention) continue;
-                    if ((int.type == 'NetworkIntention') && (intention.type == 'NetworkIntention'))  continue;
-                    int.accept(intention);
+                    const sRes = typeIntentions(int, intention);
+                    if (sRes == null) continue;
+                    sRes.local.accept(sRes.network);
                 } catch (e) {
                     console.log(e);
                 }
@@ -108,6 +116,7 @@ module.exports = class IntentionStorage {
     deleteStorage(link) {
         this.links.delete(link.key);
         link.dispose();
+        link.close();
         this._query.updateStorage(link, 'deleted');
     }
 
@@ -177,16 +186,33 @@ module.exports = class IntentionStorage {
     }
 
     deleteIntention(intention, data) {
-        try {
-            intention.accepted.close(intention, data);
-        } catch (e) {
-            console.log(e);
-        }
-
+        intention.accepted.close(data);
         this.intentions.delete(intention);
-        if (intention._storageLink != null)
-            intention._storageLink.deleteIntention(intention);
         this._query.updateIntention(intention, 'deleted');
+    }
+
+    deleteAllIntention(data) {
+        for (const intention of this._intentions) {
+            try {
+                this.deleteIntention(intention, data);
+            } catch (e) {}
+        }
+    }
+
+    deleteAllStorages() {
+        for (const [,link] of this._links) {
+            try {
+                this.deleteStorage(link);
+            } catch (e) {}
+        }
+    }
+
+    close() {
+        this.closeServer();
+        this.deleteAllIntention();
+        this.deleteAllStorages();
+        this.dispatchInterval = 0;
+        this.statsInterval = 0;
     }
 
     get intentions() {

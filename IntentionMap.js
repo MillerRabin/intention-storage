@@ -22,10 +22,12 @@ module.exports = class IntentionMap {
         this._intentionsId.delete(intention.id);
         const key = intention.getKey();
         const origin = this._intentionsKey.get(key);
-        if (origin == null) throw new Error('The intention does not exists');
+        if (origin == null) return;
         origin.delete(intention);
         if (origin.size == 0) this._intentionsKey.delete(key);
     }
+
+    [Symbol.iterator]() { return this._intentionsId.values() }
 
     byId(id) {
         if (id != null)

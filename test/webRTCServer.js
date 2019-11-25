@@ -3,9 +3,9 @@ const { IntentionStorage } = require('../main.js');
 const fs = require('fs');
 const path = require('path');
 
-process.on('unhandledRejection', function(reason, p) {
+/*process.on('unhandledRejection', function(reason, p) {
     console.log("Possibly Unhandled Rejection at: Promise ", p, " reason: ", reason);
-});
+});*/
 
 describe('Intention WebRTC Server ', function() {
     let iQuery = null;
@@ -80,7 +80,7 @@ describe('Intention WebRTC Server ', function() {
                 output: 'None',
                 value: 'test',
                 onData: async (status, intention) => {
-                    if (status == 'accept') {
+                    if (status == 'accepted') {
                         if (intention.type != 'Intention') return;
                         iStorage = intention;
                         done();
@@ -103,7 +103,7 @@ describe('Intention WebRTC Server ', function() {
                 input: 'TranslateTestIn',
                 output: 'TranslateTestOut',
                 onData: async (status, intention, value) => {
-                    if (status == 'accept') {
+                    if (status == 'accepted') {
                         sourceAccept = {
                             intention: intention,
                             value: value
@@ -128,7 +128,7 @@ describe('Intention WebRTC Server ', function() {
                 input: 'TranslateTestOut',
                 output: 'TranslateTestIn',
                 onData: async (status, intention, value) => {
-                    if (status == 'accept') {
+                    if (status == 'accepted') {
                         targetAccept = {
                             intention: intention,
                             value: value

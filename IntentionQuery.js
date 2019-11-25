@@ -12,7 +12,7 @@ function createQueryIntention(query) {
     });
 }
 
-function sendStats() {
+async function sendStats() {
     try {
         if (this._iQuery == null) return;
         if ((this._updatedIntentions.size == 0) && (this._updatedStorages.size == 0)) return;

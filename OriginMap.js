@@ -6,7 +6,7 @@ module.exports = class OriginMap extends Map {
         origin.set(intention.id, intention);
     }
     delete(intention) {
-        if (!super.has(intention.origin)) throw new Error('Intention does not exists');
+        if (!super.has(intention.origin)) return;
         const origin = super.get(intention.origin);
         origin.delete(intention.id);
         if (origin.size == 0)

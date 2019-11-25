@@ -1,40 +1,61 @@
-const safe = require('./core/safe.js');
 const uuid = require('./core/uuid.js');
-const AcceptedIntentions = require('./AcceptedIntentions.js');
+const IntentionAbstract = require('./IntentionAbstract.js');
 
 function update(intention, status) {
     intention._updateTime = new Date();
     intention._storage._query.updateIntention(intention, status);
 }
 
-async function accept(source, target) {
-    if (source._accepted.has(target)) return;
-    if (target._accepted.has(source)) return;
+function deleteAccepted(local, network) {
+    local.accepted.delete(network);
+    network.accepted.delete(local);
+}
+
+function deleteAccepting(local, network) {
+    local.accepting.delete(network.id);
+}
+
+
+async function accept(local, network) {
+    if (local.accepted.isAccepting(network)) return;
+    if (network.accepted.isAccepting(local)) return;
     try {
+        await network.accepted.reload();
+        local.accepted.setAccepting(network);
+        if (local.accepted.has(network)) return;
+        if (network.accepted.has(local)) return;
+        if (network.accepted.isAccepting(local)) return;
+        let sAccept = null;
+        let tAccept = null;
         try {
-            await source.send('accept', target);
+            sAccept = await local.send('accepting', network);
         } catch (e) {
-            target.sendError(e);
+            network.sendError(e);
             return;
         }
         try {
-            await target.send('accept', source);
+            tAccept = await network.send('accepting', local);
         } catch (e) {
-            source.sendError(e);
+            local.sendError(e);
             return;
         }
-        source._accepted.set(target);
-        target._accepted.set(source);
-        update(source, 'accept');
-        update(target, 'accept');
-        source.send('accepted', target);
-        target.send('accepted', source);
+
+        local.send('accepted', network, tAccept);
+        network.send('accepted', local, sAccept);
+        update(local, 'accepted');
+        update(network, 'accepted');
+        local.accepted.set(network);
+        network.accepted.set(local);
     } catch (e) {
-        console.log(e);
+        local.accepted.delete(network);
+        network.accepted.delete(local);
+    } finally {
+        local.accepted.deleteAccepting(network);
+        network.accepted.deleteAccepting(local);
     }
 }
 
-module.exports = class Intention {
+module.exports = class Intention extends IntentionAbstract {
     constructor ({
         title,
         description,
@@ -45,71 +66,32 @@ module.exports = class Intention {
         value,
         storage
     }) {
-        if (safe.isEmpty(title)) throw new Error('Intention must have a title');
-        if (safe.isEmpty(input)) throw new Error('Intention must have an input parameters');
-        if (safe.isEmpty(output)) throw new Error('Intention must have an output parameters');
+        super({title, description, input, output, parameters, value});
         if (storage == null) throw new Error('Intention must have a storage');
         if (typeof(onData) != 'function') throw new Error('Intention onData must be an async function');
-        if (!Array.isArray(parameters)) throw new Error('Parameters must be array');
-        if (input == output) throw new Error('Input and Output can`t be the same');
-
         this._createTime = new Date();
-        this._updateTime = new Date();
-        this._title = title;
-        this._description = description;
-        this._input = input;
-        this._output = output;
-        this._origin = null;
         this._onData = onData;
-        this._parameters = parameters;
         this._id = uuid.generate();
-        this._accepted = new AcceptedIntentions(this);
-        this._value = value;
         this._storage = storage;
         this._type = 'Intention';
-    }
-    getKey(reverse = false) {
-        return (!reverse) ? `${ this._input } - ${ this._output }` : `${ this._output } - ${ this._input }`;
-    }
-    get parameters() {
-        return this._parameters;
-    }
-    get input() {
-        return this._input;
-    }
-    get output() {
-        return this._output;
     }
     get origin() {
         if (this._storage._storageServer != null)
             return this._storage._storageServer.key;
         if (this._storage._webRTCAnswer != null)
             return this._storage._webRTCAnswer.key;
-        return this._origin;
-    }
-    get description() {
-        return this._description;
-    }
-    get title() {
-        return this._title;
-    }
-    get accepted() {
-        return this._accepted;
-    }
-    get updateTime() {
-        return this._updateTime;
+        return null;
     }
     get createTime() {
         return this._createTime;
     }
+
     get id() {
         return this._id;
     }
-    get value() {
-        return this._value;
-    }
-    get type() {
-        return this._type;
+
+    async accept(intention) {
+        return await accept(this, intention);
     }
 
     async send(status, intention, data) {
@@ -121,45 +103,16 @@ module.exports = class Intention {
         }
     }
 
-    async sendError(error) {
-        return await this._onData('error', this, error);
-    }
-
-    async accept(intention) {
-        return await accept(this, intention);
-    }
-
-    async close(intention, info) {
-        try {
-            return await this._onData('close', intention, info);
-        }
-        catch (e) {
-            console.log(e);
-        }
-        finally {
-            this._accepted.delete(intention);
-            update(intention, 'closed');
-        }
-    }
     dispatch() {
         this._storage._dispatchWait.add(this);
     }
 
     toObject() {
         return {
+            ...super.toObject(),
             id: this._id,
-            type: this._type,
             createTime: this.createTime,
-            updateTime: this.updateTime,
-            key: this.getKey(),
-            input: this._input,
-            output: this._output,
-            origin: this.origin,
-            title: this._title,
-            description: this._description,
-            accepted: this._accepted.toObject(),
-            value: this._value,
-            parameters: this._parameters
-        }
+            origin: this.origin
+        };
     }
 };

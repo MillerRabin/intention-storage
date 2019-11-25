@@ -71,7 +71,7 @@ describe('Local intentions', function() {
                input: 'TestIn',
                output: 'TestOut',
                onData: async (status, intention, value) => {
-                    if (status == 'accept') {
+                    if (status == 'accepted') {
                         sourceAccept = {
                             intention: intention,
                             value: value
@@ -96,7 +96,7 @@ describe('Local intentions', function() {
                 input: 'TestOut',
                 output: 'TestIn',
                 onData: async (status, intention, value) => {
-                    if (status == 'accept') {
+                    if (status == 'accepted') {
                         targetAccept = {
                             intention: intention,
                             value: value
@@ -125,12 +125,12 @@ describe('Local intentions', function() {
         it('Stats has been sended accept status for source and target', function (done) {
             this.timeout(3000);
             setTimeout(() => {
-                const tito = updatedIntentions.find(v => (v.intention.key == 'TestIn - TestOut') && (v.status == 'accept'));
-                const toti = updatedIntentions.find(v => (v.intention.key == 'TestOut - TestIn') && (v.status == 'accept'));
+                const tito = updatedIntentions.find(v => (v.intention.key == 'TestIn - TestOut') && (v.status == 'accepted'));
+                const toti = updatedIntentions.find(v => (v.intention.key == 'TestOut - TestIn') && (v.status == 'accepted'));
                 assert.ok(toti != null, 'TestIn - TestOut must exists');
                 assert.ok(tito != null, 'TestOut - TestIn');
-                assert.strictEqual(toti.status, 'accept');
-                assert.strictEqual(tito.status, 'accept');
+                assert.strictEqual(toti.status, 'accepted');
+                assert.strictEqual(tito.status, 'accepted');
                 updatedIntentions.length = 0;
                 done();
             }, 2000);
@@ -153,18 +153,21 @@ describe('Local intentions', function() {
                 done();
             });
         });
+
         it('target must be removed from source accepted list', function () {
             assert.strictEqual(source.accepted.size, 0);
         });
+
         it('source must be removed from target accepted list', function () {
             assert.strictEqual(target.accepted.size, 0);
         });
+
         it('Stats has been sended close status for target', function (done) {
             this.timeout(1000);
             setTimeout(() => {
                 const toti = updatedIntentions.find(v => v.intention.key == 'TestOut - TestIn');
                 assert.ok(toti != null, 'TestOut - TestIn must exists');
-                assert.strictEqual(toti.status, 'closed');
+                assert.strictEqual(toti.status, 'deleted');
                 updatedIntentions.length = 0;
                 done();
             }, 500);

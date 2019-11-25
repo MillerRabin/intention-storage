@@ -19,6 +19,7 @@ describe('Linked Storages', function() {
 
     const updatedStorages = [];
     let iQuery = null;
+
     describe('Query Intention', function() {
         let iStorage = null;
         it('Create query intention', function(done) {
@@ -28,7 +29,7 @@ describe('Linked Storages', function() {
                 output: 'None',
                 value: 'test',
                 onData: async (status, intention, value) => {
-                    if (status == 'accept') {
+                    if (status == 'accepting') {
                         if (iStorage == null) {
                             iStorage = intention;
                             done();
@@ -60,7 +61,7 @@ describe('Linked Storages', function() {
             assert.strictEqual(res, linked);
         });
 
-        it('Storage has been sended in stats', function (done) {
+        it('Storage has been sent in stats', function (done) {
             this.timeout(1000);
             setTimeout(() => {
                 const loc = updatedStorages.find(v => v.storage.origin == 'localhost');

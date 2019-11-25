@@ -78,7 +78,7 @@ describe('Translate intentions operations', function() {
                 output: 'None',
                 value: 'test',
                 onData: async (status, intention) => {
-                    if (status == 'accept') {
+                    if (status == 'accepted') {
                         if (intention.type != 'Intention') return;
                         iStorage = intention;
                         done();
@@ -101,7 +101,7 @@ describe('Translate intentions operations', function() {
                 input: 'TranslateTestIn',
                 output: 'TranslateTestOut',
                 onData: async (status, intention, value) => {
-                    if (status == 'accept') {
+                    if (status == 'accepted') {
                         sourceAccept = {
                             intention: intention,
                             value: value
@@ -126,7 +126,7 @@ describe('Translate intentions operations', function() {
                 input: 'TranslateTestOut',
                 output: 'TranslateTestIn',
                 onData: async (status, intention, value) => {
-                    if (status == 'accept') {
+                    if (status == 'accepted') {
                         targetAccept = {
                             intention: intention,
                             value: value
@@ -163,7 +163,7 @@ describe('Translate intentions operations', function() {
     });
 
     describe('Send data between intentions', function () {
-        it('Intention from client must be appeared at server as NetworkIntention', function () {
+        it('Intention from client must be appeared on server as NetworkIntention', function () {
             const intention = intentionStorageServer.intentions.byId(target.id);
             assert.strictEqual(intention.type, 'NetworkIntention');
         });
@@ -191,7 +191,7 @@ describe('Translate intentions operations', function() {
         });
     });
 
-    describe('Delete appropriate network intention at target if source intention at origin does not exists anymore', function () {
+    describe('Delete appropriate network intention on target if source intention on origin does not exists anymore', function () {
         it('Delete target intention', function () {
             const cTarget = intentionStorage.intentions.byId(target.id);
             assert.ok(cTarget, 'Target must be exists at client');
@@ -232,27 +232,15 @@ describe('Translate intentions operations', function() {
         })
     });
 
-    describe('Disable stats at client', function () {
-        it ('should disable stats', function () {
-            intentionStorage.statsInterval = 0;
-        });
-
-        it('disable dispatch interval', function () {
-            intentionStorage.dispatchInterval = 0;
+    describe('Close client', function () {
+        it ('close storage', function () {
+            intentionStorage.close();
         });
     });
 
-    describe('Disable stats at server', function () {
-        it ('should disable stats', function () {
-            intentionStorageServer.statsInterval = 0;
-        });
-
-        it('disable dispatch interval', function () {
-            intentionStorageServer.dispatchInterval = 0;
-        });
-
-        it('close Server', function () {
-            intentionStorageServer.closeServer();
+    describe('Close server', function () {
+        it('close storage', function () {
+            intentionStorageServer.close();
         });
     });
 });

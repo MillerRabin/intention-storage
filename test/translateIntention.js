@@ -82,7 +82,7 @@ describe('Translate intentions', function() {
                 output: 'None',
                 value: 'test',
                 onData: async (status, intention) => {
-                    if (status == 'accept') {
+                    if (status == 'accepted') {
                         if (intention.type != 'Intention') return;
                         iStorage = intention;
                         done();
@@ -105,7 +105,7 @@ describe('Translate intentions', function() {
                 input: 'TranslateTestIn',
                 output: 'TranslateTestOut',
                 onData: async (status, intention, value) => {
-                    if (status == 'accept') {
+                    if (status == 'accepted') {
                         sourceAccept = {
                             intention: intention,
                             value: value
@@ -130,7 +130,7 @@ describe('Translate intentions', function() {
                 input: 'TranslateTestOut',
                 output: 'TranslateTestIn',
                 onData: async (status, intention, value) => {
-                    if (status == 'accept') {
+                    if (status == 'accepted') {
                         targetAccept = {
                             intention: intention,
                             value: value

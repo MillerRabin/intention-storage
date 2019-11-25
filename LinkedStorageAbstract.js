@@ -1,16 +1,6 @@
 const NetworkIntention = require('./NetworkIntention.js');
 const Stream = require('./Stream.js');
 
-async function translate(storageLink, textIntention) {
-    if (textIntention.id == null) throw new Error('Intention id must exists');
-    const target =  storageLink._storage.intentions.byId(textIntention.id);
-    if (target != null) return target;
-    textIntention.storageLink = storageLink;
-    const intention = new NetworkIntention(textIntention);
-    await storageLink._storage.addNetworkIntention(intention);
-    return intention;
-}
-
 const gCommandTable = {
     '1:translate':  async function (storageLink, message) {
         if (message.intention == null) throw new Error('intention object expected');
@@ -24,35 +14,16 @@ const gCommandTable = {
         }
     },
     '1:message':  async function (storageLink, message) {
-        if (message.status == null) throw new Error('message status is expected');
-        const id = message.id;
-        if (id == null) throw new Error('Intention id must exists');
-        const intention = storageLink._storage.intentions.byId(id);
-        if (intention == null) throw { message: `The Intention is not found at the origin`, operation: 'delete', id: id };
-        if (message.intention == null) throw new Error('Intention expected');
-        const target = await translate(storageLink, message.intention);
-        if (target == null) throw new Error('Intention is not found');
-        if (intention.type == 'Intention') {
-            intention.send(message.status, target, message.data);
-        }
-    },
-    '1:error': async function (storageLink, message) {
-        const error = message.error;
-        if (error == null) {
-            console.log(message);
-            throw new Error('message error is expected');
-        }
-        const id = error.id;
-        const operation = error.operation;
-        if ((id == null) || (operation == null)) {
-            console.log(message);
-            return;
-        }
-
-        if (operation == 'delete') {
-            const intention = storageLink._storage.intentions.byId(id);
-            if (intention == null) return;
-            storageLink._storage.deleteIntention(intention);
+        try {
+            const mData = await parseMessage(storageLink, message);
+            const result = await mData.intention.send(message.status, mData.target, message.data);
+            await sendStatus({storageLink, status: 'OK', requestId: mData.result.requestId, result});
+        } catch (e) {
+            if (e instanceof Error) {
+                console.log(e);
+                return;
+            }
+            sendStatus({storageLink, status: 'FAILED', requestId: e.requestId, result: e});
         }
     },
     '1:ping': async function (storageLink) {
@@ -63,9 +34,118 @@ const gCommandTable = {
     },
     '1:pong': async function (storageLink) {
         storageLink.setAlive();
-    }
+    },
+    '1:requestStatus':  async function (storageLink, message) {
+       try {
+            NetworkIntention.updateRequestObject(message);
+       } catch (e) {
+           console.log(e);
+       }
+    },
+    '1:getAccepted':  async function (storageLink, message) {
+        try {
+            const mData = parseStatusMessage(storageLink, message);
+            const accepted = mData.intention.accepted;
+            await sendStatus({storageLink, status: 'OK', requestId: mData.result.requestId, result: accepted.toObject() });
+        } catch (e) {
+            parseError(storageLink, e);
+        }
+    },
+    '1:setAccepted':  async function (storageLink, message) {
+        try {
+            const mData = await parseMessage(storageLink, message);
+            mData.intention.accepted.set(mData.target);
+            await sendStatus({storageLink, status: 'OK', requestId: mData.result.requestId });
+        } catch (e) {
+            parseError(storageLink, e);
+        }
+    },
+    '1:deleteAccepted':  async function (storageLink, message) {
+        try {
+            const mData = parseStatusMessage(storageLink, message);
+            mData.target = storageLink._storage.intentions.byId(message.intention);
+            if (mData.target == null) throwObject(mData.result, 'Target intention is not found');
+            mData.intention.accepted.delete(message.data);
+            mData.intention.send('close', mData.target, message.data);
+            await sendStatus({storageLink, status: 'OK', requestId: mData.result.requestId });
+        } catch (e) {
+            parseError(storageLink, e);
+        }
+    },
 };
 
+function parseError(storageLink, e) {
+    if (e instanceof Error) {
+        console.log(e);
+        return;
+    }
+    sendStatus({storageLink, status: 'FAILED', requestId: e.requestId, result: e}).catch((e) => {});
+}
+
+async function translate(storageLink, textIntention) {
+    if (textIntention.id == null) throw new Error('Intention id must exists');
+    const target =  storageLink._storage.intentions.byId(textIntention.id);
+    if (target != null) return target;
+    textIntention.storageLink = storageLink;
+    const intention = new NetworkIntention(textIntention);
+    await storageLink._storage.addNetworkIntention(intention);
+    return intention;
+}
+
+async function sendStatus({storageLink, status, requestId, result}) {
+    if (requestId == null) throw new Error({ message: 'requestId is null', ...result});
+    await storageLink.sendObject({
+        command: 'requestStatus',
+        version: 1,
+        status,
+        requestId,
+        result
+    });
+}
+
+function throwObject(rObj, message) {
+    rObj.messages.push(message);
+    throw rObj;
+}
+
+function parseStatusMessage(storageLink, message) {
+    const rObj = { messages: [] };
+    rObj.requestId = message.requestId;
+    if (rObj.requestId == null) rObj.messages.push('requestId field must exists');
+    rObj.id = message.id;
+    if (rObj.id == null) throwObject(rObj, 'Intention id field must exists');
+    const intention = storageLink._storage.intentions.byId(rObj.id);
+    if (intention == null) {
+        rObj.operation = 'delete';
+        throwObject(rObj, 'The Intention is not found at the origin')
+    }
+    if (intention.type != 'Intention')
+        throwObject(rObj, 'Intention must be of type Intention');
+    return { message, intention, result: rObj };
+}
+
+
+async function parseMessage(storageLink, message) {
+    const pStatus = parseStatusMessage(storageLink, message);
+    if (message.status == null) pStatus.result.messages.push('message status field must exists');
+    if (message.intention == null)
+        throwObject(pStatus.result, 'intention field must exists');
+    pStatus.target = await translate(storageLink, message.intention);
+    if (pStatus.target == null)
+        throwObject(pStatus.result, 'Intention is not found');
+    return pStatus;
+}
+
+async function dispatchMessage(linkedStorage, data) {
+    try {
+        const dec = new TextDecoder();
+        const message = dec.decode(data);
+        const obj = JSON.parse(message);
+        await linkedStorage.dispatchMessage(obj);
+    } catch (e) {
+        console.log(e);
+    }
+}
 
 function send(channel, obj) {
     const maxLength = (channel.maxMessageSize == undefined) ? 65535 : channel.maxMessageSize;
@@ -94,7 +174,7 @@ module.exports = class LinkedStorageAbstract {
         const key = `${data.version}:${data.command}`;
         const func = gCommandTable[key];
         if (func == null) {
-            throw new Error('command is not supported');
+            throw new Error(`${key} command is not supported`);
         }
         return await func(this, data);
     }
@@ -115,19 +195,7 @@ module.exports = class LinkedStorageAbstract {
 
         const stream = Stream.from(value);
         stream.onmessage = (data) => {
-            let obj = null;
-            try {
-                const dec = new TextDecoder();
-                const message = dec.decode(data);
-                obj = JSON.parse(message);
-                this.dispatchMessage(obj).catch((e) => {
-                    if (obj.command != 'error')
-                        this.sendError(e)
-                });
-            } catch (e) {
-                if ((obj != null) && (obj.command != 'error'))
-                    this.sendError(e);
-            }
+            dispatchMessage(this, data);
         };
     }
 
@@ -142,19 +210,7 @@ module.exports = class LinkedStorageAbstract {
 
         const stream = Stream.from(value);
         stream.onmessage = (message) => {
-            let data = null;
-            try {
-                const dec = new TextDecoder();
-                const text = dec.decode(message);
-                data = JSON.parse(text);
-                this.dispatchMessage(data).catch((e) => {
-                    if (data.command != 'error')
-                        this.sendError(e)
-                });
-            } catch (e) {
-                if ((data != null) && (data.command != 'error'))
-                    this.sendError(e);
-            }
+            dispatchMessage(this, message);
         };
     }
 

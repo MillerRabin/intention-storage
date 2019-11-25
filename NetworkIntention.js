@@ -1,7 +1,19 @@
 const safe = require('./core/safe.js');
-const AcceptedIntentions = require('./AcceptedIntentions.js');
+const uuid = require('./core/uuid.js');
+const IntentionAbstract = require('./IntentionAbstract.js');
+const AcceptedIntentions = require("./AcceptedIntentions.js");
 
-module.exports = class NetworkIntention {
+const gRequestTransactions = {};
+
+function processError(networkIntention, error) {
+    const id = error.id;
+    const operation = error.operation;
+    if ((id == null) || (operation == null)) return;
+    if (operation == 'delete')
+        networkIntention.storageLink._storage.deleteIntention(networkIntention);
+}
+
+module.exports = class NetworkIntention extends IntentionAbstract {
     constructor ({
                      id,
                      createTime,
@@ -12,133 +24,124 @@ module.exports = class NetworkIntention {
                      output,
                      parameters = [],
                      value,
-                     storageLink
+                     storageLink,
+                     accepted
                  }) {
-        if (safe.isEmpty(title)) throw new Error('Network Intention must have a title');
-        if (safe.isEmpty(input)) throw new Error('Network Intention must have an input parameter');
-        if (safe.isEmpty(output)) throw new Error('Network Intention must have an output parameters');
-        if (safe.isEmpty(createTime)) throw new Error('Network Intention must have createTime');
+        super({ title, description, input, output, parameters, value, accepted });
         if (safe.isEmpty(id)) throw new Error('Network Intention must have an id');
-        if (!Array.isArray(parameters)) throw new Error('Parameters must be array');
-        if (input == output) throw new Error('Input and Output can`t be the same');
+        if (safe.isEmpty(createTime)) throw new Error('Network Intention must have createTime');
         if (storageLink == null) throw new Error('Storage link must be exists');
-
         this._createTime = createTime;
-        this._updateTime = new Date();
-        this._title = title;
-        this._description = description;
-        this._input = input;
-        this._output = output;
         this._origin = origin;
-        this._parameters = parameters;
         this._id = id;
-        this._value = value;
-        this._storage = null;
         this._storageLink = storageLink;
         this._storageLink.addIntention(this);
-        this._accepted = new AcceptedIntentions(this);
+        this.messageTimeout = 5000;
         this._type = 'NetworkIntention';
     }
-    getKey(reverse = false) {
-        return (!reverse) ? `${ this._input } - ${ this._output }` : `${ this._output } - ${ this._input }`;
+
+    static createRequestObject(networkIntention, intention, data) {
+        const requestId = uuid.generate();
+        const request = { intention, id: requestId };
+        request.promise = new Promise((resolve, reject) => {
+            request.resolve = resolve;
+            request.reject = reject;
+            request.timeout = setTimeout(() => {
+                reject({ message: `Request ${requestId} time is out`, data});
+                NetworkIntention.deleteRequestObject(requestId);
+            }, networkIntention.messageTimeout);
+        }).then((result) => {
+            NetworkIntention.deleteRequestObject(requestId);
+            return result;
+        }).catch((error) =>{
+            NetworkIntention.deleteRequestObject(requestId);
+            processError(networkIntention, error);
+            throw error;
+        });
+        gRequestTransactions[requestId] = request;
+        return request;
     }
-    get parameters() {
-        return this._parameters;
+
+    static deleteRequestObject(requestId, error) {
+        if (gRequestTransactions[requestId] == null) return;
+        clearTimeout(gRequestTransactions[requestId].timeout);
+        error = (error == null) ? new Error(`Request ${requestId} is deleted`) : error;
+        const req = gRequestTransactions[requestId];
+        delete gRequestTransactions[requestId];
+        req.reject(error);
     }
-    get input() {
-        return this._input;
+
+    static updateRequestObject(message) {
+        if (message.requestId == null) throw new Error('message requestId is null');
+        const request = gRequestTransactions[message.requestId];
+        if (message.status != 'FAILED') {
+            request.resolve(message.result);
+            return;
+        }
+        request.reject(message.result);
     }
-    get output() {
-        return this._output;
-    }
+
     get origin() {
         return this._origin;
     }
-    get description() {
-        return this._description;
-    }
-    get title() {
-        return this._title;
-    }
-    get updateTime() {
-        return this._updateTime;
-    }
+
     get createTime() {
         return this._createTime;
     }
+
     get id() {
         return this._id;
     }
-    get value() {
-        return this._value;
-    }
+
     get storageLink() {
         return this._storageLink;
     }
 
-    get type() {
-        return this._type;
-    }
-
-    get storage() {
-        return this._storage;
-    }
-
-    async send(status, intention, data) {
+    send(status, intention, data) {
         if (intention.toObject == null) throw new Error('Intention must not be null');
+        const request = NetworkIntention.createRequestObject(this, intention);
         try {
-            return await this._storageLink.sendObject({
+            this._storageLink.sendObject({
                 command: 'message',
                 version: 1,
-                status: status,
+                status,
                 id: this.id,
                 intention: intention.toObject(),
-                data: data
+                data: data,
+                requestId: request.id
             });
+            return request.promise;
         } catch (e) {
-            if ((status != 'error') && (status != 'close')) {
-                console.log(e);
-                return await this._storageLink.sendObject({
-                    command: 'message',
-                    version: 1,
-                    status: 'error',
-                    id: this.id,
-                    intention: intention.toObject(),
-                    data: e
-                });
-            }
+            NetworkIntention.deleteRequestObject(request.id, e);
+            return request.promise;
         }
     }
-    async sendError(error) {
-        return await this.send('error', this, error);
+
+    async sendCommand(intention, command, data) {
+        const request = module.exports.createRequestObject(this, intention, data);
+        const iObj = (intention.toObject == null) ? intention : intention.toObject();
+        try {
+            this._storageLink.sendObject({
+                command: command,
+                version: 1,
+                id: this.id,
+                intention: iObj,
+                data: data,
+                requestId: request.id
+            });
+            return request.promise;
+        } catch (e) {
+            NetworkIntention.deleteRequestObject(request.id, e);
+            return request.promise;
+        }
     }
 
-    async accept(intention) {
-        return await this.send('accept', intention);
-    }
-
-    async close(intention, message) {
-        return await this.send('close', intention, message);
-    }
-
-    get accepted() {
-        return this._accepted;
-    }
 
     toObject() {
         return {
-            id: this._id,
+            ...super.toObject(),
             createTime: this.createTime,
-            updateTime: this.updateTime,
-            key: this.getKey(),
-            input: this._input,
-            output: this._output,
-            title: this._title,
-            description: this._description,
-            value: this._value,
-            type: this._type,
-            origin: this._origin,
-            parameters: this._parameters
+            origin: this._origin
         }
     }
 };
