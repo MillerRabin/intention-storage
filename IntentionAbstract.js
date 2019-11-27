@@ -31,6 +31,7 @@ module.exports = class IntentionAbstract {
     getKey(reverse = false) {
         return (!reverse) ? `${ this._input } - ${ this._output }` : `${ this._output } - ${ this._input }`;
     }
+
     get parameters() {
         return this._parameters;
     }

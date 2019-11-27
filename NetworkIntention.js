@@ -1,7 +1,6 @@
 const safe = require('./core/safe.js');
 const uuid = require('./core/uuid.js');
 const IntentionAbstract = require('./IntentionAbstract.js');
-const AcceptedIntentions = require("./AcceptedIntentions.js");
 
 const gRequestTransactions = {};
 

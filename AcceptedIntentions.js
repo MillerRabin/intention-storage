@@ -81,7 +81,7 @@ module.exports = class AcceptedIntentions {
                     id: intention.id,
                     origin: intention.origin,
                     title: intention.title,
-                    key: intention.key
+                    key: (intention.key != null) ? key : intention.getKey()
                 }]);
         }
         return res;
