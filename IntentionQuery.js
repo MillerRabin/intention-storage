@@ -7,7 +7,7 @@ function createQueryIntention(query) {
         input: 'None',
         output: 'StorageStats',
         onData: async function onData(status) {
-            if (status == 'accept') return query._iObj;
+            if (status == 'accepted') return query._iObj;
         }
     });
 }
