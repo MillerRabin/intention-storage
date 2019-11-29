@@ -54,7 +54,7 @@ describe('Linked Storages', function() {
 
     describe('Linked storage by webaddress', function() {
         it('add linked storage by webaddress', function() {
-            const res = intentionStorage.addLink([{ type: 'WebAddress', value: 'localhost' }]);
+            const res = intentionStorage.addLink([{ name: 'WebAddress', value: 'localhost' }]);
             const linked = intentionStorage.links.get('localhost:10010');
             linked.waitForServerInterval = 500;
             assert.strictEqual(linked.key, 'localhost:10010');
@@ -72,7 +72,7 @@ describe('Linked Storages', function() {
         });
 
         it('delete linked storage by webaddress', function() {
-            intentionStorage.deleteLink([{ type: 'WebAddress', value: 'localhost' }]);
+            intentionStorage.deleteLink([{ name: 'WebAddress', value: 'localhost' }]);
             const linked = intentionStorage.links.get('localhost');
             assert.strictEqual(linked, undefined);
         });
@@ -80,7 +80,7 @@ describe('Linked Storages', function() {
 
     describe('Linked storage by ipaddress and port', function() {
         it('add linked storage by ipaddress', function() {
-            const res = intentionStorage.addLink([{ type: 'IPAddress', value: '192.168.1.5' }, { type: 'IPPort', value: '1515'}]);
+            const res = intentionStorage.addLink([{ name: 'IPAddress', value: '192.168.1.5' }, { name: 'IPPort', value: '1515'}]);
             const linked = intentionStorage.links.get('192.168.1.5:1515');
             linked.waitForServerInterval = 500;
             assert.strictEqual(linked.key, '192.168.1.5:1515');
@@ -89,7 +89,7 @@ describe('Linked Storages', function() {
 
         it('add linked storage with same parameters must fails', function() {
             try {
-                intentionStorage.addLink([{ type: 'IPAddress', value: '192.168.1.5' }, { type: 'IPPort', value: '1515'}]);
+                intentionStorage.addLink([{ name: 'IPAddress', value: '192.168.1.5' }, { name: 'IPPort', value: '1515'}]);
                 assert.fail('Storage must not created');
             } catch (e) {
                 assert.strictEqual(e.detail.link.key, '192.168.1.5:1515');
@@ -108,7 +108,7 @@ describe('Linked Storages', function() {
         });
 
         it('delete linked storage by ipaddress and port', function() {
-            intentionStorage.deleteLink([{ type: 'IPAddress', value: '192.168.1.5' }, { type: 'IPPort', value: '1515'}]);
+            intentionStorage.deleteLink([{ name: 'IPAddress', value: '192.168.1.5' }, { name: 'IPPort', value: '1515'}]);
             const linked = intentionStorage.links.get('localhost');
             assert.strictEqual(linked, undefined);
         });

@@ -58,7 +58,7 @@ function getParameter(params, type) {
     if (!Array.isArray(params)) return params;
     const tp = (Array.isArray(type)) ? type : [type];
     const par = params.filter((p) => {
-        const pt = p.type.toLowerCase();
+        const pt = p.name.toLowerCase();
         const cs = tp.find((t) => {
             const lt = t.toLowerCase();
             return pt == lt;

@@ -54,7 +54,7 @@ describe('Translate intentions', function() {
         });
 
         it('add linked storage by parameters', function() {
-            const res = intentionStorage.addLink([{ type: 'WebAddress', value: 'localhost' }]);
+            const res = intentionStorage.addLink([{ name: 'WebAddress', value: 'localhost' }]);
             const linked = intentionStorage.links.get('localhost:10010');
             linked.waitForServerInterval = 500;
             assert.strictEqual(linked.key, 'localhost:10010');
@@ -201,7 +201,7 @@ describe('Translate intentions', function() {
         });
 
         it('delete linked storage by parameters', function() {
-            intentionStorage.deleteLink([{ type: 'WebAddress', value: 'localhost' }]);
+            intentionStorage.deleteLink([{ name: 'WebAddress', value: 'localhost' }]);
             const linked = intentionStorage.links.get('localhost');
             assert.strictEqual(linked, undefined);
         });
