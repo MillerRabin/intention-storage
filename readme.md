@@ -1,17 +1,17 @@
 # Intention Storage
-In real life we don't communicate with each others by calling theirs methods.
-Instead of that we use intentions and entities. 
+In real life we don't communicate with each others by calling theirs methods. 
+Instead of that we use intentions and entities.
 Intention network works similar way but for devices.
 When the device need to get something or give something it creates an Intention and broadcasts it.
-When intention with counter needs is found, the devices starts communicate each other.
+When intention with counter needs is found, the devices starts to communicate each other.
 Intention can be broadcasted not only through internet, but with sound signals or gestures.
 As example you can call drone by hand gesture and it will be recognised as intention.
 
-# Live demo
+## Live demo
 The Intention Network debugging console can be found at https://intention.tech
 
-# Manuals
-##Creating a NodeJS application
+## Manuals
+###Creating a NodeJS application
 You need a NodeJS https://nodejs.org
 
 Create a project in your favorite IDE with one file main.js
@@ -47,7 +47,7 @@ You will move to the Storage tab and see the record
 
 Now you can create intention in your project and console will see on the Intentions tab https://intention.tech/en/browser.html
 
-## Sending data between devices
+### Sending data between devices
 Let's imagine what all devices in house has it's own name. 
 There's a robot assistant, who is able to carry out your orders. His name is Victor. 
 Also, there is a fridge in the house kitchen. His name is Good Boatswain. He keeps cold lemonade.
@@ -175,7 +175,7 @@ node victor.js
 You can see the data about lemonade in the Victors`s console
 Now when Victor creates intention to get lemonade, he knows where to find it.
 
-##Using sound recognition in your projects
+###Using sound recognition in your projects
 You can use the console https://intention.tech to provide voice recognition in your projects
 
 Open the tab https://intention.tech/en/browser.html"  
