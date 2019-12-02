@@ -54,7 +54,7 @@ Also, there is a fridge in the house kitchen. His name is Good Boatswain. He kee
 And you ask Victor "Bring me lemonade".
 
 Let's Express it in the code.
-## Creating an application</h3>
+## Creating an application
 
 Create a project in your favorite IDE with two empty files victor.js и fridge.js
 Run npm init in project directory to create package.json
