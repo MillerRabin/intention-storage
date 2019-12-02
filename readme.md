@@ -11,7 +11,7 @@ As example you can call drone by hand gesture and it will be recognised as inten
 The Intention Network debugging console can be found at https://intention.tech
 
 # Manuals
-##Creating a NodeJS application
+###Creating a NodeJS application
 You need a NodeJS https://nodejs.org
 
 Create a project in your favorite IDE with one file main.js
@@ -178,16 +178,16 @@ Now when Victor creates intention to get lemonade, he knows where to find it.
 ##Using sound recognition in your projects
 You can use the console https://intention.tech to provide voice recognition in your projects
 
-    Open the tab https://intention.tech/en/browser.html"
-    Find the intention "Can receive raw user input from microphone or keyboard" with key HTMLTextAreaElement - Recognition.
-    Output key Recognition means, what the intention gives voice input as text
-    HTMLTextAreaElement - means, what the link to the textarea element can be present for receiving keyboard input. But it is not necessary.
-    That intention was implemented for transferring data in console internally. But we can use it in external projects easy.
-    To connect with that intention we need to create counter intention with opposite key
-    Take template main.js created in Creating application
-    Add the following code to the end of main.js
+Open the tab https://intention.tech/en/browser.html"  
+Find the intention "Can receive raw user input from microphone or keyboard" with key HTMLTextAreaElement - Recognition.  
+Output key Recognition means, what the intention gives voice input as text  
+HTMLTextAreaElement - means, what the link to the textarea element can be present for receiving keyboard input. But it is not necessary.  
+That intention was implemented for transferring data in console internally. But we can use it in external projects easy.  
+To connect with that intention we need to create counter intention with opposite key.  
+Take template main.js created in [Creating a NodeJS application](#creating-a-nodejs-application)  
+Add the following code to the end of main.js  
 
-main.js
+**main.js**
 
 ```javascript
 intentionStorage.createIntention({
@@ -202,10 +202,8 @@ intentionStorage.createIntention({
     }
 });
 ```
-
 Launch the project
-
-```bash
+```Bash
 node main.js
 ```
 
