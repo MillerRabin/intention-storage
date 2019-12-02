@@ -176,7 +176,7 @@ node victor.js
 You can see the data about lemonade in the Victors`s console
 Now when Victor creates intention to get lemonade, he knows where to find it.
 
-##Using sound recognition in your projects
+## Using sound recognition in your projects
 You can use the console https://intention.tech to provide voice recognition in your projects
 
 Open the tab https://intention.tech/en/browser.html"  
