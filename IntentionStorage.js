@@ -265,10 +265,10 @@ module.exports = class IntentionStorage {
         return this._storageServer;
     }
 
-    async createServer({address, port = 10010, options, useSocket = true, useWebRTC = false }) {
+    async createServer({address, port = 10010, sslCert, useSocket = true, useWebRTC = false }) {
         const rObj = {};
         if (useSocket) {
-            this._storageServer = new LinkedStorageServer({ storage: this, address: address, port, options });
+            this._storageServer = new LinkedStorageServer({ storage: this, address: address, port, sslCert });
             rObj.socketServer = this._storageServer;
         }
 

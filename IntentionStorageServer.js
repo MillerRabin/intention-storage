@@ -20,13 +20,13 @@ function createSecureServer(storage, port, cert) {
 }
 
 module.exports = class IntentionStorageServer extends LinkedStorageAbstract {
-    constructor({ storage, address, port = 10010, options = {}}) {
+    constructor({ storage, address, port = 10010, sslCert}) {
         super({ storage, port, handling: 'manual' });
         if (address == null) throw new Error('address is not defined');
-        if (options.cert == null)
+        if (sslCert == null)
             createSimpleServer(this, port);
         else
-            createSecureServer(this, port, options.cert);
+            createSecureServer(this, port, sslCert);
 
         this._listenSocket.on('connection', (ws, req) => {
             const link = this._storage.addStorage({ storage: this._storage, socket: ws, request: req, handling: 'auto' });
@@ -39,6 +39,7 @@ module.exports = class IntentionStorageServer extends LinkedStorageAbstract {
         });
         this._type = 'IntentionStorageServer';
         this._address = address;
+        this._port = port;
     }
 
     close() {
@@ -49,10 +50,15 @@ module.exports = class IntentionStorageServer extends LinkedStorageAbstract {
         return `${this._schema}://${this._address}:${this._port}`;
     }
 
+    get port() {
+        return this._port;
+    }
+
     toObject() {
         return {
             type: this._type,
-            address: this.key
+            address: this.key,
+            port: this._port
         }
     }
 };

@@ -53,8 +53,9 @@ describe('Intention results', function () {
             petya.name = 'Петя';
         });
 
-        it('Create Server', function () {
-            petya.createServer({ address: 'localhost', port: 10011 });
+        it('Create Server', async function () {
+            const server = await petya.createServer({ address: 'localhost', port: 10011 });
+            assert.strictEqual(server.socketServer.port, 10011);
         });
 
         it('should enable stats', function () {
@@ -91,8 +92,9 @@ describe('Intention results', function () {
             kolya.name = 'Коля';
         });
 
-        it('Create Server', function () {
-            kolya.createServer({ address: 'localhost', port: 10012 });
+        it('Create Server', async function () {
+            const server = await kolya.createServer({ address: 'localhost', port: 10012 });
+            assert.strictEqual(server.socketServer.port, 10012);
         });
 
 

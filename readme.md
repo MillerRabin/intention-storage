@@ -24,13 +24,28 @@ Install intention-storage package
 ```bash
 npm i intention-storage
 ```
-Add the following code into main.js
+Add the following code into main.js to create simple server
 ```javascript
 const { IntentionStorage } = require('intention-storage');
 const intentionStorage = new IntentionStorage();
 const storageServer = intentionStorage.createServer({ address: 'localhost' });
-console.log(`Server listens on port ${storageServer.port}`);
+console.log(`Server listens on port ${storageServer.socketServer.port}`);
 ```
+
+or you can use ssl certificate to create secure server
+```javascript
+const { IntentionStorage } = require('intention-storage');
+const intentionStorage = new IntentionStorage();
+const storageServer = intentionStorage.createServer({ 
+    address: 'your.server.domain.name', 
+    sslCert: { 
+        cert: 'path to certificate', 
+        key: 'path to certificate key'
+    } 
+});
+console.log(`Server listens on port ${storageServer.socketServer.port}`);
+```
+
 Run project for execution
 ```bash
 node main.js
@@ -79,10 +94,10 @@ const storageServer = intentionStorage.createServer({ address: 'localhost' });
 ```
 
 Now we will create intention storage for Victor and ask him for lemonade. Victor doesn't have a lemonade, that's why he creates the intention.  
-Intention has input and output keys. It can be any strings. For example: "Lemonade - ThankYou".
-Then input key is "Lemonade", and output key is our gratitude "ThankYou".
+Intention has input and output keys. It can be any strings. For example: "Lemonade - Thankyou".
+Then input key is "Lemonade", and output key is our gratitude "Thankyou".
 When intention is created, the search of counter intention will starts.
-Counter intention is a intention with opposite order of input and output keys "ThankYou - Lemonade"
+Counter intention is a intention with opposite order of input and output keys "Thankyou - Lemonade"
 First will be search in the device`s local intention storage. If it has no results, then intention will be broadcasts to known storages.
 In our case it will be the fridge.
 
@@ -99,7 +114,7 @@ intentionStorage.createIntention({
         en: 'Need lemonade'
     },
     input: 'Lemonade',
-    output: 'ThankYou',
+    output: 'thankyou',
     onData: onData
 });
         
@@ -118,7 +133,7 @@ intentionStorage.createIntention({
     title: {
         en: 'Has lemonade',
     },
-    input: 'ThankYou',
+    input: 'thankyou',
     output: 'Lemonade',
     onData: onData
 });
@@ -166,7 +181,7 @@ async function onData (status, intention, value) {
     }
 }   
 ```
-Now all device with intention "Lemonade - ThankYou", will receive information about lemonade from fridge Launch the code
+Now all device with intention "Lemonade - thankyou", will receive information about lemonade from fridge Launch the code
     
 ```Bash
 node freezer.js
