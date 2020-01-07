@@ -55,7 +55,7 @@ function dispatchCycle(storage) {
 }
 
 function getParameter(params, type) {
-    if (!Array.isArray(params)) return params;
+    if (!Array.isArray(params)) throw new Error('Parameters must be array of enties');
     const tp = (Array.isArray(type)) ? type : [type];
     const par = params.filter((p) => {
         const pt = p.name.toLowerCase();
@@ -120,10 +120,10 @@ module.exports = class IntentionStorage {
         this._query.updateStorage(link, 'deleted');
     }
 
-    addLink(origin) {
-        const address = getParameter(origin, ['WebAddress', 'IPAddress']);
-        if (address == null) throw new Error('WebAddress or IPAddress parameter expected');
-        let port = getParameter(origin, ['IPPort']);
+    addLink(parameters) {
+        const address = getParameter(parameters, ['WebAddress', 'IPAddress']);
+        if (address == null) throw new Error('WebAddress or IPAddress entities expected');
+        let port = getParameter(parameters, ['IPPort']);
         port = (port == null) ? undefined : port;
         const keys = LinkedStorageClient.getKeys(address, port);
         const tLink = hasStorage(this.links, keys);
