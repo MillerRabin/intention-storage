@@ -43,7 +43,7 @@ function renewCancelTimeout(msgData) {
 }
 
 function checkMessage(msgData) {
-    let oldOffset;
+    let oldOffset = null;
     for (const offset of msgData.offsets) {
         if ((oldOffset != null) && (oldOffset[1] != offset[0])) return false;
         if (offset[1] == msgData.length) {
@@ -69,7 +69,7 @@ function addOffset(msg, start, end) {
     msg.offsets.push([start, end]);
     msg.offsets.sort((a, b) => {
        const aStart = a[0];
-       const bStart = a[1];
+       const bStart = b[1];
        if (aStart < bStart) return -1;
        if (aStart > bStart) return 1;
        return 0;
