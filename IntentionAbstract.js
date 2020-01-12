@@ -63,6 +63,7 @@ module.exports = class IntentionAbstract {
 
     toObject() {
         return {
+            id: this._id,
             updateTime: this.updateTime,
             key: this.getKey(),
             input: this._input,

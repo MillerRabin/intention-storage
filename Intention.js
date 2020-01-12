@@ -110,7 +110,6 @@ module.exports = class Intention extends IntentionAbstract {
     toObject() {
         return {
             ...super.toObject(),
-            id: this._id,
             createTime: this.createTime,
             origin: this.origin
         };
