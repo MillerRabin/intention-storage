@@ -117,7 +117,7 @@ module.exports = class NetworkIntention extends IntentionAbstract {
     }
 
     async sendCommand(intention, command, data) {
-        const request = module.exports.createRequestObject(this, intention, data);
+        const request = NetworkIntention.createRequestObject(this, intention, data);
         const iObj = (intention.toObject == null) ? intention : intention.toObject();
         try {
             this._storageLink.sendObject({
