@@ -103,6 +103,18 @@ function getMessage(stream, id, buffer, length, start, end) {
     return msg;
 }
 
+function isBlob(message) {
+    try {
+        return message instanceof Blob;
+    } catch (e) {
+        return false;
+    }
+}
+
+function getArrayFromBlob(blob) {
+    return blob.arrayBuffer();
+}
+
 function parseStructure(stream, message) {
     const data = new Uint8Array(message);
     const idA = new Uint32Array(data.buffer, 0, 4);
@@ -114,7 +126,6 @@ function parseStructure(stream, message) {
     const msg = getMessage(stream, id, buffer, length, start, end);
     checkMessage(msg);
 }
-
 module.exports = class Stream {
     constructor(data, chunkSize) {
         this._data = data;
@@ -144,8 +155,10 @@ module.exports = class Stream {
     }
     static from(channel) {
         const stream = new Stream(null, channel.maxMessageSize);
-        channel.onmessage = function (event) {
-            const data = event.data;
+        channel.onmessage = async function (event) {
+            let data = event.data;
+            if (isBlob(data))
+                data = await getArrayFromBlob(data);
             parseStructure(stream, data);
         };
         return stream;
