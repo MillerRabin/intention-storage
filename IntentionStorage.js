@@ -180,7 +180,7 @@ module.exports = class IntentionStorage {
         return intention;
     }
 
-    async addNetworkIntention(intention) {
+    addNetworkIntention(intention) {
         if (!(intention instanceof NetworkIntention)) throw new Error('intention must be instance of NetworkIntention');
         this._add(intention);
     }

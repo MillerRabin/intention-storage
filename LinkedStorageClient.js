@@ -60,7 +60,7 @@ async function selectSchemaSocket(storageLink) {
 }
 
 async function connectSocket(storageLink) {
-    let socket = null;
+    let socket;
     if (storageLink._schema == null)
         socket = await selectSchemaSocket(storageLink);
     else
@@ -163,13 +163,22 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
         })
     }
 
-    waitConnection() {
+    waitConnection(timeout) {
         if (this._waitP != null) return this._waitP;
-        let waitP = new Promise((resolve) => {
+        let waitP = new Promise((resolve, reject) => {
             const resolvePromise = () => {
                 resolve(this);
+                clearTimeout(rejectTimeout);
                 this._waitP = null;
             };
+
+            let rejectTimeout = null;
+            if (timeout != null)
+                rejectTimeout = setTimeout(() => {
+                    clearTimeout(this._waitForServerTimeout);
+                    this._waitP = null;
+                    return reject(new Error('The connection time is out'));
+                }, timeout);
 
             const wait = async () => {
                 if ((this.disposed) || (this.socket != null)) {

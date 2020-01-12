@@ -6,15 +6,6 @@ function update(intention, status) {
     intention._storage._query.updateIntention(intention, status);
 }
 
-function deleteAccepted(local, network) {
-    local.accepted.delete(network);
-    network.accepted.delete(local);
-}
-
-function deleteAccepting(local, network) {
-    local.accepting.delete(network.id);
-}
-
 
 async function accept(local, network) {
     if (local.accepted.isAccepting(network)) return;
@@ -47,6 +38,7 @@ async function accept(local, network) {
         local.accepted.set(network);
         network.accepted.set(local);
     } catch (e) {
+        console.log(e);
         local.accepted.delete(network);
         network.accepted.delete(local);
     } finally {

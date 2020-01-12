@@ -79,16 +79,38 @@ function parseError(storageLink, e) {
         console.log(e);
         return;
     }
-    sendStatus({storageLink, status: 'FAILED', requestId: e.requestId, result: e}).catch((e) => {});
+    sendStatus({storageLink, status: 'FAILED', requestId: e.requestId, result: e}).catch(() => {});
+}
+
+function parseUrl(url) {
+    const reg = /(.+):\/\/(.+):(.+)/;
+    const match = reg.exec(url);
+    if (match == null) throw new Error('Wrong url');
+    return { scheme: match[1], origin: match[2], port: match[3] };
+}
+
+async function getStorageLink(textIntention, storageLink) {
+    const tUrl = textIntention.origin;
+    const sUrl = storageLink.key;
+    if ((storageLink.socket == null) || (tUrl == null) || (tUrl == sUrl)) return storageLink;
+    const params = parseUrl(tUrl);
+    const link = storageLink._storage.addStorage({ ...params, handling: 'auto' });
+    try {
+        await link.waitConnection(10000);
+    } catch (e) {
+        storageLink._storage.deleteStorage(link);
+        throw new Error(`Connection with ${tUrl} cat't be established`);
+    }
+
 }
 
 async function translate(storageLink, textIntention) {
     if (textIntention.id == null) throw new Error('Intention id must exists');
     const target =  storageLink._storage.intentions.byId(textIntention.id);
     if (target != null) return target;
-    textIntention.storageLink = storageLink;
+    textIntention.storageLink = await getStorageLink(textIntention, storageLink);
     const intention = new NetworkIntention(textIntention);
-    await storageLink._storage.addNetworkIntention(intention);
+    storageLink._storage.addNetworkIntention(intention);
     return intention;
 }
 
