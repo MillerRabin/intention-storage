@@ -1,18 +1,29 @@
 # Intention Storage
-In real life we don't communicate with each others by calling theirs methods. 
-Instead of that we use intentions and entities.
-Intention network works similar way but for devices.
-When the device need to get something or give something it creates an Intention and broadcasts it.
-When intention with counter needs is found, the devices starts to communicate each other.
-Intention can be broadcasted not only through internet, but with sound signals or gestures.
-As example you can call drone by hand gesture and it will be recognised as intention.
+This is a core package for Intention Network. It gives ability for the device
+to be a member of such networks.
+It`s include code to accept intentions, searching for counter intentions and translate
+intentions to another storages. 
 
+##What is Intention Network
+When the device needs to get something or give something, that device generates an intention and 
+broadcasts it through known storages to searching an intention for counter needs.
+When that intention is found, then the devices starts to communicate with each other.
+The device can generate a lot of intentions and get answers from many devices.
+They forms an intention network. This makes it possible for simple devices to do
+a complex things together.
+
+##What is Intention
+Generally, intention is a JSON structure. It can be generated from device to begin 
+communication and broadcasted to network. The gestures and speech can also generate 
+the intentions. It gives ability to user interact with intentions in most 
+friendly ways.  
+ 
 # Live demo
 The Intention Network debugging console can be found at https://intention.tech
 
-## Manuals
+## Recipes
 
-## Creating a NodeJS application
+### Creating a NodeJS application
 You need a NodeJS https://nodejs.org
 
 Create a project in your favorite IDE with one file main.js  
