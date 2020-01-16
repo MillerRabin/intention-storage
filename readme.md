@@ -4,7 +4,28 @@ to be a member of such networks.
 It`s include code to accept intentions, searching for counter intentions and translate
 intentions to another storages. 
 
-##What is Intention Network
+# What is Intention Network
+With Intention Network you can build communication systems between you 
+and your devices. It can be your smart house or field communication system.
++ **No proprietary devices** There is no need to buy devices with specific vendor interfaces,
+every common electronic device can be used. Simple devices with simple controllers can do
+complex things together.
++ **Fully autonomous** There is no need to be connected to the internet, intention network 
+can works in full autonomous mode.
++ **High scalability** Not only a house, but yard, workshop, robo-cafe, robo-market,
+everything can work fully autonomous.
++ **Full area control** Then you use online assistance, you control nothing. 
+You just send a commands to the cloud from station. And the cloud will decide
+how it will be done. The cloud controls rules, not you. With intention network you
+can communicate with your device directly. The cloud is not necessary.
++ **Not a toy** The smart house systems which depending on internet connectivity
+is nothing more than expensive toys. When a real fire or robbery starts that systems 
+becomes useless first. With intention network you can build a system that will resists
+a real threats.
++ **Fail safe** Every life important nodes and communications lines 
+can be easily doubled, tripled and more without synchronisation problems. 
+ 
+#How Intention Network works
 When the device needs to get something or give something, that device generates an intention and 
 broadcasts it through known storages to searching an intention for counter needs.
 When that intention is found, then the devices starts to communicate with each other.
