@@ -44,4 +44,5 @@ Enable your microphone for the console.
 Then speak into the microphone `Add storage localhost`
 You will move to the Storage tab and see the record `localhost:10010 is online`  
 
-Now you can create intention in your project and console will see on the Intentions tab https://intention.tech/en/browser.html
+Now you can create intention in your project and console will see it on 
+the Intentions tab https://intention.tech/en/browser.html
