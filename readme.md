@@ -4,7 +4,7 @@ to be a member of such networks.
 It`s include code to accept intentions, searching for counter intentions and translate
 intentions to another storages. 
 
-# What is Intention Network
+## What is Intention Network
 With Intention Network you can build communication systems between you 
 and your devices. It can be your smart house or field communication system.
 + **No proprietary devices** There is no need to buy devices with specific vendor interfaces,
@@ -25,8 +25,10 @@ a real threats.
 + **Fail safe** Every life important nodes and communications lines 
 can be easily doubled, tripled and more without synchronisation problems. 
  
-# Live demo
+## Live demo
 The Intention Network debugging console can be found at https://intention.tech
 
 ## Recipes
-[Creating a NodeJS application](docs/recipes/creating-nodejs-application.md)
++ [Creating a NodeJS application](docs/recipes/creating-nodejs-application.md)
++ [Sending data between devices](docs/recipes/sending-data-between-devices.md)
++ [Using sound recognition](docs/recipes/using-sound-recognition.md)
