@@ -10,10 +10,10 @@ and your devices. It can be your smart house or field communication system.
 + **No proprietary devices** There is no need to buy devices with specific vendor interfaces,
 every common electronic device can be used. Simple devices with simple controllers can do
 complex things together.
-+ **Fully autonomous** There is no need to be connected to the internet, intention network 
++ **Full autonomous** There is no need to be connected to the internet, intention network 
 can works in full autonomous mode.
 + **High scalability** Not only a house, but yard, workshop, robo-cafe, robo-market,
-everything can work fully autonomous.
+everything can work full autonomous.
 + **Full area control** Then you use online assistance, you control nothing. 
 You just send a commands to the cloud from station. And the cloud will decide
 how it will be done. The cloud controls rules, not you. With intention network you
