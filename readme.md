@@ -28,7 +28,12 @@ can be easily doubled, tripled and more without synchronisation problems.
 ## Live demo
 The Intention Network debugging console can be found at https://intention.tech
 
+##How it works
+ + [Basic concepts](docs/basic-concepts.md)
+
 ## Recipes
 + [Creating a NodeJS application](docs/recipes/creating-nodejs-application.md)
 + [Sending a data between devices](docs/recipes/sending-data-between-devices.md)
 + [Using sound recognition](docs/recipes/using-sound-recognition.md)
+
+License
