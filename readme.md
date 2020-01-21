@@ -36,8 +36,8 @@ This is a communication mechanism between devices that gives ability to the devi
  
 The essence of the network of intentions is best described by the following example.  
 Many of us have our own smartphones and laptops. Every modern smartphone and laptops has camera and microphone.
-So its can "see" and "hear". 
-**The kettle.** The kettle do not have any camera or microphone. 
+So its can "see" and "hear".   
+The kettle do not have any camera or microphone. 
 It connected to the power line through smart socket. 
 You can ask your phone to boil a water and it asks your kettle to do that.
 Nothing special all smart sockets do this.
