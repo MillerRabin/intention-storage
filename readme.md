@@ -59,7 +59,10 @@ Let`s do the situation even more realistic. There is no water in pipe.
 * The intention **I need the water** will not closed and will be translated through known storages.
 As example it can be accepted by water service.
  
- 
+The typical smart house system can have hundreds of that small devices. Every of it can generate own intentions.     
+The simple things in your home can produce very complex scenarios with huge amount of possible results.  
+But all of them can be resolved through **Intention Network**
+
 ## Live demo
 The Intention Network debugging console can be found at https://intention.tech
 
