@@ -32,8 +32,7 @@ system to every device?
 And this is the area where Intention Network works.
 
 ## What is the Intention Network?
-This is a communication mechanism between devices that gives ability to  
-the devices to do a complex things together. 
+This is a communication mechanism between devices that gives ability to the devices to do a complex things together. 
  
 The essence of the network of intentions is best described by the following example.
 Many of us have our own smartphones and laptops. Every modern smartphone and laptops has camera and microphone.
