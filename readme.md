@@ -6,7 +6,7 @@ intentions to another storages.
 
 ## Instead of Introduction
 Today there is no problem to buy a smart socket or hub controlled by wi-fi connections.
-So you can turn it on remotely or create a schedule to these actions.
+So you can turn it on or off remotely and create a schedule for these actions.
 
 Today we have voice or gestures recognition systems. Proprietary, 
 open source, cloud and embedded.
