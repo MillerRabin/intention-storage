@@ -46,7 +46,7 @@ Let connect the kettle to a water pipe through a smart wi-fi valve - second devi
 Install a smart water measurer to control amount of water in your kettle - third device.  
 How to manage the chain of three devices? It`s not a problem for Intention Network.
 * The smartphone creates the Intention **My owner wants a hot water"**
-* The kettler answers to the intention and create a new **How about the water?**
+* The kettler answers to the intention and create a new intention **How about the water?**
 * The measurer answers to the intention and founds that no more water in the kettle.
 It creates a new **I need the water**.
 * The valve answers to the intentions and opens the water. 
