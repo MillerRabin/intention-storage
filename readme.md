@@ -4,26 +4,62 @@ to be a member of such networks.
 It`s include code to accept intentions, searching for counter intentions and translate
 intentions to another storages. 
 
-## What is Intention Network
-With Intention Network you can build communication systems between you 
-and your devices. It can be your smart house or field communication system.
-+ **No proprietary devices** There is no need to buy devices with specific vendor interfaces,
-every common electronic device can be used. Simple devices with simple controllers can do
-complex things together.
-+ **Full autonomous** There is no need to be connected to the internet, intention network 
-can works in full autonomous mode.
-+ **High scalability** Not only a house, but yard, workshop, robo-cafe, robo-market,
-everything can work full autonomous.
-+ **Full area control** Then you use online assistance, you control nothing. 
-You just send a commands to the cloud from station. And the cloud will decide
-how it will be done. The cloud controls rules, not you. With intention network you
-can communicate with your device directly. The cloud is not necessary.
-+ **Not a toy** The smart house systems which depending on internet connectivity
-is nothing more than expensive toys. When a real fire or robbery starts that systems 
-becomes useless first. With intention network you can build a system that will resists
-a real threats.
-+ **Fail safe** Every life important nodes and communications lines 
-can be easily doubled, tripled and more without synchronisation problems. 
+## Instead of Introduction
+Today there is no problem to buy a smart socket or hub controlled by wi-fi connections.
+So you can turn it of or on remotely or create a schedule to these actions.
+
+Today we have voice or gestures recognition systems. Proprietary, 
+open source, cloud and embedded.
+
+We have a devices for cleaning, building, washing, security and more.
+We want them to do works in our homes, yards, streets.
+
+The main question is **"How can I manage all this?"**
+
+When I creating a smart house system what choose do I have?
+Regardless of whether I use cloud system or built my own local ecosystem,
+I faced with same problem - there is too many of devices to support. 
+If you want something more complex than just turning the device on by 
+scheduler, you will find that communication between device can be 
+very complex.
+But often I catched myself that I do not want anymore to search 
+the sequence of buttons I must push. I just want to speak with it and 
+get the answers from it.
+
+But how? I need to install microphone, camera and voice recognition
+system to every device?
+
+And this is the area where Intention Network works.
+
+## What is the Intention Network?
+This is a communication mechanism between devices that gives ability 
+the devices to do a complex things together. 
+ 
+The essence of the network of intentions is best described by the following example.
+Many of us have our own smartphones or laptops. Every modern smartphone and laptops has camera and microphone.
+So its can "see" and "hear". 
+**The kettle.** The kettle do not have any camera or microphone. 
+It connected to the power line through smart socket. 
+You can ask your phone to boil a water and it asks your kettle to do that.
+Nothing special all smart sockets do this.
+But do the situation more realistic. What if there is no water in your kettle?
+Connect the kettle to a water pipe through a smart wi-fi valve - second device.
+Install a smart water measurer to control amount of water in your kettle - third device.
+How to manage the chain of three devices? It`s not a problem for Intention Network.
+* The smartphone creates the Intention **My owner wants a hot water"**
+* The kettler answers to the intention and create a new **How about the water?**
+* The measurer answers to the intention and founds that no more water in the kettle.
+It creates a new **I need the water**.
+* The valve answers to the intentions and opens the water. 
+* When amount of water is enough, the measurer closes the intention and the valve closes the water.
+* The measurer answers to the kettler through opened intention "The water is ok"
+* The kettler boils the water and answers through intention to the smartphone "The water is ok"
+
+Let`s do the situation even more realistic. There is no water in pipe.
+
+* The intention **I need the water** will not closed and will be translated through known storages.
+As example it can be accepted by water service.
+ 
  
 ## Live demo
 The Intention Network debugging console can be found at https://intention.tech
