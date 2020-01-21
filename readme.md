@@ -40,7 +40,7 @@ So its can "see" and "hear".
 The kettle do not have any camera or microphone. 
 It connected to the power line through smart socket. 
 You can ask your phone to boil a water and it asks your kettle to do that.  
-Nothing special all smart sockets do this.
+Nothing special. All smart sockets do this.  
 But do the situation more realistic. What if there is no water in your kettle?
 Connect the kettle to a water pipe through a smart wi-fi valve - second device.
 Install a smart water measurer to control amount of water in your kettle - third device.
