@@ -34,7 +34,7 @@ And this is the area where Intention Network works.
 ## What is the Intention Network?
 This is a communication mechanism between devices that gives ability to the devices to do a complex things together. 
  
-The essence of the network of intentions is best described by the following example. 
+The essence of the network of intentions is best described by the following example.  
 Many of us have our own smartphones and laptops. Every modern smartphone and laptops has camera and microphone.
 So its can "see" and "hear". 
 **The kettle.** The kettle do not have any camera or microphone. 
