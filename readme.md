@@ -8,7 +8,7 @@ intentions to another storages.
 Today there is no problem to buy a smart socket or hub controlled by wi-fi connections.
 So you can turn it on or off remotely and create a schedule for these actions.
 
-Today we have voice or gestures recognition systems. Proprietary, 
+Today we have voice and gestures recognition systems. Proprietary, 
 open source, cloud and embedded.
 
 We have a devices for cleaning, building, washing, security and more.
