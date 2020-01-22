@@ -20,8 +20,8 @@ When creating a smart house system what choices do I have?
 Regardless of whether I use cloud system or built my own local ecosystem,
 I`m faced with same problem - there are too many devices to support. 
 If you want something more complex than just turning the device on by 
-scheduler, you will find that communication between device can be 
-very complex.
+scheduler, you will find that communication between devices can be 
+very complicated.
 But often I catched myself that I do not want anymore to search 
 the sequence of buttons I must push. I just want to speak with it and 
 get the answers from it.
