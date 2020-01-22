@@ -37,7 +37,7 @@ So it can "see" and "hear".
 The coffee machine does not have any camera or microphone. 
 It connected to the power line through smart socket. 
 You can ask your phone make coffee and it tells coffee machine to do it.    
-Nothing special. All smart sockets do this.  
+This is nothing new, all smart sockets do it.  
 But do the situation more realistic. What if there is no water in your coffee machine?  
 Let connect the coffee machine to a water pipe through a smart wi-fi valve - second device.      
 Install a smart water measurer to control amount of water in your kettle - third device.  
