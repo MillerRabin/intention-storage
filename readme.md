@@ -25,13 +25,11 @@ very complicated.
 But often I caught myself searching the sequence of buttons to push. I give the system a command and it searches out the best
 avenue to complete it`s action.
 
-But how? Do I need to install microphone, camera and voice recognition
-system to every device?
-
-And this is the area where Intention Network works.
+With Intention Network you don`t need to install microphone, camera and voice recognition to all devices.
+The Intention Network does all this for you.
 
 ## What is the Intention Network?
-This is a communication mechanism between devices that gives ability to the devices to do a complex things together. 
+This is a communication mechanism between devices that gives ability to the devices to do a complex commands together. 
  
 The essence of the network of intentions is best described by the following example.  
 Many of us have our own smartphones and laptops. Every modern smartphone and laptops has camera and microphone.
