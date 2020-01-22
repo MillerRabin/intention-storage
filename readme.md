@@ -34,12 +34,12 @@ This is a communication mechanism between devices that gives ability to the devi
 The essence of the Intention Network is best described by the following example.  
 Many of us have our own smartphones and laptops. Every modern smartphone and laptops has camera and microphone.
 So it can "see" and "hear".   
-The kettle do not have any camera or microphone. 
+The coffee machine does not have any camera or microphone. 
 It connected to the power line through smart socket. 
-You can ask your phone to boil a water and it asks your kettle to do that.  
+You can ask your phone make coffee and it tells coffee machine to do it.    
 Nothing special. All smart sockets do this.  
-But do the situation more realistic. What if there is no water in your kettle?  
-Let connect the kettle to a water pipe through a smart wi-fi valve - second device.      
+But do the situation more realistic. What if there is no water in your coffee machine?  
+Let connect the coffee machine to a water pipe through a smart wi-fi valve - second device.      
 Install a smart water measurer to control amount of water in your kettle - third device.  
 How to manage the chain of three devices? It`s not a problem for Intention Network.
 * The smartphone creates the Intention **My owner wants a hot water**
