@@ -26,7 +26,7 @@ But often I catched myself that I do not want anymore to search
 the sequence of buttons I must push. I just want to speak with it and 
 get the answers from it.
 
-But how? I need to install microphone, camera and voice recognition
+But how? Do I need to install microphone, camera and voice recognition
 system to every device?
 
 And this is the area where Intention Network works.
