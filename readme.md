@@ -18,13 +18,12 @@ The main question is **"How can I manage all this?"**
 
 When creating a smart house system what choices do I have?
 Regardless of whether I use cloud system or built my own local ecosystem,
-I`m faced with same problem - there are too many devices to support. 
+I'm faced with same problem - there are too many devices to support. 
 If you want something more complex than just turning the device on by 
 scheduler, you will find that communication between devices can be 
 very complicated.
-But often I catched myself that I do not want anymore to search 
-the sequence of buttons I must push. I just want to speak with it and 
-get the answers from it.
+But often I caught myself searching the sequence of buttons to push. I give the system a command and it searches out the best
+avenue to complete it`s action.
 
 But how? Do I need to install microphone, camera and voice recognition
 system to every device?
