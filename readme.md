@@ -64,7 +64,7 @@ Do the situation less realistic, but more **fail safe**
 There is another kettler in your home. And the first one can't boil the water because there is not water in the pipe.
 
 * The secondary kettler accepts the intention **My owner wants a hot water**.
-* All chain of events will be same but it`s succeeded.
+* All chain of events was same but it`s succeeded.
 * It answers through opened intention to the smartphone "The water is ok"
 * Smartphone closes the intention
 * The first kettler will find that intention is closed and cancels the task.
