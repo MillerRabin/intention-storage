@@ -40,27 +40,27 @@ You can use your phone to ask the tea pot to boil water.
 This is nothing new, all smart sockets do it.  
 What if there is no water in your tea pot?  
 The tea pot can be connected to a water pipe through a smart wi-fi valve - second device.      
-Install a smart water measurer to control amount of water in your kettle - third device.  
+Install a smart water measurer to control amount of water in your tea pot - third device.  
 How to manage the chain of three devices? It`s not a problem for Intention Network.
-* The smartphone creates the Intention **My owner wants a hot water**
-* The kettler answers to the intention and creates a new intention **How about the water?**
-* The measurer answers to the intention and founds that no more water in the kettle.
+* The smartphone creates the intention **My owner wants a hot water**
+* The tea pot accepts the intention and creates a new **How about the water?**
+* The measurer accepts the intention and founds that no more water in the kettle.
 It creates a new intention **I need the water**.
-* The valve answers to the intentions and opens the water. 
-* When amount of water is enough, the measurer closes the intention and the valve closes the water.
-* The measurer answers to the kettler through opened intention "The water is ok"
-* The kettler boils the water and answers through intention to the smartphone "The water is ok"
+* The valve accept the intention and opens the water. 
+* When the amount of water is enough, the measurer closes the intention and the valve closes the water.
+* The measurer answers to the tea pot through opened intention "The water is ok"
+* The tea pot boils the water and answers through intention to the smartphone "The water is ok"
 
-Let`s do the situation even more realistic. There is no water in pipe.
+What if there is no water in the pipe?
 
 * The intention **I need the water** will not closed and will be translated through known storages.
 As example it can be accepted by water service.
  
-Do the situation less realistic, but more **fail safe**
+Let's do the situation more **fail safe**.
 
-There is another kettler in your home. And the first one can't boil the water because there is not water in the pipe.
+There is another tea pot in your home. And the first one can't boil the water because there is not water in the pipe.
 
-* The secondary kettler accepts the intention **My owner wants a hot water**.
+* The secondary tea pot accepts the intention **My owner wants a hot water**.
 * All chain of events was same but it`s succeeded.
 * It answers through opened intention to the smartphone "The water is ok"
 * Smartphone closes the intention
