@@ -16,9 +16,9 @@ We want them to do works in our homes, yards, streets.
 
 The main question is **"How can I manage all this?"**
 
-When I creating a smart house system what choose do I have?
+When creating a smart house system what choices do I have?
 Regardless of whether I use cloud system or built my own local ecosystem,
-I faced with same problem - there is too many of devices to support. 
+I`m faced with same problem - there are too many devices to support. 
 If you want something more complex than just turning the device on by 
 scheduler, you will find that communication between device can be 
 very complex.
