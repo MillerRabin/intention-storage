@@ -45,7 +45,7 @@ But do the situation more realistic. What if there is no water in your kettle?
 Let connect the kettle to a water pipe through a smart wi-fi valve - second device.      
 Install a smart water measurer to control amount of water in your kettle - third device.  
 How to manage the chain of three devices? It`s not a problem for Intention Network.
-* The smartphone creates the Intention **My owner wants a hot water"**
+* The smartphone creates the Intention **My owner wants a hot water**
 * The kettler answers to the intention and creates a new intention **How about the water?**
 * The measurer answers to the intention and founds that no more water in the kettle.
 It creates a new intention **I need the water**.
@@ -58,6 +58,16 @@ Let`s do the situation even more realistic. There is no water in pipe.
 
 * The intention **I need the water** will not closed and will be translated through known storages.
 As example it can be accepted by water service.
+ 
+Do the situation less realistic, but more **fail safe**
+
+There is another kettler in your home. And the first one can't boil the water because there is not water in the pipe.
+
+* The secondary kettler accepts the intention **My owner wants a hot water**.
+* All chain of events will be same but it`s succeeded.
+* It answers through opened intention to the smartphone "The water is ok"
+* Smartphone closes the intention
+* The first kettler will find that intention is closed and cancels the task.
  
 The typical smart house system can have hundreds of that small devices. Every of it can generate own intentions.     
 The simple things in your home can produce very complex scenarios with huge amount of possible results.  
