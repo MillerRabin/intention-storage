@@ -56,9 +56,9 @@ What if there is no water in the pipe?
 * The volume control indicates that water is not receved and infroms your smartphone there is no water. 
 With approval it can place an order for the water from you or a water service company.
    
-Let's do the situation more **fail safe**.
+We can create a more **fail safe** process.
 
-There is another tea pot in your home. And the first one can't boil the water because there is not water in the pipe.
+There is another tea pot in your home. The first one can't boil the water and Intention Network will search for other options.
 
 * The secondary tea pot accepts the intention **My owner wants a hot water**.
 * All chain of events was same but it`s succeeded.
