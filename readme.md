@@ -53,9 +53,9 @@ It creates a new intention **I need the water**.
 
 What if there is no water in the pipe?
 
-* The intention **I need the water** will not closed and will be translated through known storages.
-As example it can be accepted by water service.
- 
+* The volume control indicates no water. It`s not receiving water from the pipe. The volume control indicates what water is not received and
+informs your smartphone where is no water. With approval it can order water from a water service.
+   
 Let's do the situation more **fail safe**.
 
 There is another tea pot in your home. And the first one can't boil the water because there is not water in the pipe.
