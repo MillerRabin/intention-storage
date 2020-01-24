@@ -58,9 +58,10 @@ With approval it can place an order for the water from you or a water service co
    
 We can create a more **fail safe** process.
 
-There is another tea pot in your home. The first one can't boil the water and Intention Network will search for other options.
+There is another tea pot in your home. 
 
-* The secondary tea pot accepts the intention **My owner wants a hot water**.
+* The first one can't boil the water and Intention Network will search for other options.
+* The secondary tea pot accepts the intention and bolis water.
 * All chain of events was same but it`s succeeded.
 * It answers through opened intention to the smartphone "The water is ok"
 * Smartphone closes the intention
