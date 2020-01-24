@@ -48,8 +48,8 @@ How to manage the chain of three devices? It`s not a problem for Intention Netwo
 It creates a new intention **I need the water**.
 * The valve accept the intention and opens the water. 
 * When the amount of water is enough, the water volume control closes the intention and the valve closes the water.
-* The water volume control answers to the tea pot through opened intention "The water is ok"
-* The tea pot boils the water and answers through intention to the smartphone "The water is ok"
+* The water volume control indicates to the tea pot through opened intention "The water is ok".
+* The tea pot boils the water and indicates it finished through intention to the smartphone "The water is ready".
 
 What if there is no water in the pipe?
 
