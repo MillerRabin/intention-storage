@@ -53,8 +53,8 @@ It creates a new intention **I need the water**.
 
 What if there is no water in the pipe?
 
-* The volume control indicates that water is not receved. It`s not receiving water from the pipe. The volume control indicates what water is not received and
-informs your smartphone where is no water. With approval it can place the order for the water from a water service.
+* The volume control indicates that water is not receved and infroms your smartphone there is no water. 
+With approval it can place the order for the water from a water service.
    
 Let's do the situation more **fail safe**.
 
