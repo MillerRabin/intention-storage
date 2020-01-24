@@ -40,15 +40,15 @@ You can use your phone to ask the tea pot to boil water.
 This is nothing new, all smart sockets do it.  
 What if there is no water in your tea pot?  
 The tea pot can be connected to a water pipe through a smart wi-fi valve - second device.      
-Install a smart water measurer to control amount of water in your tea pot - third device.  
+Install a smart water volume control to measure amount of water in your tea pot - third device.  
 How to manage the chain of three devices? It`s not a problem for Intention Network.
 * The smartphone creates the intention **My owner wants hot water**
-* The tea pot accepts the intention and creates a new **How about the water?**
-* The measurer accepts the intention and founds that no more water in the kettle.
+* The tea pot accepts the intention and creates a new **What about the water?**
+* The water volume control accepts the intention and finds that no more water in the kettle.
 It creates a new intention **I need the water**.
 * The valve accept the intention and opens the water. 
-* When the amount of water is enough, the measurer closes the intention and the valve closes the water.
-* The measurer answers to the tea pot through opened intention "The water is ok"
+* When the amount of water is enough, the water volume control closes the intention and the valve closes the water.
+* The water volume control answers to the tea pot through opened intention "The water is ok"
 * The tea pot boils the water and answers through intention to the smartphone "The water is ok"
 
 What if there is no water in the pipe?
