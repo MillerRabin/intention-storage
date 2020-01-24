@@ -42,7 +42,7 @@ What if there is no water in your tea pot?
 The tea pot can be connected to a water pipe through a smart wi-fi valve - second device.      
 Install a smart water measurer to control amount of water in your tea pot - third device.  
 How to manage the chain of three devices? It`s not a problem for Intention Network.
-* The smartphone creates the intention **My owner wants a hot water**
+* The smartphone creates the intention **My owner wants hot water**
 * The tea pot accepts the intention and creates a new **How about the water?**
 * The measurer accepts the intention and founds that no more water in the kettle.
 It creates a new intention **I need the water**.
