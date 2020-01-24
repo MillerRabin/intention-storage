@@ -62,7 +62,7 @@ There is another tea pot in your home.
 
 * The first one can't boil the water and Intention Network will search for other options.
 * The secondary tea pot accepts the intention and boils water.
-* All chain of events was same but it`s succeeded.
+* All chain of events are completed and now we have hot water.
 * It answers through opened intention to the smartphone "The water is ok"
 * Smartphone closes the intention
 * The first kettler will find that intention is closed and cancels the task.
