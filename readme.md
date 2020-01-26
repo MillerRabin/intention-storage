@@ -65,7 +65,7 @@ There is another tea pot in your home.
 * All chain of events were completed and now we have hot water.
 * It answers through opened intention to the smartphone "The water is ready"
 * Smartphone closes the intention
-* The first teapot will find that intention is closed and cancels the task.
+* The first tea pot will find that intention is closed and cancels the task.
  
 The typical smart house system can have hundreds of that small devices. Every of it can generate own intentions.     
 The simple things in your home can produce very complex scenarios with huge amount of possible results.  
