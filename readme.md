@@ -37,8 +37,10 @@ So it can "see" and "hear".
 The tea pot does not have any camera or microphone. 
 It connected to the power line through smart socket. 
 You can use your phone to ask the tea pot to boil water.    
-This is nothing new, all smart sockets do it.  
+This is nothing new, all smart sockets do it.     
+But Intention Network can resolve exceptions.   
 What if there is no water in your tea pot?  
+
 The tea pot can be connected to a water pipe through a smart wi-fi valve - second device.      
 Install a smart water volume control to measure amount of water in your tea pot - third device.  
 How to manage the chain of three devices? It`s not a problem for Intention Network.
@@ -56,9 +58,10 @@ What if there is no water in the pipe?
 * The volume control indicates that water is not received and informs your smartphone there is no water. 
 With approval it can place an order for the water from you or a water service company.
    
-We can create a more **fail safe** process.
-
-There is another tea pot in your home. 
+We can create a more **fail safe** process.   
+In the Intention Network all important nodes or transport can be doubled or tripled
+without any problems.   
+Let's we add another tea pot in your home. 
 
 * The first one can't boil the water and Intention Network will search for other options.
 * The secondary tea pot accepts the intention and boils water.
