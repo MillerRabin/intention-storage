@@ -46,7 +46,7 @@ Install a smart water volume control to measure amount of water in your tea pot 
 How to manage the chain of three devices? It`s not a problem for Intention Network.
 * The smartphone creates the intention **My owner wants hot water**
 * The tea pot accepts the intention and creates a new **What about the water?**
-* The water volume control accepts the intention and finds that no more water in the kettle.
+* The water volume control accepts the intention and finds that no water in the tea pot.
 It creates a new intention **I need the water**.
 * The valve accept the intention and opens the water. 
 * When the amount of water is enough, the water volume control closes the intention and the valve closes the water.
