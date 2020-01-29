@@ -59,7 +59,7 @@ What if there is no water in the pipe?
 With approval it can place an order for the water from you or a water service company.
    
 We can create a more **fail safe** process.   
-In the Intention Network all important nodes or transport can be doubled or tripled
+In the Intention Network all important nodes or transports can be doubled or tripled
 without any problems.   
 Let's add another tea pot in your home. 
 
@@ -67,7 +67,7 @@ Let's add another tea pot in your home.
 * The secondary tea pot accepts the intention and boils water.
 * All chain of events were completed and now we have hot water.
 * It answers through opened intention to the smartphone "The water is ready"
-* Smartphone closes the intention
+* Smartphone closes the intention.
 * The first tea pot will find that intention is closed and cancels the task.
  
 The typical smart house system can have hundreds of that small devices. Every of it can generate own intentions.     
