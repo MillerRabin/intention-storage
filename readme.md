@@ -59,7 +59,7 @@ What if there is no water in the pipe?
 With approval it can place an order for the water from you or a water service company.
    
 We can create a more **fail safe** process.   
-In the Intention Network all important nodes or transports can be doubled or tripled
+In the Intention Network all important nodes or transports can be modified by doubling or tripling
 without any problems.   
 Let's add another tea pot in your home. 
 
