@@ -71,7 +71,7 @@ Let's add another tea pot in your home.
 * The first tea pot will find that intention is closed and cancels the task.
  
 The typical smart house system can have hundreds of that small devices. Each one can generate it's own intentions.     
-The simple things in your home can produce very complex scenarios by selecting the best possible result.  
+The simple things in your home can produce very complex scenarios by selecting the best possible option.  
 **Intention Network** is designed to resolve all device commands.   
 
 ## Live demo
