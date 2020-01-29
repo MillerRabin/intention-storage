@@ -61,7 +61,7 @@ With approval it can place an order for the water from you or a water service co
 We can create a more **fail safe** process.   
 In the Intention Network all important nodes or transport can be doubled or tripled
 without any problems.   
-Let's we add another tea pot in your home. 
+Let's add another tea pot in your home. 
 
 * The first one can't boil the water and Intention Network will search for other options.
 * The secondary tea pot accepts the intention and boils water.
