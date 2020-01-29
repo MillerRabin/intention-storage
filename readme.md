@@ -38,7 +38,7 @@ The tea pot does not have any camera or microphone.
 It connected to the power line through smart socket. 
 You can use your phone to ask the tea pot to boil water.    
 This is nothing new, all smart sockets do it.     
-But Intention Network can resolve exceptions.   
+But Intention Network can automaticly resolve exceptions.   
 What if there is no water in your tea pot?  
 
 The tea pot can be connected to a water pipe through a smart wi-fi valve - second device.      
