@@ -77,13 +77,13 @@ The **Intention Network** is designed to resolve all device commands.
 
 ## Outdoor intention networks
 
-Every location can has own network. Some of them can be physically splitted, 
+Every location can has it`s own network. Some of them can be physically splitted, 
 some of them can be connected together.
-In anycase every device will have no any problems to migrate between networks.   
+In anycase every device will have no problems to migrate between networks.   
 
 **The robotic cafe**.
 
-* You go to cafe fully serviced by robots.
+* You go to cafe a fully serviced by robots.
 * You call the robo-waiter with a gesture or voice. Gestures can also generate the intention.
 * Now the robo-waiter has the intention from you that you want his attention.
 * The robo-waiter is coming to you. And you order carbonara.
