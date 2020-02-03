@@ -1,32 +1,32 @@
 # Intention Storage
-This is a core package for Intention Network. It gives ability for the device
+This is a core package for the Intention Network. It gives ability to the device
 to be a member of such networks.
-It`s include code to accept intentions, searching for counter intentions and translate
-intentions to another storages. 
+It`s includes code to accept intentions, to search for counter intentions and to translate
+intentions to other storage. 
 
 ## Instead of Introduction
-Today there is no problem to buy a smart socket or hub controlled by wi-fi connections.
+Today there is no problem in buying a smart socket or hub controlled by wi-fi connections.
 So you can turn it on or off remotely and create a schedule for these actions.
 
-Today we have a choose of voice and gestures recognition systems - proprietary, 
-open source, cloud, embedded.
+Today we have a choices of voice and gestures recognition systems - proprietary, 
+open source, cloud and embedded.
 
-We have a devices for cleaning, building, washing, security and more.
-We want them to do works in our homes, yards, streets.
+We have devices for cleaning, building, washing, security and more.
+We want them to do work in our homes, yards and streets.
 
-The main question is **"How can I manage all this?"**
+The main question is **"How can I manage all of this?"**
 
 When creating a smart house system what choices do I have?
-Regardless of whether I use cloud system or built my own local ecosystem,
-I'm faced with same problem - there are too many devices to support. 
-If you want something more complex than just turning the device on by 
-scheduler, you will find that communication between devices can be 
+Regardless of whether I use a cloud system or build my own local ecosystem,
+I'm faced with the same problem - there are too many devices to support. 
+If you want something more complex than just turning the device on with 
+a scheduler, you will find that communication between devices can be 
 very complicated.
-But often I caught myself searching the sequence of buttons to push. I give the system a command and it searches out the best
-avenue to complete it`s action.
+But often I catch myself searching the sequences of buttons to push. I give the system a command and it 
+searches for the best way to complete this action.
 
-With Intention Network you don`t need to install microphone, camera and voice recognition to all devices.
-The Intention Network does all this for you.
+With the Intention Network you don`t need to install microphone, camera or voice recognition to all devices.
+The Intention Network does all of this for you.
 
 ## What is the Intention Network?
 This is a communication mechanism between devices that gives ability to the devices to do a complex commands together. 
