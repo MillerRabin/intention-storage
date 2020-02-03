@@ -92,8 +92,8 @@ In anycase every device will have no problems to migrate between networks.
 intention.
 * The robo-waiter takes the carbonara and brings it to you.
 * When you want to leave you ask the robo-waiter for the bill.
-* The robo-waiter generates an intention **Could you pay for carbonara?** with your specific public key.
-* Your smart phone can accept these intentions, and asks you to approve transaction. 
+* The robo-waiter generates an intention "Could you pay for carbonara?" with your specific public key.
+* Your smart phone can accept these intentions, and asks you to approve the transaction. 
   
 ## Live demo
 The Intention Network debugging console can be found at https://intention.tech
