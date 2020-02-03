@@ -29,21 +29,22 @@ With the Intention Network you don`t need to install microphone, camera or voice
 The Intention Network does all of this for you.
 
 ## What is the Intention Network?
-This is a communication mechanism between devices that gives ability to the devices to do a complex commands together. 
+This is a communication mechanism between devices that gives the ability to all devices to do 
+complex commands together. 
  
 The essence of the Intention Network is best described by the following example.  
-Many of us have our own smartphones and laptops. Every modern smartphone and laptops has camera and microphone.
+Many of us have our own smartphones and laptops. Every modern smartphone and laptop has a camera and microphone.
 So it can "see" and "hear".   
-The tea pot does not have any camera or microphone. 
+A tea pot does not have any camera or microphone. 
 It connected to the power line through smart socket. 
 You can use your phone to ask the tea pot to boil water.    
 This is nothing new, all smart sockets do it.     
-But Intention Network can automaticly resolve exceptions.   
+But the Intention Network can automaticly resolve exceptions.   
 What if there is no water in your tea pot?  
 
-The tea pot can be connected to a water pipe through a smart wi-fi valve - second device.      
-Install a smart water volume control to measure amount of water in your tea pot - third device.  
-How to manage the chain of three devices? It`s not a problem for Intention Network.
+The tea pot can be connected to a water pipe through a smart wi-fi valve - the second device.      
+Install a smart water volume control to measure the amount of water in your tea pot - the third device.  
+How can we manage the chain of three devices? It`s not a problem for the Intention Network.
 * The smartphone creates the intention **My owner wants hot water**
 * The tea pot accepts the intention and creates a new **What about the water?**
 * The water volume control accepts the intention and finds that it needs water in the tea pot.
