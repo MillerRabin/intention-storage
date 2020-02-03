@@ -64,16 +64,16 @@ In the Intention Network all important nodes or transports can be modified by do
 without any problems.   
 Let's add another tea pot in your home. 
 
-* The first one can't boil the water and Intention Network will search for other options.
-* The secondary tea pot accepts the intention and boils water.
+* The first one can't boil the water and the Intention Network will search for other options.
+* The secondary tea pot accepts the intention and boils the water.
 * All chain of events were completed and now we have hot water.
-* It answers through opened intention to the smartphone "The water is ready"
-* Smartphone closes the intention.
-* The first tea pot will find that intention is closed and cancels the task.
+* It answers through the opened intention to the smartphone "The water is ready"
+* The smartphone closes the intention.
+* The first tea pot will find that the intention is closed and cancels the task.
  
-The typical smart house system can have hundreds of that small devices. Each one can generate it's own intentions.     
-The simple things in your home can produce very complex scenarios by selecting the best possible option.  
-**Intention Network** is designed to resolve all device commands.   
+A typical smart house system can have hundreds of small devices. Each one can generate it's own intentions.     
+The simple things in your home can produce very complex scenarios because of selecting the best possible option.  
+The **Intention Network** is designed to resolve all device commands.   
 
 ##Outdoor intention networks
 Every location can has own network. Some of them can be physically splitted, 
