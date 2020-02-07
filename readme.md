@@ -79,8 +79,7 @@ The **Intention Network** is designed to resolve all device commands.
 
 Every location can have it`s own network. Some of them can be separated by location or connected
 together. And this will allow migration between networks.
-In anycase every device will have no problems to migrate between networks.   
-
+   
 **The robotic cafe**.
 
 * You go to cafe a fully serviced by robots.
