@@ -75,13 +75,35 @@ A typical smart house system can have hundreds of small devices. Each one can ge
 The simple things in your home can produce very complex scenarios because of selecting the best possible option.  
 The **Intention Network** is designed to resolve all device commands.   
 
+## Home security
+
+Let`s imagine a picture. You live in your own house. There is a main gate with doorbell and camera.
+The camera has built in microphone and connected to the video server in security room, The main gate has engine for 
+automatic opening and closing. The gate engine is connected to the gate computer - Raspberry PI, so it can receive 
+command for opening and closing from keychain or wi-fi.  
+There is a laptop on your workspace and smartphone that is always with you when you are out.   
+
+You work on the laptop and somebody rang the doorbell.
+* You ask your laptop: "Please connect me to the gate camera"
+* Your laptop creates the intention "I need a video from gate camera"
+* Video server accepts the intention and redirects a video stream from the gate camera to your laptop. 
+* Now you can see who is coming and start conversation from your workplace.
+* If you wish, you can ask your laptop "Please open the gate"
+* THe laptop creates the intention "Open the main gate"
+* The gate computer accepts the intention and opens gate.
+
+What if you work in the garden when the doorbell rang. It`s not a problem. Just ask your smartphone "Connect me to the gate camera" and
+process will be same, but through your smartphone.  
+Want a security terminal for all your family that will automatically on when the doorbell is rang. It's not a
+problem. 
+
 ## Multilocation Intention Networks
 
 Every location can have it`s own network. The networks can be separated by location or connected
 together. This setup allows migration between networks.
    
-**The robotic cafe**.
-
+**The robotic cafe**   
+ 
 * You go to cafe a fully serviced by robots.
 * You call the robo-waiter with a gesture or by voice. Gestures can also generate the intention.
 * Now the robo-waiter has the intention from you that you want his attention.
@@ -94,7 +116,7 @@ intention.
 * The robo-waiter generates an intention "Could you pay for carbonara?" with your specific public key.
 * Your smart phone can accept these intentions, and asks you to approve the transaction. 
   
-## Live demo
+ ## Live demo
 The Intention Network debugging console can be found at https://intention.tech
 
 ## How it works
