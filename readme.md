@@ -75,7 +75,7 @@ A typical smart house system can have hundreds of small devices. Each one can ge
 The simple things in your home can produce very complex scenarios because of selecting the best possible option.  
 The **Intention Network** is designed to resolve all device commands.   
 
-## Outdoor intention networks
+## Multilocations intention networks
 
 Every location can has it`s own network. Some of them can be physically splitted, 
 some of them can be connected together.
