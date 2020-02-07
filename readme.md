@@ -78,7 +78,7 @@ The **Intention Network** is designed to resolve all device commands.
 ## Multilocation Intention Networks
 
 Every location can have it`s own network. The networks can be separated by location or connected
-together. And this will allow migration between networks.
+together. This setup allows migration between networks.
    
 **The robotic cafe**.
 
