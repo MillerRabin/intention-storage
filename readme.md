@@ -103,6 +103,7 @@ Every location can have it`s own network. The networks can be separated by locat
 together. This setup allows migration between networks.
    
 **The robotic cafe**   
+*This is a futuristic scenario, but this case can be modeled using intentions*   
  
 * You go to cafe a fully serviced by robots.
 * You call the robo-waiter with a gesture or by voice. Gestures can also generate the intention.
