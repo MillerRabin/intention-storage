@@ -118,7 +118,7 @@ intention.
 * Your smart phone can accept these intentions, and asks you to approve the transaction. 
   
  ## Live demo
-The Intention Network debugging console can be found at https://intention.tech
+The Intention Network debugging console can be found at https://console.raintech.su
 
 ## How it works
  + [Basic concepts](docs/basic-concepts.md)

@@ -1,7 +1,7 @@
 # Using sound recognition in your projects
-You can use the console https://intention.tech to provide voice recognition in your projects
+You can use the console https://console.raintech.su to provide voice recognition in your projects
 
-Open the tab https://intention.tech/en/browser.html"  
+Open the tab https://console.raintech.su/en/browser.html"  
 Find the intention "Can receive raw user input from microphone or keyboard" with key "HTMLTextAreaElement - Recognition."  
 Output key **Recognition** means, what the intention gives voice input as text  
 **HTMLTextAreaElement** - means, what the link to the textarea element can be present for receiving keyboard input. But it is not necessary.  

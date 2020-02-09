@@ -2,8 +2,8 @@ const WebSocket = require('ws'); //Delete for Browser environment
 const Network = require('./Network.js');
 const wrtc = getWRTC();
 
-const signalServerHttp = 'https://signal.intention.tech:8086';
-const signalServerSocket = 'wss://signal.intention.tech:8086';
+const signalServerHttp = 'https://signal.raintech.su:8086';
+const signalServerSocket = 'wss://signal.raintech.su:8086';
 
 const gConfig = {
     iceServers: []

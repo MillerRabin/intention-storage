@@ -39,10 +39,10 @@ node main.js
 If all works fine, you should see a record in console "Server listens on port 10010".  
 10010 - is a default port for all intention storages.  
 The console need to know at least one server from your infrastructure.  
-Open https://intention.tech in browser with SpeechRecognition support. Chrome for example  
+Open https://console.raintech.su in browser with SpeechRecognition support. Chrome for example  
 Enable your microphone for the console.  
 Then speak into the microphone `Add storage localhost`
 You will move to the Storage tab and see the record `localhost:10010 is online`  
 
 Now you can create intention in your project and console will see it on 
-the Intentions tab https://intention.tech/en/browser.html
+the Intentions tab https://console.raintech.su/en/browser.html
