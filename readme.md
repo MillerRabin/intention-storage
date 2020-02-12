@@ -93,7 +93,7 @@ You work on the laptop and somebody rang the doorbell.
 * The gate computer accepts the intention and opens the gate.
 * When you want to close the gate just ask your laptop to close it
 
-What if you work in the garden when the doorbell rang. It`s not a problem. Just ask your smartphone "Connect me to the gate camera" and
+What if you working in the garden when the doorbell rings. It`s not a problem. Just ask your smartphone "Connect me to the gate camera" and
 process will be same, but through your smartphone.  
 Want a security terminal for all your family that will automatically on when the doorbell is rang. It's not a
 problem. 
