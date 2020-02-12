@@ -79,7 +79,7 @@ The **Intention Network** is designed to resolve all device commands.
 
 Let`s imagine a picture of you in your own home. There is a main gate with doorbell and camera.
 The camera has built in microphone and connected to the video server in security room. The main gate  
-automatically opening and closing. The gate is connected to the computer system Raspberry PI, so it can receive 
+automatically opening and closing. The gate is connected to the computer system (Raspberry PI), so it can receive 
 command for opening and closing from keychain or wi-fi.  
 There is a laptop on your workspace and smartphone that is always with you when you are out.   
 
