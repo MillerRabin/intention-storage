@@ -77,7 +77,7 @@ The **Intention Network** is designed to resolve all device commands.
 
 ## Home security
 
-Let`s imagine a picture. You live in your own house. There is a main gate with doorbell and camera.
+Let`s imagine a picture of you in your own home. There is a main gate with doorbell and camera.
 The camera has built in microphone and connected to the video server in security room, The main gate has engine for 
 automatic opening and closing. The gate engine is connected to the gate computer - Raspberry PI, so it can receive 
 command for opening and closing from keychain or wi-fi.  
