@@ -95,7 +95,7 @@ You work on the laptop and somebody rang the doorbell.
 
 What if you working in the garden when the doorbell rings. It`s not a problem. Just ask your smartphone "Connect me to the gate camera" and
 process will be the same, but through your smartphone.  
-In additional to your laptop and smartphone you can add a security terminal for all your family that can automatically answer the door.
+In addition to your laptop and smartphone you can add a security terminal for all your family that can automatically answer the door.
 
 ## Multilocation Intention Networks
 
