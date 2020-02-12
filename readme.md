@@ -89,8 +89,9 @@ You work on the laptop and somebody rang the doorbell.
 * Video server accepts the intention and redirects a video stream from the gate camera to your laptop. 
 * Now you can see who is coming and start conversation from your workplace.
 * If you wish, you can ask your laptop "Please open the gate"
-* THe laptop creates the intention "Open the main gate"
-* The gate computer accepts the intention and opens gate.
+* The laptop creates the intention "Open the main gate"
+* The gate computer accepts the intention and opens the gate.
+* When you want to close the gate just ask your laptop to close it
 
 What if you work in the garden when the doorbell rang. It`s not a problem. Just ask your smartphone "Connect me to the gate camera" and
 process will be same, but through your smartphone.  
