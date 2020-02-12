@@ -81,7 +81,7 @@ Let`s imagine a picture of you in your own home. There is a main gate with doorb
 The camera has built in microphone and connected to the video server in security room. The main gate  
 automatically opening and closing. The gate is connected to the computer system (Raspberry PI), so it can receive 
 command for opening and closing from keychain or wi-fi.  
-There is a laptop on your workspace and smartphone that is always with you when you are out.   
+There is a laptop at your workspace or smartphone that is always with you when you are out.   
 
 You work on the laptop and somebody rang the doorbell.
 * You ask your laptop: "Please connect me to the gate camera"
