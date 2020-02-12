@@ -84,7 +84,7 @@ command for opening and closing from keychain or wi-fi.
 There is a laptop at your workspace or smartphone that is always with you when you are out.   
 
 You work on the laptop and somebody rang the doorbell.
-* You ask your laptop: "Please connect me to the gate camera"
+* You give a command to connect you to the gate camera.
 * Your laptop creates the intention "I need a video from gate camera"
 * Video server accepts the intention and redirects a video stream from the gate camera to your laptop. 
 * Now you can see who is coming and start conversation from your workplace.
