@@ -32,9 +32,7 @@ function dispatchIntentions(storage, intention) {
                     const sRes = typeIntentions(int, intention);
                     if (sRes == null) continue;
                     sRes.local.accept(sRes.network);
-                } catch (e) {
-                    console.log(e);
-                }
+                } catch (e) {}
             }
         }
     }
@@ -292,7 +290,6 @@ module.exports = class IntentionStorage {
                 await link.translate(intention);
             } catch (e) {
                 if (!e.dispose) {
-                    console.log(e);
                     return;
                 }
                 this.deleteStorage(link);
@@ -316,7 +313,6 @@ module.exports = class IntentionStorage {
                 link.translate(intention);
             } catch (e) {
                 if (!e.dispose) {
-                    console.log(e);
                     return;
                 }
                 this.deleteStorage(link);
