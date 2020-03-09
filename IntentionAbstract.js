@@ -9,7 +9,8 @@ module.exports = class IntentionAbstract {
                      output,
                      parameters = [],
                      value,
-                     accepted
+                     accepted,
+                     enableBroadcasting = true
                  }) {
         if (safe.isEmpty(title)) throw new Error('Intention must have a title');
         if (safe.isEmpty(input)) throw new Error('Intention must have an input parameter');
@@ -26,6 +27,7 @@ module.exports = class IntentionAbstract {
         this._value = value;
         this._accepted = new AcceptedIntentions(this, accepted);
         this._type = 'IntentionAbstract';
+        this._enableBroadcasting = enableBroadcasting;
     }
 
     getKey(reverse = false) {
@@ -59,6 +61,10 @@ module.exports = class IntentionAbstract {
 
     get accepted() {
         return this._accepted;
+    }
+
+    get enableBroadcasting() {
+        return this._enableBroadcasting;
     }
 
     toObject() {

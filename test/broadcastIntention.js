@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { IntentionStorage } = require('../main.js');
 
-describe('Translate intentions', function() {
+describe('Broadcast intentions', function() {
     let iQuery = null;
     let source = null;
     let target = null;
@@ -98,12 +98,12 @@ describe('Translate intentions', function() {
         });
     });
 
-    describe('Translation', function() {
-        it('create test translate intention at server', function () {
+    describe('Broadcasting', function() {
+        it('create test broadcast intention at server', function () {
             source = intentionStorageServer.createIntention({
-                title: 'test translate intention',
-                input: 'TranslateTestIn',
-                output: 'TranslateTestOut',
+                title: 'Test broadcasting intention',
+                input: 'BroadcastTestIn',
+                output: 'BroadcastTestOut',
                 onData: async (status, intention, value) => {
                     if (status == 'accepted') {
                         sourceAccept = {
@@ -120,15 +120,15 @@ describe('Translate intentions', function() {
             });
             assert.ok(source != null, 'Source must be created');
             assert.strictEqual(source.origin, 'ws://localhost:10010');
-            const intention = intentionStorageServer.intentions.byKey('TranslateTestIn - TranslateTestOut');
+            const intention = intentionStorageServer.intentions.byKey('BroadcastTestIn - BroadcastTestOut');
             assert.ok(intention != null, 'Source must be exists in storage');
         });
 
-        it('create counter translate intention', function () {
+        it('create counter broadcast intention', function () {
             target = intentionStorage.createIntention({
-                title: 'test counter translate intention',
-                input: 'TranslateTestOut',
-                output: 'TranslateTestIn',
+                title: 'test counter broadcast intention',
+                input: 'BroadcastTestOut',
+                output: 'BroadcastTestIn',
                 onData: async (status, intention, value) => {
                     if (status == 'accepted') {
                         targetAccept = {
@@ -144,7 +144,7 @@ describe('Translate intentions', function() {
                 }
             });
             assert.ok(target != null, 'Target must be created');
-            const intention = intentionStorage.intentions.byKey('TranslateTestOut - TranslateTestIn');
+            const intention = intentionStorage.intentions.byKey('BroadcastTestOut - BroadcastTestIn');
             assert.ok(intention != null, 'Target must be exists in storage');
         });
 
@@ -211,27 +211,15 @@ describe('Translate intentions', function() {
         })
     });
 
-    describe('Disable stats at client', function () {
-        it ('should disable stats', function () {
-            intentionStorage.statsInterval = 0;
-        });
-
-        it('disable dispatch interval', function () {
-            intentionStorage.dispatchInterval = 0;
+    describe('Close client', function () {
+        it ('should close', function () {
+            intentionStorage.close();
         });
     });
 
-    describe('Disable stats at server', function () {
-        it ('should disable stats', function () {
-            intentionStorageServer.statsInterval = 0;
-        });
-
-        it('disable dispatch interval', function () {
-            intentionStorageServer.dispatchInterval = 0;
-        });
-
-        it('close Server', function () {
-            intentionStorageServer.closeServer();
+    describe('Close server', function () {
+        it ('should close', function () {
+            intentionStorageServer.close();
         });
     });
 });

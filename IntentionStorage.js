@@ -37,7 +37,8 @@ function dispatchIntentions(storage, intention) {
         }
     }
 
-    storage.translate(intention);
+    if (intention.enableBroadcasting)
+        storage.broadcast(intention);
     return true;
 }
 
@@ -283,11 +284,11 @@ module.exports = class IntentionStorage {
             this._storageServer.close();
     }
 
-    async translate(intention) {
+    async broadcast(intention) {
         if (intention.origin == null) return false;
         for (let [,link] of this._links) {
             try {
-                await link.translate(intention);
+                await link.broadcast(intention);
             } catch (e) {
                 if (!e.dispose) {
                     return;
@@ -306,11 +307,11 @@ module.exports = class IntentionStorage {
         return this._query.queryLinkedStorages(params);
     }
 
-    translateIntentionsToLink(link) {
+    broadcastIntentionsToLink(link) {
         const intentions = this.intentions.byId();
         for (let [,intention] of intentions) {
             try {
-                link.translate(intention);
+                link.broadcast(intention);
             } catch (e) {
                 if (!e.dispose) {
                     return;

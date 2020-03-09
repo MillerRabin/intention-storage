@@ -1,7 +1,7 @@
 # Intention Storage
 This is a core package for the Intention Network. It gives ability to the device
 to be a member of such networks.
-It`s includes code to accept intentions, to search for counter intentions and to translate
+It`s includes code to accept intentions, to search for counter intentions and to broadcast
 intentions to other storage. 
 
 ## Instead of Introduction

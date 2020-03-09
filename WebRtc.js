@@ -133,7 +133,7 @@ async function setOffer(socket, peer, offer) {
         if (storage == null) throw new Error('webRTC storage is not defined');
         const address = getAddressFromOffer(offer);
         link = storage.addStorage({ channel: channel, handling: 'auto', origin: address });
-        storage.translateIntentionsToLink(link);
+        storage.broadcastIntentionsToLink(link);
         channel.maxMessageSize = peer.maxMessageSize;
 
         channel.onclose = function() {

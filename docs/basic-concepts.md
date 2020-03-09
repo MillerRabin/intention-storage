@@ -1,7 +1,7 @@
 ## How Intention Network works
-Every device in Intention Network can accept, store and translate intentions - to be an **intention storage**. 
+Every device in Intention Network can accept, store and broadcast intentions - to be an **intention storage**. 
 If the device can perform the specific functions, it can accepts a specific intentions. 
-If no, it just translate intentions to another devices.     
+If no, it just broadcast intentions to another devices.     
 
 When the device needs to get something or give something, that device generates an intention and 
 broadcasts it through known storages to searching an intention for counter needs.

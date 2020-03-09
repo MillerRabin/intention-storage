@@ -2,13 +2,13 @@ const NetworkIntention = require('./NetworkIntention.js');
 const Stream = require('./Stream.js');
 
 const gCommandTable = {
-    '1:translate':  async function (storageLink, message) {
+    '1:broadcast':  async function (storageLink, message) {
         if (message.intention == null) throw new Error('intention object expected');
         const textIntention = message.intention;
         if ((textIntention.type != 'Intention') && (textIntention.type != 'NetworkIntention'))
             throw new Error('type of object must be Intention or NetworkIntention');
         try {
-            return await translate(storageLink, textIntention);
+            return await broadcast(storageLink, textIntention);
         } catch (e) {
             return null;
         }
@@ -104,7 +104,7 @@ async function getStorageLink(textIntention, storageLink) {
 
 }
 
-async function translate(storageLink, textIntention) {
+async function broadcast(storageLink, textIntention) {
     if (textIntention.id == null) throw new Error('Intention id must exists');
     const target =  storageLink._storage.intentions.byId(textIntention.id);
     if (target != null) return target;
@@ -152,7 +152,7 @@ async function parseMessage(storageLink, message) {
     if (message.status == null) pStatus.result.messages.push('message status field must exists');
     if (message.intention == null)
         throwObject(pStatus.result, 'intention field must exists');
-    pStatus.target = await translate(storageLink, message.intention);
+    pStatus.target = await broadcast(storageLink, message.intention);
     if (pStatus.target == null)
         throwObject(pStatus.result, 'Intention is not found');
     return pStatus;
@@ -164,9 +164,7 @@ async function dispatchMessage(linkedStorage, data) {
         const message = dec.decode(data);
         const obj = JSON.parse(message);
         await linkedStorage.dispatchMessage(obj);
-    } catch (e) {
-        console.log(e);
-    }
+    } catch (e) {}
 }
 
 function send(channel, obj) {

@@ -9,13 +9,18 @@ function update(intention, status) {
 
 async function accept(local, network) {
     if (local.accepted.isAccepting(network)) return;
-    if (network.accepted.isAccepting(local)) return;
+    if (local.enableBroadcasting && network.accepted.isAccepting(local)) return;
     try {
-        await network.accepted.reload();
+        if (local.enableBroadcasting)
+            await network.accepted.reload();
         local.accepted.setAccepting(network);
         if (local.accepted.has(network)) return;
-        if (network.accepted.has(local)) return;
-        if (network.accepted.isAccepting(local)) return;
+
+        if (local.enableBroadcasting) {
+            if (network.accepted.has(local)) return;
+            if (network.accepted.isAccepting(local)) return;
+        }
+
         let sAccept = null;
         let tAccept = null;
         try {
@@ -38,12 +43,13 @@ async function accept(local, network) {
         local.accepted.set(network);
         network.accepted.set(local);
     } catch (e) {
-        console.log(e);
         local.accepted.delete(network);
-        network.accepted.delete(local);
+        if (local.enableBroadcasting)
+            network.accepted.delete(local);
     } finally {
         local.accepted.deleteAccepting(network);
-        network.accepted.deleteAccepting(local);
+        if (local.enableBroadcasting)
+            network.accepted.deleteAccepting(local);
     }
 }
 
@@ -56,9 +62,10 @@ module.exports = class Intention extends IntentionAbstract {
         onData,
         parameters = [],
         value,
-        storage
+        storage,
+        enableBroadcasting = true
     }) {
-        super({title, description, input, output, parameters, value});
+        super({title, description, input, output, parameters, value, enableBroadcasting});
         if (storage == null) throw new Error('Intention must have a storage');
         if (typeof(onData) != 'function') throw new Error('Intention onData must be an async function');
         this._createTime = new Date();

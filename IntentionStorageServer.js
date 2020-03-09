@@ -30,7 +30,7 @@ module.exports = class IntentionStorageServer extends LinkedStorageAbstract {
 
         this._listenSocket.on('connection', (ws, req) => {
             const link = this._storage.addStorage({ storage: this._storage, socket: ws, request: req, handling: 'auto' });
-            this._storage.translateIntentionsToLink(link);
+            this._storage.broadcastIntentionsToLink(link);
             ws.on('close', () => {
                 this._storage.deleteStorage(link);
             });

@@ -155,9 +155,9 @@ module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
         return this._webRTCPeer;
     }
 
-    async translate(intention) {
+    async broadcast(intention) {
         await this.sendObject({
-            command: 'translate',
+            command: 'broadcast',
             version: 1,
             intention: intention.toObject()
         })
