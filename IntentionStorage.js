@@ -37,7 +37,7 @@ function dispatchIntentions(storage, intention) {
         }
     }
 
-    if (intention.enableBroadcasting)
+    if (intention.enableBroadcast)
         storage.broadcast(intention);
     return true;
 }
@@ -163,7 +163,8 @@ module.exports = class IntentionStorage {
         output,
         onData,
         parameters = [],
-        value
+        value,
+        enableBroadcast = true
     }) {
         const intention = new Intention({
             title,
@@ -174,6 +175,7 @@ module.exports = class IntentionStorage {
             parameters,
             value,
             storage: this,
+            enableBroadcast
         });
         this._add(intention);
         return intention;

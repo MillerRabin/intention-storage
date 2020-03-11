@@ -9,14 +9,14 @@ function update(intention, status) {
 
 async function accept(local, network) {
     if (local.accepted.isAccepting(network)) return;
-    if (local.enableBroadcasting && network.accepted.isAccepting(local)) return;
+    if (local.enableBroadcast && network.accepted.isAccepting(local)) return;
     try {
-        if (local.enableBroadcasting)
+        if (local.enableBroadcast)
             await network.accepted.reload();
         local.accepted.setAccepting(network);
         if (local.accepted.has(network)) return;
 
-        if (local.enableBroadcasting) {
+        if (local.enableBroadcast) {
             if (network.accepted.has(local)) return;
             if (network.accepted.isAccepting(local)) return;
         }
@@ -44,11 +44,11 @@ async function accept(local, network) {
         network.accepted.set(local);
     } catch (e) {
         local.accepted.delete(network);
-        if (local.enableBroadcasting)
+        if (local.enableBroadcast)
             network.accepted.delete(local);
     } finally {
         local.accepted.deleteAccepting(network);
-        if (local.enableBroadcasting)
+        if (local.enableBroadcast)
             network.accepted.deleteAccepting(local);
     }
 }
@@ -63,9 +63,9 @@ module.exports = class Intention extends IntentionAbstract {
         parameters = [],
         value,
         storage,
-        enableBroadcasting = true
+        enableBroadcast = true
     }) {
-        super({title, description, input, output, parameters, value, enableBroadcasting});
+        super({title, description, input, output, parameters, value, enableBroadcast});
         if (storage == null) throw new Error('Intention must have a storage');
         if (typeof(onData) != 'function') throw new Error('Intention onData must be an async function');
         this._createTime = new Date();

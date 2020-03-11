@@ -97,11 +97,11 @@ async function getStorageLink(textIntention, storageLink) {
     const link = storageLink._storage.addStorage({ ...params, handling: 'auto' });
     try {
         await link.waitConnection(10000);
+        return link;
     } catch (e) {
         storageLink._storage.deleteStorage(link);
         throw new Error(`Connection with ${tUrl} cat't be established`);
     }
-
 }
 
 async function broadcast(storageLink, textIntention) {
