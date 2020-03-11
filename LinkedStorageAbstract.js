@@ -19,10 +19,7 @@ const gCommandTable = {
             const result = await mData.intention.send(message.status, mData.target, message.data);
             await sendStatus({storageLink, status: 'OK', requestId: mData.result.requestId, result});
         } catch (e) {
-            if (e instanceof Error) {
-                console.log(e);
-                return;
-            }
+            if (e instanceof Error) return;
             sendStatus({storageLink, status: 'FAILED', requestId: e.requestId, result: e});
         }
     },
@@ -38,9 +35,7 @@ const gCommandTable = {
     '1:requestStatus':  async function (storageLink, message) {
        try {
             NetworkIntention.updateRequestObject(message);
-       } catch (e) {
-           console.log(e);
-       }
+       } catch (e) {}
     },
     '1:getAccepted':  async function (storageLink, message) {
         try {
@@ -75,10 +70,7 @@ const gCommandTable = {
 };
 
 function parseError(storageLink, e) {
-    if (e instanceof Error) {
-        console.log(e);
-        return;
-    }
+    if (e instanceof Error) return;
     sendStatus({storageLink, status: 'FAILED', requestId: e.requestId, result: e}).catch(() => {});
 }
 
