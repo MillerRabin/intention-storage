@@ -1,6 +1,6 @@
 {
   "name": "intention-storage",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Intention Storage project",
   "main": "main.js",
   "scripts": {
@@ -15,7 +15,7 @@
   "license": "ISC",
   "homepage": "https://github.com/MillerRabin/intention-storage",
   "devDependencies": {
-    "intention-builder": "0.1.0",
+    "intention-builder": "0.1.1",
     "mocha": "^9.2.1"
   },
   "dependencies": {

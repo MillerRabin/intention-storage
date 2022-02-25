@@ -17,7 +17,7 @@ function typeIntentions(source, target) {
     if (source.type == 'Intention')
         return { local: source, network: target };
     if (target.type == 'Intention')
-        return { local: target, network: target };
+        return { local: target, network: source };
     return null;
 }
 
