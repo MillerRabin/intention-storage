@@ -1,10 +1,10 @@
-const WebSocket = require('./WebSocket.js');
-const LinkedStorageAbstract = require('./LinkedStorageAbstract.js');
-const https = require('https'); //Delete for Browser environment
+import WebSocket  from "./WebSocket.js";
+import LinkedStorageAbstract  from "./LinkedStorageAbstract.js";
+
 
 function createSimpleServer(storage, port) {
     storage._schema = 'ws';
-    storage._listenSocket = new WebSocket.Server({ port });
+    storage._listenSocket = new WebSocket.WebSocketServer({ port });
 }
 
 function createSecureServer(storage, port, cert) {
@@ -16,10 +16,10 @@ function createSecureServer(storage, port, cert) {
 
     const server = createHttpsServer(cert, port);
     storage._schema = 'wss';
-    storage._listenSocket = new WebSocket.Server({ server });
+    storage._listenSocket = new WebSocket.WebSocketServer({ server });
 }
 
-module.exports = class IntentionStorageServer extends LinkedStorageAbstract {
+export default class IntentionStorageServer extends LinkedStorageAbstract {
     constructor({ storage, address, port = 10010, sslCert}) {
         super({ storage, port, handling: 'manual' });
         if (address == null) throw new Error('address is not defined');

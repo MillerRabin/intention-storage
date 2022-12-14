@@ -1,8 +1,3 @@
-//${time}
-const http = require('http'); //Delete for Browser environment
-const https = require('https'); //Delete for Browser environment
-const Url = require('url'); //Delete for Browser environment
-
 function getJsonData(data) {
     try {
         return JSON.parse(data)
@@ -65,9 +60,20 @@ class BrowserRequest {
     }
 }
 
+
+async function loadDeps() {
+    const [http, https, Url] = await Promise.all([
+        import('http'),
+        import('https'),
+        import('url')
+    ]);
+    return {http, https, Url}
+}
+
 class Request {
     static request(url, { method = 'GET', headers = {}, data }) {
-        return new Promise(function (resolve, reject) {
+        return new Promise(async (resolve, reject) => {
+            const { http, https, Url } = await loadDeps();
             const params = Url.parse(url);
             params.method = method;
             params["rejectUnauthorized"] = false;
@@ -120,10 +126,4 @@ try {
     defClass = BrowserRequest;
 } catch (e) {}
 
-module.exports = defClass;
-
-
-
-
-
-
+export default defClass;

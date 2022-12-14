@@ -1,5 +1,5 @@
-const uuid = require('./core/uuid.js');
-const IntentionAbstract = require('./IntentionAbstract.js');
+import uuid  from "./core/uuid.js";
+import IntentionAbstract  from "./IntentionAbstract.js";
 
 function update(intention, status) {
     intention._updateTime = new Date();
@@ -53,7 +53,7 @@ async function accept(local, network) {
     }
 }
 
-module.exports = class Intention extends IntentionAbstract {
+export default class Intention extends IntentionAbstract {
     constructor ({
         title,
         description,

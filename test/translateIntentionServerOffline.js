@@ -1,5 +1,6 @@
-const assert = require('assert');
-const { IntentionStorage } = require('../main.js');
+import assert from 'assert';
+import main from "../main.js";
+const { IntentionStorage } = main;
 
 describe('Translate intentions server offline', function() {
     let iQuery = null;
@@ -56,7 +57,7 @@ describe('Translate intentions server offline', function() {
         it('automatic linked storage should be appeared at server', function(done) {
             setTimeout(() => {
                 const links = [...intentionStorageServer.links.values()];
-                const target = links.find(l => l.origin == '::ffff:127.0.0.1');
+                const target = links.find(l => l.origin == '::1');
                 assert.ok(target != null, 'storage must exists');
                 assert.strictEqual(target.handling,'auto');
                 done();

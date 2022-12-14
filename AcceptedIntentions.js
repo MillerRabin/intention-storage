@@ -5,7 +5,7 @@ function loadAccepted(self, acceptedObject) {
     self._accepting = aSet;
 }
 
-module.exports = class AcceptedIntentions {
+export default class AcceptedIntentions {
     constructor (intention, accepted) {
         if (intention == null) throw new Error('intention expected');
         this.intention = intention;

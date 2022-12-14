@@ -1,7 +1,9 @@
-const assert = require('assert');
-const { IntentionStorage } = require('../main.js');
+import assert from 'assert';
+import main from "../main.js";
+const { IntentionStorage } = main;
 
 describe('Non broadcast intentions', function() {
+    this.timeout(0);
     let broadcastIntention = null;
     let nonBroadcastIntention = null;
     let nonBroadcastServer = null;

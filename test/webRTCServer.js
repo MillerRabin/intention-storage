@@ -1,13 +1,21 @@
-const assert = require('assert');
-const { IntentionStorage } = require('../main.js');
-const fs = require('fs');
-const path = require('path');
+import assert from "assert";
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import main from "../main.js";
+const { IntentionStorage } = main;
+
+import fs from "fs";
+import path from "path";
 
 /*process.on('unhandledRejection', function(reason, p) {
     console.log("Possibly Unhandled Rejection at: Promise ", p, " reason: ", reason);
 });*/
 
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
 describe('Intention WebRTC Server ', function() {
+    this.timeout(0);
     let iQuery = null;
     let source = null;
     let target = null;
@@ -146,10 +154,10 @@ describe('Intention WebRTC Server ', function() {
             assert.ok(intention != null, 'Target must be exists in storage');
         });
 
-        it('Wait 1000 seconds', function (done) {
+        it('Wait 2000 seconds', function (done) {            
             setTimeout(function () {
                 done();
-            },1000);
+            },2000);
         });
     });
 

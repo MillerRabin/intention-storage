@@ -1,7 +1,7 @@
-const safe = require('./core/safe.js');
-const AcceptedIntentions = require('./AcceptedIntentions.js');
+import safe  from "./core/safe.js";
+import AcceptedIntentions  from "./AcceptedIntentions.js";
 
-module.exports = class IntentionAbstract {
+export default class IntentionAbstract {
     constructor ({
                      title,
                      description,

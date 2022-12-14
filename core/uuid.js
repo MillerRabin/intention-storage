@@ -10,6 +10,6 @@ function generateUUID() { // Public Domain/MIT
     });
 }
 
-module.exports = {
+export default {
     generate: generateUUID
 };
