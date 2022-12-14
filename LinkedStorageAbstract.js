@@ -1,5 +1,5 @@
-const NetworkIntention = require('./NetworkIntention.js');
-const Stream = require('./Stream.js');
+import NetworkIntention  from "./NetworkIntention.js";
+import Stream  from "./Stream.js";
 
 const gCommandTable = {
     '1:broadcast':  async function (storageLink, message) {
@@ -166,7 +166,7 @@ function send(channel, obj) {
     stream.send(channel);
 }
 
-module.exports = class LinkedStorageAbstract {
+export default class LinkedStorageAbstract {
     constructor({ storage, port = 10010, handling, socket, channel }) {
         if (storage == null) throw new Error('Storage must be exists');
         if (handling == null) throw new Error('Manage type must be defined');

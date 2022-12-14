@@ -1,5 +1,6 @@
-const assert = require('assert');
-const { IntentionStorage } = require('../main.js');
+import assert from 'assert';
+import main from "../main.js";
+const { IntentionStorage } = main;
 
 describe('Linked Storages', function() {
     let intentionStorage = null;

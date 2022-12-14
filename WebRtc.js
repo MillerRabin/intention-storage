@@ -1,6 +1,7 @@
-const WebSocket = require('ws'); //Delete for Browser environment
-const Network = require('./Network.js');
-const wrtc = getWRTC();
+
+import Network from "./Network.js";
+import WebSocket from "./WebSocket.js";
+const wrtc = await getWRTC();
 
 const signalServerHttp = 'https://signal.raintech.su:8086';
 const signalServerSocket = 'wss://signal.raintech.su:8086';
@@ -9,13 +10,11 @@ const gConfig = {
     iceServers: []
 };
 
-function getWRTC() {
+async function getWRTC() {
     try {
-        return {
-            RTCPeerConnection: window.RTCPeerConnection
-        }
+        return window.RTCPeerConnection;
     } catch (e) {
-        return require('wrtc');
+        return (await import('wrtc')).default;
     }
 }
 
@@ -51,7 +50,7 @@ function getMaxMessage(offer, answer) {
 
 
 function connectSignalSocket(webRTC, label) {
-    const socket = new WebSocket(webRTC.signalServer);
+    const socket = new WebSocket.WebSocket(webRTC.signalServer);
     socket.webRTC = webRTC;
     socket.onopen = function () {
         sendData(socket, {
@@ -163,8 +162,8 @@ function waitForCandidates(peer, timeout = 5000) {
     });
 }
 
-module.exports = class WebRTC {
-    constructor ({ storage, key }) {
+export default class WebRTC {
+    constructor ({ storage, key }) {        
         this._peer = new wrtc.RTCPeerConnection(gConfig);
 
         this._signalServer = signalServerSocket;

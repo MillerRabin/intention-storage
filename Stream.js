@@ -126,7 +126,7 @@ function parseStructure(stream, message) {
     const msg = getMessage(stream, id, buffer, length, start, end);
     checkMessage(msg);
 }
-module.exports = class Stream {
+export default class Stream {
     constructor(data, chunkSize) {
         this._data = data;
         this._chunkSize = chunkSize;

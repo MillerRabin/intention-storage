@@ -1,4 +1,4 @@
-module.exports = class OriginMap extends Map {
+export default class OriginMap extends Map {
     set(intention) {
         if (!super.has(intention.origin))
             super.set(intention.origin, new Map());

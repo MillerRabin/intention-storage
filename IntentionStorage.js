@@ -1,13 +1,12 @@
-//${time}
-const Intention = require('./Intention.js');
-const IntentionMap = require('./IntentionMap.js');
-const LinkedStorageClient = require('./LinkedStorageClient.js');
-const LinkedStorageServer = require('./IntentionStorageServer.js'); //Delete for Browser environment
-const NetworkIntention = require('./NetworkIntention.js');
-const IntentionQuery = require('./IntentionQuery.js');
-const IntentionError = require('./IntentionError.js');
-const WebRTC = require('./WebRtc.js');
-const uuid = require('./core/uuid.js');
+import Intention  from "./Intention.js";
+import IntentionMap  from "./IntentionMap.js";
+import LinkedStorageClient  from "./LinkedStorageClient.js";
+import LinkedStorageServer  from "./IntentionStorageServer.js";
+import NetworkIntention  from "./NetworkIntention.js";
+import IntentionQuery  from "./IntentionQuery.js";
+import IntentionError  from "./IntentionError.js";
+import WebRTC  from "./WebRtc.js";
+import uuid  from "./core/uuid.js";
 
 const errorCodes = {
     linkAlreadyExists: 'LNK-0001'
@@ -76,7 +75,7 @@ function hasStorage(storages, keys) {
     return null;
 }
 
-module.exports = class IntentionStorage {
+export default class IntentionStorage {
     constructor () {
         this._intentions = new IntentionMap(this);
         this._links = new Map();

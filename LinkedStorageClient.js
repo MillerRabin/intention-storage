@@ -1,7 +1,6 @@
-//${time}
-const WebSocket = require('./WebSocket.js');
-const LinkedStorageAbstract = require('./LinkedStorageAbstract.js');
-const WebRTC = require('./WebRtc.js');
+import WebSocket  from "./WebSocket.js";
+import LinkedStorageAbstract  from "./LinkedStorageAbstract.js";
+import WebRTC  from "./WebRtc.js";
 
 function addListeners(storageLink, socket, resolve, reject) {
     socket.onerror = function (error) {
@@ -24,7 +23,7 @@ function addListeners(storageLink, socket, resolve, reject) {
 
 function connectSchemaSocket({ schema, storageLink }) {
     return new Promise((resolve, reject) => {
-        const socket =  new WebSocket(`${schema}://${storageLink._origin}:${storageLink._port}`);
+        const socket =  new WebSocket.WebSocket(`${schema}://${storageLink._origin}:${storageLink._port}`);
         addListeners(storageLink, socket, resolve, reject);
     });
 }
@@ -94,7 +93,7 @@ function isChannelOpen(channel) {
     return (channel != null) && (channel.readyState == 'open')
 }
 
-module.exports = class LinkedStorageClient extends LinkedStorageAbstract {
+export default class LinkedStorageClient extends LinkedStorageAbstract {
     constructor({ storage, origin, port = 10010, schema, socket, channel, request, handling, useSocket = true, useWebRTC = true }) {
         if (request != null) {
             origin = request.connection.remoteAddress;

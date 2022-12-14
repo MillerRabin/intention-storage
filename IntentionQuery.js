@@ -41,10 +41,10 @@ function enableStats(intentionQuery) {
 
 function disableStats(intentionQuery) {
     intentionQuery._sendStats = false;
-    clearTimeout(this._statsTimeout);
+    clearTimeout(intentionQuery._statsTimeout);
 }
 
-module.exports = class IntentionQuery {
+export default class IntentionQuery {
     constructor (storage) {
         this._storage = storage;
         this._updatedIntentions = new Map();

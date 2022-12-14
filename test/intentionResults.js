@@ -1,7 +1,9 @@
-const assert = require('assert');
-const { IntentionStorage, generateUUID } = require('../main.js');
+import assert from 'assert';
+import main from "../main.js";
+const { IntentionStorage } = main;
 
 describe('Intention results', function () {
+    this.timeout(0);
     let masha = null;
     let mashaGetsCoffee = null;
     let petya = null;
@@ -146,7 +148,7 @@ describe('Intention results', function () {
                 const [vl] = petyaAccepted;
                 assert.strictEqual(vl.value.message, 'Masha accepted');
                 done();
-            }, 1000);
+            }, 2000);
         });
 
         it('Kolya intention must be accepted', function (done) {
@@ -155,7 +157,7 @@ describe('Intention results', function () {
                 const [vl] = kolyaAccepted;
                 assert.strictEqual(vl.value.message, 'Masha accepted');
                 done();
-            }, 1000);
+            }, 2000);
         });
 
         it('Masha intention must be accepted', function (done) {
@@ -165,7 +167,7 @@ describe('Intention results', function () {
                 assert.strictEqual(vl1.value.message, 'Petya accepted');
                 assert.strictEqual(vl2.value.message, 'Kolya accepted');
                 done();
-            }, 1000);
+            }, 2000);
         });
     });
 

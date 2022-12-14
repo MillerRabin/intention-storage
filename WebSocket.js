@@ -1,8 +1,11 @@
-let WebSocket;
-try {
-    WebSocket = window.WebSocket;
-} catch (e) {
-    WebSocket = require('ws');
+const WebSocket = await getWebsocket();
+
+async function getWebsocket() {
+    try {
+        return window.WebSocket;
+    } catch (e) {
+        return await import('ws');        
+    }    
 }
 
-module.exports = WebSocket;
+export default WebSocket;

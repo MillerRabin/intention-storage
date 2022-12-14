@@ -1,6 +1,6 @@
-const safe = require('./core/safe.js');
-const uuid = require('./core/uuid.js');
-const IntentionAbstract = require('./IntentionAbstract.js');
+import safe  from "./core/safe.js";
+import uuid  from "./core/uuid.js";
+import IntentionAbstract  from "./IntentionAbstract.js";
 
 const gRequestTransactions = {};
 
@@ -12,7 +12,7 @@ function processError(networkIntention, error) {
         networkIntention.storageLink._storage.deleteIntention(networkIntention);
 }
 
-module.exports = class NetworkIntention extends IntentionAbstract {
+export default class NetworkIntention extends IntentionAbstract {
     constructor ({
                      id,
                      createTime,

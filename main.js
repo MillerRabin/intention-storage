@@ -1,9 +1,9 @@
-const IntentionStorage = require('./IntentionStorage.js');
-const IntentionError = require('./IntentionError.js');
+import IntentionStorage  from "./IntentionStorage.js";
+import IntentionError  from "./IntentionError.js";
 
-const uuid = require('./core/uuid.js');
+import uuid  from "./core/uuid.js";
 
-module.exports = {
+export default {
     generateUUID: uuid.generate,
     IntentionStorage,
     IntentionError

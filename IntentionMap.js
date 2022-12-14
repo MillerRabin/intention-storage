@@ -1,6 +1,6 @@
-const OriginMap = require('./OriginMap.js');
+import OriginMap  from "./OriginMap.js";
 
-module.exports = class IntentionMap {
+export default class IntentionMap {
     constructor(storage) {
         if (storage == null) throw new Error('storage must be the first parameter');
         this.storage = storage;
