@@ -58,7 +58,7 @@ const gCommandTable = {
     '1:deleteAccepted':  async function (storageLink, message) {
         try {
             const mData = parseStatusMessage(storageLink, message);
-            mData.target = storageLink._storage.intentions.byId(message.intention);
+            mData.target = storageLink.storage.intentions.byId(message.intention);
             if (mData.target == null) throwObject(mData.result, 'Target intention is not found');
             mData.intention.accepted.delete(message.data);
             mData.intention.send('close', mData.target, message.data);
@@ -86,23 +86,23 @@ async function getStorageLink(textIntention, storageLink) {
     const sUrl = storageLink.key;
     if ((storageLink.socket == null) || (tUrl == null) || (tUrl == sUrl)) return storageLink;
     const params = parseUrl(tUrl);
-    const link = storageLink._storage.addStorage({ ...params, handling: 'auto' });
+    const link = storageLink.storage.addStorage({ ...params, handling: 'auto' });
     try {
         await link.waitConnection(10000);
         return link;
     } catch (e) {
-        storageLink._storage.deleteStorage(link);
+        storageLink.storage.deleteStorage(link);
         throw new Error(`Connection with ${tUrl} cat't be established`);
     }
 }
 
 async function broadcast(storageLink, textIntention) {
     if (textIntention.id == null) throw new Error('Intention id must exists');
-    const target =  storageLink._storage.intentions.byId(textIntention.id);
+    const target =  storageLink.storage.intentions.byId(textIntention.id);
     if (target != null) return target;
     textIntention.storageLink = await getStorageLink(textIntention, storageLink);
     const intention = new NetworkIntention(textIntention);
-    storageLink._storage.addNetworkIntention(intention);
+    storageLink.storage.addNetworkIntention(intention);
     return intention;
 }
 
@@ -128,7 +128,7 @@ function parseStatusMessage(storageLink, message) {
     if (rObj.requestId == null) rObj.messages.push('requestId field must exists');
     rObj.id = message.id;
     if (rObj.id == null) throwObject(rObj, 'Intention id field must exists');
-    const intention = storageLink._storage.intentions.byId(rObj.id);
+    const intention = storageLink.storage.intentions.byId(rObj.id);
     if (intention == null) {
         rObj.operation = 'delete';
         throwObject(rObj, 'The Intention is not found at the origin')
@@ -166,20 +166,28 @@ function send(channel, obj) {
     stream.send(channel);
 }
 
-export default class LinkedStorageAbstract {
+export default class LinkedStorageAbstract {    
+    #storage;
+    #port;
+    #handling;
+    #socket;
+    #disposed = false;
+    #channel;
+    #lifeTimeout = null;
+    #lifeTime = 5000;
+    #pingTimeout = null;
+    #intentions = new Map();
+    #type = 'LinkedStorageAbstract';
+
     constructor({ storage, port = 10010, handling, socket, channel }) {
         if (storage == null) throw new Error('Storage must be exists');
-        if (handling == null) throw new Error('Manage type must be defined');
-        this._intentions = new Map();
-        this._storage = storage;
-        this._port = port;
-        this._handling = handling;
-        this.socket = socket;
-        this._disposed = false;
-        this.channel = channel;
-        this._lifeTimeout = null;
-        this._lifeTime = storage.lifeTime;
-        this._pingTimeout = null;
+        if (handling == null) throw new Error('Manage type must be defined');        
+        this.#storage = storage;
+        this.#port = port;
+        this.#handling = handling;
+        this.socket = socket;        
+        this.channel = channel;        
+        this.#lifeTime = storage.lifeTime;
     }
 
     async dispatchMessage(data) {
@@ -197,10 +205,10 @@ export default class LinkedStorageAbstract {
     }
 
     set socket(value) {
-        if (this._socket != null)
-            this._socket.close();
+        if (this.#socket != null)
+            this.#socket.close();
 
-        this._socket = value;
+        this.#socket = value;
         if (value == null) {
             return;
         }
@@ -212,10 +220,10 @@ export default class LinkedStorageAbstract {
     }
 
     set channel(value) {
-        if (this._channel != null)
-            this._channel.close();
+        if (this.#channel != null)
+            this.#channel.close();
 
-        this._channel = value;
+        this.#channel = value;
         if (value == null) {
             return;
         }
@@ -227,11 +235,11 @@ export default class LinkedStorageAbstract {
     }
 
     addIntention(intention) {
-        return this._intentions.set(intention.id, intention);
+        return this.#intentions.set(intention.id, intention);
     }
 
     deleteIntention(intention) {
-        return this._intentions.delete(intention.id);
+        return this.#intentions.delete(intention.id);
     }
 
     getChannel() {
@@ -243,63 +251,67 @@ export default class LinkedStorageAbstract {
     }
 
     setAlive() {
-        if (this._lifeTimeout != null)
-            clearTimeout(this._lifeTimeout);
-        this._lifeTimeout = setTimeout(() => {
+        if (this.#lifeTimeout != null)
+            clearTimeout(this.#lifeTimeout);
+        this.#lifeTimeout = setTimeout(() => {
             this.close();
-        }, this._lifeTime + 1000);
+        }, this.#lifeTime + 1000);
     }
 
     get socket() {
-        return this._socket;
+        return this.#socket;
     }
 
     get type() {
-        return this._type;
+        return this.#type;
     }
 
     get handling() {
-        return this._handling;
+        return this.#handling;
     }
 
     get port() {
-        return this._port;
+        return this.#port;
     }
 
     get disposed() {
-        return this._disposed;
+        return this.#disposed;
     }
 
     get channel() {
-        return this._channel;
+        return this.#channel;
     }
 
     get lifeTime() {
-        return this._lifeTime;
+        return this.#lifeTime;
+    }
+
+    get storage() {
+        return this.#storage;
     }
 
     set lifeTime(value) {
-        this._lifeTime = value;
+        this.#lifeTime = value;
         this.setAlive();
     }
 
     offline() {
-        for(let [,intention] of this._intentions) {
-            this._storage.deleteIntention(intention, 'Linked storage is offline');
+        for(const [,intention] of this.#intentions) {
+            this.#storage.deleteIntention(intention, 'Linked storage is offline');
         }
     }
 
     close() {
-        this._storage._query.updateStorage(this, 'closed');
-        if (this._lifeTimeout != null)
-            clearTimeout(this._lifeTimeout);
+        this.#storage.query.updateStorage(this, 'closed');
+        if (this.#lifeTimeout != null)
+            clearTimeout(this.#lifeTimeout);
         this.offline();
         this.socket = null;
         this.channel = null;
     }
 
     dispose() {
-        this._disposed = true;
+        this.#disposed = true;
     }
 
     sendError(error) {
@@ -311,10 +323,9 @@ export default class LinkedStorageAbstract {
         });
     }
 
-
     startPinging() {
-        if (this._pingTimeout != null) clearTimeout(this._pingTimeout);
-        this._pingTimeout = setTimeout(() => {
+        if (this.#pingTimeout != null) clearTimeout(this.#pingTimeout);
+        this.#pingTimeout = setTimeout(() => {
             try {
                 this.sendObject({
                     command: 'ping',

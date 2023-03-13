@@ -163,17 +163,19 @@ function waitForCandidates(peer, timeout = 5000) {
 }
 
 export default class WebRTC {
-    constructor ({ storage, key }) {        
-        this._peer = new wrtc.RTCPeerConnection(gConfig);
+    #peer = new wrtc.RTCPeerConnection(gConfig);
+    #signalServer = signalServerSocket;
+    #storage;
+    #key;
 
-        this._signalServer = signalServerSocket;
+    constructor ({ storage, key }) {        
         if (storage == null) throw new Error('Storage is not defined');
-        this._storage = storage;
-        this._key = key;
+        this.#storage = storage;
+        this.#key = key;
     }
 
     get peer() {
-        return this._peer;
+        return this.#peer;
     }
 
     async connectToSignal(address) {
@@ -199,15 +201,15 @@ export default class WebRTC {
     };
 
     get signalServer() {
-        return this._signalServer;
+        return this.#signalServer;
     }
 
     get storage() {
-        return this._storage;
+        return this.#storage;
     }
 
     get key() {
-        return this._key;
+        return this.#key;
     }
 };
 

@@ -1,11 +1,4 @@
-import uuid  from "./core/uuid.js";
 import IntentionAbstract  from "./IntentionAbstract.js";
-
-function update(intention, status) {
-    intention._updateTime = new Date();
-    intention._storage._query.updateIntention(intention, status);
-}
-
 
 async function accept(local, network) {
     if (local.accepted.isAccepting(network)) return;
@@ -38,8 +31,8 @@ async function accept(local, network) {
 
         local.send('accepted', network, tAccept);
         network.send('accepted', local, sAccept);
-        update(local, 'accepted');
-        update(network, 'accepted');
+        local.update('accepted');
+        network.update('accepted');
         local.accepted.set(network);
         network.accepted.set(local);
     } catch (e) {
@@ -53,7 +46,11 @@ async function accept(local, network) {
     }
 }
 
-export default class Intention extends IntentionAbstract {
+export default class Intention extends IntentionAbstract {        
+    #type = 'Intention';
+    #storage;
+    #onData;
+    
     constructor ({
         title,
         description,
@@ -67,35 +64,26 @@ export default class Intention extends IntentionAbstract {
     }) {
         super({title, description, input, output, parameters, value, enableBroadcast});
         if (storage == null) throw new Error('Intention must have a storage');
-        if (typeof(onData) != 'function') throw new Error('Intention onData must be an async function');
-        this._createTime = new Date();
-        this._onData = onData;
-        this._id = uuid.generate();
-        this._storage = storage;
-        this._type = 'Intention';
+        if (typeof(onData) != 'function') throw new Error('Intention onData must be an async function');        
+        this.#onData = onData;        
+        this.#storage = storage;        
     }
+
     get origin() {
-        if (this._storage._storageServer != null)
-            return this._storage._storageServer.key;
-        if (this._storage._webRTCAnswer != null)
-            return this._storage._webRTCAnswer.key;
+        if (this.#storage.storageServer != null)
+            return this.#storage.storageServer.key;
+        if (this.#storage.webRTCAnswer != null)
+            return this.#storage.webRTCAnswer.key;
         return null;
     }
-    get createTime() {
-        return this._createTime;
-    }
-
-    get id() {
-        return this._id;
-    }
-
+    
     async accept(intention) {
         return await accept(this, intention);
     }
 
     async send(status, intention, data) {
         try {
-            return await this._onData(status, intention, data);
+            return await this.#onData(status, intention, data);
         } catch (e) {
             await intention.send('error', this, e);
             throw e;
@@ -103,14 +91,18 @@ export default class Intention extends IntentionAbstract {
     }
 
     dispatch() {
-        this._storage._dispatchWait.add(this);
+        this.#storage.dispatchWait.add(this);
+    }
+
+    get type() {
+        return this.#type;
     }
 
     toObject() {
         return {
             ...super.toObject(),
-            createTime: this.createTime,
-            origin: this.origin
+            origin: this.origin,
+            type: this.#type
         };
     }
 };
