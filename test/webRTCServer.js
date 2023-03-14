@@ -14,7 +14,7 @@ import path from "path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-describe.only('Intention WebRTC Server ', function() {
+describe('Intention WebRTC Server ', function() {
     this.timeout(0);
     let iQuery = null;
     let source = null;

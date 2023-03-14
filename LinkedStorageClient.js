@@ -55,7 +55,7 @@ export default class LinkedStorageClient extends LinkedStorageAbstract {
                 }
                 await this.peer.sendOffer(this.origin);
                 this.channel.maxMessageSize = this.peer.maxMessageSize;
-                this.#addListeners(resolve, reject);
+                this.#addListeners(this.channel, resolve, reject);
             } catch (e) {
                 reject(e);
             }
