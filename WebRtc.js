@@ -162,8 +162,13 @@ function waitForCandidates(peer, timeout = 5000) {
     });
 }
 
+function createPeer(gConfig) {
+    if (typeof wrtc == 'function') return new wrtc(gConfig);
+    return new wrtc.RTCPeerConnection(gConfig);
+}
+
 export default class WebRTC {
-    #peer = new wrtc.RTCPeerConnection(gConfig);
+    #peer = createPeer(gConfig);
     #signalServer = signalServerSocket;
     #storage;
     #key;
