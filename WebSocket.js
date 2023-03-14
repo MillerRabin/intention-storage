@@ -2,7 +2,7 @@ const WebSocket = await getWebsocket();
 
 async function getWebsocket() {
     try {
-        return window.WebSocket;
+        return { WebSocket: window.WebSocket };
     } catch (e) {
         return await import('ws');        
     }    

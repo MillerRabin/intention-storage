@@ -12,7 +12,7 @@ const gConfig = {
 
 async function getWRTC() {
     try {
-        return window.RTCPeerConnection;
+        return { webrtc: window.RTCPeerConnection };
     } catch (e) {
         return (await import('wrtc')).default;
     }
@@ -162,13 +162,8 @@ function waitForCandidates(peer, timeout = 5000) {
     });
 }
 
-function createPeer(gConfig) {
-    if (typeof wrtc == 'function') return new wrtc(gConfig);
-    return new wrtc.RTCPeerConnection(gConfig);
-}
-
 export default class WebRTC {
-    #peer = createPeer(gConfig);
+    #peer = new wrtc.RTCPeerConnection(gConfig);
     #signalServer = signalServerSocket;
     #storage;
     #key;
