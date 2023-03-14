@@ -14,7 +14,7 @@ import path from "path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-describe('Intention WebRTC Server ', function() {
+describe.only('Intention WebRTC Server ', function() {
     this.timeout(0);
     let iQuery = null;
     let source = null;
@@ -30,6 +30,7 @@ describe('Intention WebRTC Server ', function() {
     describe('Create Storage Server', function () {
         it ('Create storage server', async function () {
             intentionStorageServer = new IntentionStorage();
+            console.log('intentionStorageServer', intentionStorageServer.id);
             const {webRTCAnswer} = await intentionStorageServer.createServer({ address: 'localhost', useWebRTC: true, useSocket: false });
             assert.notStrictEqual(webRTCAnswer, null);
             assert.notStrictEqual(webRTCAnswer.signalSocket, null);
@@ -48,6 +49,7 @@ describe('Intention WebRTC Server ', function() {
     describe('Create Storage Client', function () {
         it ('Create storage', function () {
             intentionStorage = new IntentionStorage();
+            console.log('intentionStorage', intentionStorage.id);
         });
 
         it ('should enable stats', function () {

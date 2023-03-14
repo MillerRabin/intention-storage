@@ -9,10 +9,15 @@ function processError(networkIntention, error) {
     const operation = error.operation;
     if ((id == null) || (operation == null)) return;
     if (operation == 'delete')
-        networkIntention.storageLink._storage.deleteIntention(networkIntention);
+        networkIntention.storageLink.storage.deleteIntention(networkIntention);
 }
 
 export default class NetworkIntention extends IntentionAbstract {
+    #origin;
+    #storageLink;
+    #type = 'NetworkIntention';
+    #messageTimeout = 5000;
+
     constructor ({
                      id,
                      createTime,
@@ -26,17 +31,15 @@ export default class NetworkIntention extends IntentionAbstract {
                      storageLink,
                      accepted
                  }) {
-        super({ title, description, input, output, parameters, value, accepted });
         if (safe.isEmpty(id)) throw new Error('Network Intention must have an id');
         if (safe.isEmpty(createTime)) throw new Error('Network Intention must have createTime');
         if (storageLink == null) throw new Error('Storage link must be exists');
-        this._createTime = createTime;
-        this._origin = origin;
-        this._id = id;
-        this._storageLink = storageLink;
-        this._storageLink.addIntention(this);
-        this.messageTimeout = 5000;
-        this._type = 'NetworkIntention';
+        
+        super({ id, createTime, title, description, input, output, parameters, value, accepted });
+        this.#origin = origin;
+        this.#storageLink = storageLink;
+        this.#storageLink.addIntention(this);
+        
     }
 
     static createRequestObject(networkIntention, intention, data) {
@@ -81,26 +84,22 @@ export default class NetworkIntention extends IntentionAbstract {
     }
 
     get origin() {
-        return this._origin;
-    }
-
-    get createTime() {
-        return this._createTime;
-    }
-
-    get id() {
-        return this._id;
+        return this.#origin;
     }
 
     get storageLink() {
-        return this._storageLink;
+        return this.#storageLink;
+    }
+
+    get type() { 
+        return this.#type; 
     }
 
     send(status, intention, data) {
         if (intention.toObject == null) throw new Error('Intention must not be null');
         const request = NetworkIntention.createRequestObject(this, intention);
         try {
-            this._storageLink.sendObject({
+            this.#storageLink.sendObject({
                 command: 'message',
                 version: 1,
                 status,
@@ -120,7 +119,7 @@ export default class NetworkIntention extends IntentionAbstract {
         const request = NetworkIntention.createRequestObject(this, intention, data);
         const iObj = (intention.toObject == null) ? intention : intention.toObject();
         try {
-            this._storageLink.sendObject({
+            this.#storageLink.sendObject({
                 command: command,
                 version: 1,
                 id: this.id,
@@ -135,12 +134,14 @@ export default class NetworkIntention extends IntentionAbstract {
         }
     }
 
+    get messageTimeout() { return this.#messageTimeout; }
+
 
     toObject() {
         return {
             ...super.toObject(),
             createTime: this.createTime,
-            origin: this._origin
+            origin: this.#origin
         }
     }
 };

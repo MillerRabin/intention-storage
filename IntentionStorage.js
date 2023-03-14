@@ -20,38 +20,6 @@ function typeIntentions(source, target) {
     return null;
 }
 
-function dispatchIntentions(storage, intention) {
-    const rKey = intention.getKey(true);
-    const originMap = storage._intentions.byKey(rKey);
-    if (originMap != null) {
-        for (const [, origin] of originMap) {
-            for (const [, int] of origin) {
-                try {
-                    if (int == intention) continue;
-                    const sRes = typeIntentions(int, intention);
-                    if (sRes == null) continue;
-                    sRes.local.accept(sRes.network);
-                } catch (e) {}
-            }
-        }
-    }
-
-    if (intention.enableBroadcast)
-        storage.broadcast(intention);
-    return true;
-}
-
-function dispatchCycle(storage) {
-    clearTimeout(storage._dispatchTimeout);
-    storage._dispatchTimeout = setTimeout(() => {
-        for (let intention of storage._dispatchWait) {
-            dispatchIntentions(storage, intention);
-            storage._dispatchWait.delete(intention);
-        }
-        dispatchCycle(storage);
-    }, storage._dispatchInterval);
-}
-
 function getParameter(params, type) {
     if (!Array.isArray(params)) throw new Error('Parameters must be array of enties');
     const tp = (Array.isArray(type)) ? type : [type];
@@ -76,21 +44,65 @@ function hasStorage(storages, keys) {
 }
 
 export default class IntentionStorage {
-    constructor () {
-        this._intentions = new IntentionMap(this);
-        this._links = new Map();
-        this._dispatchWait = new Set();
-        this._dispatchInterval = 5000;
-        this._dispatchTimeout = null;
-        this._query = new IntentionQuery(this);
-        this._storageServer = null;
-        this._webRTCAnswer = null;
-        this._lifeTime = 5000;
-        this._id = uuid.generate();
-        this._type = 'IntentionStorage';
-        dispatchCycle(this);
+    #intentions = new IntentionMap(this);
+    #links = new Map();
+    #dispatchWait = new Set();
+    #dispatchInterval = 5000;
+    #dispatchTimeout;
+    #storageServer = null;
+    #webRTCAnswer;
+    #lifeTime = 5000;
+    #id;
+    #type = 'IntentionStorage';
+    #query;
+    
+    constructor (params = {}) {
+        const id = params.id ?? uuid.generate();
+        this.#id = id;
+        this.#query = new IntentionQuery(this);
+        this.#dispatchCycle();
     }
 
+    
+    #dispatchCycle() {
+        clearTimeout(this.#dispatchTimeout);
+        this.#dispatchTimeout = setTimeout(() => {
+            for (let intention of this.#dispatchWait) {
+                this.#dispatchIntentions(intention);
+                this.#dispatchWait.delete(intention);
+            }
+            this.#dispatchCycle();
+        }, this.#dispatchInterval);
+    }
+
+    #dispatchIntentions(intention) {
+        const rKey = intention.getKey(true);
+        const originMap = this.#intentions.byKey(rKey);
+        if (originMap != null) {
+            for (const [, origin] of originMap) {
+                for (const [, int] of origin) {
+                    try {
+                        if (int == intention) continue;
+                        const sRes = typeIntentions(int, intention);
+                        if (sRes == null) continue;
+                        sRes.local.accept(sRes.network);
+                    } catch (e) {}
+                }
+            }
+        }
+    
+        if (intention.enableBroadcast)
+            this.broadcast(intention);
+        return true;
+    }
+
+    #add(intention) {
+        this.#intentions.set(intention);
+        intention.storage = this;
+        this.#query.updateIntention(intention, 'created');
+        this.#dispatchWait.add(intention);
+    }
+    
     addStorage(params) {
         params.storage = this;
         if (params.handling == null)
@@ -107,7 +119,7 @@ export default class IntentionStorage {
             this.deleteStorage(tLink);
         const link = new LinkedStorageClient(params);
         this.links.set(link.key, link);
-        this._query.updateStorage(link, 'created');
+        this.#query.updateStorage(link, 'created');
         return link;
     }
 
@@ -115,7 +127,7 @@ export default class IntentionStorage {
         this.links.delete(link.key);
         link.dispose();
         link.close();
-        this._query.updateStorage(link, 'deleted');
+        this.#query.updateStorage(link, 'deleted');
     }
 
     addLink(parameters) {
@@ -148,13 +160,6 @@ export default class IntentionStorage {
         return link;
     }
 
-    _add(intention) {
-        this.intentions.set(intention);
-        intention._storage = this;
-        this._query.updateIntention(intention, 'created');
-        this._dispatchWait.add(intention);
-    }
-
     createIntention({
         title,
         description,
@@ -176,23 +181,23 @@ export default class IntentionStorage {
             storage: this,
             enableBroadcast
         });
-        this._add(intention);
+        this.#add(intention);
         return intention;
     }
 
     addNetworkIntention(intention) {
         if (!(intention instanceof NetworkIntention)) throw new Error('intention must be instance of NetworkIntention');
-        this._add(intention);
+        this.#add(intention);
     }
 
     deleteIntention(intention, data) {
         intention.accepted.close(data);
         this.intentions.delete(intention);
-        this._query.updateIntention(intention, 'deleted');
+        this.#query.updateIntention(intention, 'deleted');
     }
 
     deleteAllIntention(data) {
-        for (const intention of this._intentions) {
+        for (const intention of this.#intentions) {
             try {
                 this.deleteIntention(intention, data);
             } catch (e) {}
@@ -200,7 +205,7 @@ export default class IntentionStorage {
     }
 
     deleteAllStorages() {
-        for (const [,link] of this._links) {
+        for (const [,link] of this.#links) {
             try {
                 this.deleteStorage(link);
             } catch (e) {}
@@ -216,78 +221,82 @@ export default class IntentionStorage {
     }
 
     get intentions() {
-        return this._intentions;
+        return this.#intentions;
     }
     get links() {
-        return this._links;
+        return this.#links;
     }
     get id() {
-        return this._id;
+        return this.#id;
     }
 
     get type() {
-        return this._type;
+        return this.#type;
     }
 
     get query() {
-        return this._query;
+        return this.#query;
     }
 
     get lifeTime() {
-        return this._lifeTime;
+        return this.#lifeTime;
     }
 
     set lifeTime(value) {
-        this._lifeTime = value;
+        this.#lifeTime = value;
     }
 
     set dispatchInterval(value) {
         if (typeof(value) != 'number') throw new Error('Value must be number');
-        clearTimeout(this._dispatchTimeout);
-        this._dispatchInterval = value;
+        clearTimeout(this.#dispatchTimeout);
+        this.#dispatchInterval = value;
         if (value > 0)
-            dispatchCycle(this);
+            this.#dispatchCycle();
     }
 
     set statsInterval(value) {
-        this._query.statsInterval = value;
+        this.#query.statsInterval = value;
     }
 
     get statsInterval() {
-        return this._query.statsInterval;
+        return this.#query.statsInterval;
     }
 
     get dispatchInterval() {
-        return this._dispatchInterval;
+        return this.#dispatchInterval;
     }
 
     get storageServer() {
-        return this._storageServer;
+        return this.#storageServer;
     }
 
+    get webRTCAnswer() {
+        return this.#webRTCAnswer;
+    }
+    
     async createServer({address, port = 10010, sslCert, useSocket = true, useWebRTC = false }) {
         const rObj = {};
         if (useSocket) {
-            this._storageServer = new LinkedStorageServer({ storage: this, address: address, port, sslCert });
-            rObj.socketServer = this._storageServer;
+            this.#storageServer = new LinkedStorageServer({ storage: this, address: address, port, sslCert });
+            rObj.socketServer = this.#storageServer;
         }
 
         if (useWebRTC) {
-            this._webRTCAnswer = new WebRTC({ storage: this, key: address });
-            await this._webRTCAnswer.connectToSignal(address);
-            rObj.webRTCAnswer = this._webRTCAnswer;
+            this.#webRTCAnswer = new WebRTC({ storage: this, key: address });
+            await this.#webRTCAnswer.connectToSignal(address);
+            rObj.webRTCAnswer = this.#webRTCAnswer;
         }
         return rObj;
     }
 
     closeServer() {
-        if (this._storageServer != null)
-            this._storageServer.close();
+        if (this.#storageServer != null)
+            this.#storageServer.close();
     }
 
     async broadcast(intention) {
         if (intention.origin == null) return false;
-        for (let [,link] of this._links) {
+        for (let [,link] of this.#links) {
             try {
                 await link.broadcast(intention);
             } catch (e) {
@@ -301,11 +310,11 @@ export default class IntentionStorage {
     }
 
     queryIntentions(params) {
-        return this._query.queryIntentions(params);
+        return this.#query.queryIntentions(params);
     }
 
     queryLinkedStorage(params) {
-        return this._query.queryLinkedStorages(params);
+        return this.#query.queryLinkedStorages(params);
     }
 
     broadcastIntentionsToLink(link) {
@@ -325,8 +334,8 @@ export default class IntentionStorage {
 
     toObject() {
         return {
-            id: this._id,
-            type: this._type
+            id: this.#id,
+            type: this.#type
         }
     }
 };

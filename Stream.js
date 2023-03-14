@@ -9,18 +9,18 @@ function getID() {
 }
 
 function getEffectiveChunkSize(stream) {
-    return stream._chunkSize - (stream._id.byteLength + 12);
+    return stream.chunkSize - (stream.id.byteLength + 12);
 }
 
 function allocateBuffer(stream) {
-    return new Uint8Array(stream._chunkSize);
+    return new Uint8Array(stream.chunkSize);
 }
 
 function setHeader(stream, buffer) {
     try {
-        const header = new Uint8Array(stream._id.buffer);
+        const header = new Uint8Array(stream.id.buffer);
         buffer.set(header, 0);
-        return stream._id.byteLength;
+        return stream.id.byteLength;
     } catch (e) {
         console.log(e);
     }
@@ -127,16 +127,18 @@ function parseStructure(stream, message) {
     checkMessage(msg);
 }
 export default class Stream {
+    #data;
+    #chunkSize;
+    #id = getID();
+
     constructor(data, chunkSize) {
-        this._data = data;
-        this._chunkSize = chunkSize;
-        this._id = getID();
-        this.onmessage = null;
+        this.#data = data;
+        this.#chunkSize = chunkSize;    
     }
 
     send(channel) {
         const enc = new TextEncoder();
-        const data = enc.encode(this._data);
+        const data = enc.encode(this.#data);
         let index = 0;
         const buffer = allocateBuffer(this);
         const offset = setHeader(this, buffer);
@@ -153,6 +155,11 @@ export default class Stream {
             channel.send(bw);
         }
     }
+
+    get id() { return this.#id; }
+    get chunkSize() { return this.#chunkSize; }
+    get data() { return this.#data; }
+
     static from(channel) {
         const stream = new Stream(null, channel.maxMessageSize);
         channel.onmessage = async function (event) {
