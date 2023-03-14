@@ -30,6 +30,7 @@ describe.only('Intention WebRTC Server ', function() {
     describe('Create Storage Server', function () {
         it ('Create storage server', async function () {
             intentionStorageServer = new IntentionStorage();
+            console.log('intentionStorageServer', intentionStorageServer.id);
             const {webRTCAnswer} = await intentionStorageServer.createServer({ address: 'localhost', useWebRTC: true, useSocket: false });
             assert.notStrictEqual(webRTCAnswer, null);
             assert.notStrictEqual(webRTCAnswer.signalSocket, null);
@@ -48,6 +49,7 @@ describe.only('Intention WebRTC Server ', function() {
     describe('Create Storage Client', function () {
         it ('Create storage', function () {
             intentionStorage = new IntentionStorage();
+            console.log('intentionStorage', intentionStorage.id);
         });
 
         it ('should enable stats', function () {
