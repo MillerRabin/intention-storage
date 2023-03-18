@@ -115,7 +115,7 @@ export default class IntentionAbstract {
             title: this.#title,
             description: this.#description,
             value: this.#value,
-            type: this.#type,
+            type: this.type,
             parameters: this.#parameters,
             accepted: this.#accepted.toObject()
         }

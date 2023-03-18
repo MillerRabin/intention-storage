@@ -1,6 +1,6 @@
 {
   "name": "intention-storage",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Intention Storage project",
   "main": "main.js",
   "type": "module",
@@ -18,8 +18,8 @@
     "mocha": "^10.2.0"
   },
   "dependencies": {
+    "@intention-network/messages": "^0.0.4",
     "wrtc": "^0.4.7",
     "ws": "^8.11.0"
   }
 }
- 

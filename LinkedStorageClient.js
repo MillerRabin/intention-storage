@@ -20,13 +20,13 @@ export default class LinkedStorageClient extends LinkedStorageAbstract {
     #waitP;
     #id = uuid.generate();
 
-    constructor({ storage, origin, port = 10010, schema, socket, channel, request, handling, useSocket = true, useWebRTC = true }) {
+    constructor({ storage, origin, port = 10010, schema, socket, channel, request, handling, useSocket = true, useWebRTC = true, sendMode = 'binary' }) {
         if (request != null) {
             origin = request.connection.remoteAddress;
             port = request.connection.remotePort;
         }
 
-        super({ storage, port, handling, socket, channel });
+        super({ storage, port, handling, socket, channel, sendMode });
         this.#origin = origin;
         this.#schema = schema;
         this.#type = 'LinkedStorageClient';

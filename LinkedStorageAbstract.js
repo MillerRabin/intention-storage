@@ -150,20 +150,12 @@ async function parseMessage(storageLink, message) {
     return pStatus;
 }
 
-async function dispatchMessage(linkedStorage, data) {
-    try {
-        const dec = new TextDecoder();
-        const message = dec.decode(data);
-        const obj = JSON.parse(message);
-        await linkedStorage.dispatchMessage(obj);
-    } catch (e) {}
-}
 
-function send(channel, obj) {
+function send(channel, obj, mode) {
     const maxLength = (channel.maxMessageSize == undefined) ? 65535 : channel.maxMessageSize;
-    const msg = JSON.stringify(obj);
+    const msg = JSON.stringify(obj);    
     const stream = new Stream(msg, maxLength);
-    stream.send(channel);
+    stream.send(channel, mode);
 }
 
 export default class LinkedStorageAbstract {    
@@ -178,8 +170,9 @@ export default class LinkedStorageAbstract {
     #pingTimeout = null;
     #intentions = new Map();
     #type = 'LinkedStorageAbstract';
+    #sendMode = 'binary';
 
-    constructor({ storage, port = 10010, handling, socket, channel }) {
+    constructor({ storage, port = 10010, handling, socket, channel, sendMode = 'binary' }) {
         if (storage == null) throw new Error('Storage must be exists');
         if (handling == null) throw new Error('Manage type must be defined');        
         this.#storage = storage;
@@ -188,6 +181,7 @@ export default class LinkedStorageAbstract {
         this.socket = socket;        
         this.channel = channel;        
         this.#lifeTime = storage.lifeTime;
+        this.#sendMode = sendMode;
     }
 
     async dispatchMessage(data) {
@@ -199,9 +193,20 @@ export default class LinkedStorageAbstract {
         return await func(this, data);
     }
 
+    async #decodeMessage(data) {
+        try {
+            const dec = new TextDecoder();
+            const message = dec.decode(data);
+            const obj = JSON.parse(message);
+            await this.dispatchMessage(obj);
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
     sendObject(obj) {
         const channel = this.getChannel();
-        return send(channel, obj);
+        return send(channel, obj, this.#sendMode);
     }
 
     set socket(value) {
@@ -215,7 +220,7 @@ export default class LinkedStorageAbstract {
 
         const stream = Stream.from(value);
         stream.onmessage = (data) => {
-            dispatchMessage(this, data);
+            this.#decodeMessage(data);
         };
     }
 
@@ -229,8 +234,8 @@ export default class LinkedStorageAbstract {
         }
 
         const stream = Stream.from(value);
-        stream.onmessage = (message) => {
-            dispatchMessage(this, message);
+        stream.onmessage = (message) => {            
+            this.#decodeMessage(message);
         };
     }
 
