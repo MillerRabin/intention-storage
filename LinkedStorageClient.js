@@ -19,21 +19,21 @@ export default class LinkedStorageClient extends LinkedStorageAbstract {
     #webRTCPeer;
     #waitP;
     #id = uuid.generate();
-
-    constructor({ storage, origin, port = 10010, schema, socket, channel, request, handling, useSocket = true, useWebRTC = true, sendMode = 'binary' }) {
+    
+    constructor({ storage, origin, port = 10010, schema, socket, channel, request, handling, useSocket = true, useWebRTC = true, socketSendMode = 'json' }) {
         if (request != null) {
             origin = request.connection.remoteAddress;
             port = request.connection.remotePort;
         }
 
-        super({ storage, port, handling, socket, channel, sendMode });
+        super({ storage, port, handling, socket, channel, socketSendMode });
         this.#origin = origin;
         this.#schema = schema;
         this.#type = 'LinkedStorageClient';
         this.#waitForServerInterval = 15000;
         this.#waitForServerTimeout = null;
         this.#useSocket = useSocket;
-        this.#useWebRTC = useWebRTC;
+        this.#useWebRTC = useWebRTC;        
         if (this.#useWebRTC) {
             this.#webRTCPeer = new WebRTC({ storage });
         }
@@ -41,7 +41,7 @@ export default class LinkedStorageClient extends LinkedStorageAbstract {
 
     #connectSchemaSocket(schema) {
         return new Promise((resolve, reject) => {
-            const socket =  new WebSocket.WebSocket(`${schema}://${this.#origin}:${this.port}`);
+            const socket =  new WebSocket.WebSocket(`${schema}://${this.#origin}:${this.port}`);            
             this.#addListeners(socket, resolve, reject);
         });
     }
@@ -51,7 +51,7 @@ export default class LinkedStorageClient extends LinkedStorageAbstract {
             if (this.peer == null) return reject('Peer is not created');
             try {
                 if ((this.channel == null) || (this.channel.readyState != 'connecting')) {
-                    this.channel = await this.peer.createChannel('intentions');
+                    this.channel = await this.peer.createChannel('intentions');                    
                 }
                 await this.peer.sendOffer(this.origin);
                 this.channel.maxMessageSize = this.peer.maxMessageSize;
