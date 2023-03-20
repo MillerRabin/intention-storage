@@ -87,7 +87,7 @@ export default class LinkedStorageClient extends LinkedStorageAbstract {
         let schema = 'wss';
         try {
             socket = await this.#connectSchemaSocket(schema);
-            storageLink.#schema = schema;
+            this.#schema = schema;
             return socket
         } catch (e) {}
         schema = 'ws';

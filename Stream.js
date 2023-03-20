@@ -1,4 +1,13 @@
-import messages from "@intention-network/messages";
+async function getMessages() {
+    try {
+        const md = await import('/node_modules/@intention-network/messages/main.js');
+        return md.default;
+    } catch (e) {
+        return (await import('@intention-network/messages')).default;
+    }    
+}
+
+const messages = await getMessages();
 
 function isBlob(message) {
     try {

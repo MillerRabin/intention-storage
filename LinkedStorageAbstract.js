@@ -1,5 +1,6 @@
 import NetworkIntention  from "./NetworkIntention.js";
 import Stream  from "./Stream.js";
+import uuid  from "./core/uuid.js";
 
 const gCommandTable = {
     '1:broadcast':  async function (storageLink, message) {
@@ -153,7 +154,7 @@ async function parseMessage(storageLink, message) {
 
 function send(channel, obj) {
     const maxLength = (channel.maxMessageSize == undefined) ? 65535 : channel.maxMessageSize;
-    const msg = JSON.stringify(obj);    
+    const msg = JSON.stringify({ ...obj, requestId: uuid.generate() });
     const stream = new Stream(msg, maxLength);
     stream.send(channel, channel.sendMode);
 }
