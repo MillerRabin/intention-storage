@@ -59,8 +59,8 @@ export default class NetworkIntention extends IntentionAbstract {
             NetworkIntention.deleteRequestObject(requestId);
             processError(networkIntention, error);
             throw error;
-        });
-        gRequestTransactions[requestId] = request;
+        });        
+        gRequestTransactions[requestId] = request;        
         return request;
     }
 
@@ -69,13 +69,17 @@ export default class NetworkIntention extends IntentionAbstract {
         clearTimeout(gRequestTransactions[requestId].timeout);
         error = (error == null) ? new Error(`Request ${requestId} is deleted`) : error;
         const req = gRequestTransactions[requestId];
-        delete gRequestTransactions[requestId];
+        delete gRequestTransactions[requestId];        
         req.reject(error);
     }
 
     static updateRequestObject(message) {
         if (message.requestId == null) throw new Error('message requestId is null');
         const request = gRequestTransactions[message.requestId];
+        if (request == null) {
+            console.log(`request is not found: ${message.requestId}`);
+            return;
+        }            
         if (message.status != 'FAILED') {
             request.resolve(message.result);
             return;
@@ -119,7 +123,7 @@ export default class NetworkIntention extends IntentionAbstract {
         const request = NetworkIntention.createRequestObject(this, intention, data);
         const iObj = (intention.toObject == null) ? intention : intention.toObject();
         try {
-            this.#storageLink.sendObject({
+            await this.#storageLink.sendObject({
                 command: command,
                 version: 1,
                 id: this.id,

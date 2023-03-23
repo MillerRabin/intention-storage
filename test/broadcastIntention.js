@@ -15,8 +15,7 @@ describe('Broadcast intentions', function() {
 
 
     describe('Create Storage Server', function () {
-        it ('Create storage', 
-        function () {
+        it ('Create storage', function () {
             intentionStorageServer = new IntentionStorage();
         });
 

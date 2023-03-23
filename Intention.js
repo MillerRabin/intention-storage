@@ -36,6 +36,7 @@ async function accept(local, network) {
         local.accepted.set(network);
         network.accepted.set(local);
     } catch (e) {
+        console.log(e);
         local.accepted.delete(network);
         if (local.enableBroadcast)
             network.accepted.delete(local);

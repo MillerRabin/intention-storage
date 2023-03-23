@@ -103,6 +103,10 @@ export default class IntentionAbstract {
         this.#updateTime = new Date();
         this.#storage.query.updateIntention(this, status);
     }
+
+    async sendError(obj) {
+        await this.#storage.sendError(obj);
+    }
     
     toObject() {
         return {
