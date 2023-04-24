@@ -9,5 +9,5 @@ export default {
     generateUUID: uuid.generate,
     IntentionStorage,
     IntentionError,
-    mapValueToInterface: core.mapValueToInterface
+    IntentionInterface: core.IntentionInterface
 };
