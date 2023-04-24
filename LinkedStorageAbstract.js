@@ -3,7 +3,7 @@ import Stream from "./Stream.js";
 import uuid from "./core/uuid.js";
 
 const gCommandTable = {
-  '1:broadcast': async function (storageLink, message) {
+  '1:broadcast': async function (storageLink, message) {    
     if (message.intention == null) throw new Error('intention object expected');
     const textIntention = message.intention;
     if ((textIntention.type != 'Intention') && (textIntention.type != 'NetworkIntention'))
@@ -11,7 +11,7 @@ const gCommandTable = {
     try {
       return await broadcast(storageLink, textIntention);
     } catch (e) {
-      return null;
+      console.error(e);
     }
   },
   '1:message': async function (storageLink, message) {
@@ -104,7 +104,7 @@ async function broadcast(storageLink, textIntention) {
   const target = storageLink.storage.intentions.byId(textIntention.id);
   if (target != null) return target;
   textIntention.storageLink = await getStorageLink(textIntention, storageLink);
-  const intention = new NetworkIntention(textIntention);
+  const intention = new NetworkIntention({ ...textIntention, requestLifeTime: storageLink.storage.requestLifeTime });
   storageLink.storage.addNetworkIntention(intention);
   return intention;
 }
@@ -183,7 +183,7 @@ export default class LinkedStorageAbstract {
     this.#handling = handling;
     this.socket = socket;
     this.channel = channel;
-    this.#lifeTime = storage.lifeTime;
+    this.#lifeTime = storage.connectionLifeTime;
     this.#socketSendMode = socketSendMode;
   }
 
@@ -217,7 +217,7 @@ export default class LinkedStorageAbstract {
   }
 
   sendObject(obj) {
-    const channel = this.getChannel();
+    const channel = this.getChannel();    
     return send(channel, obj);
   }
 

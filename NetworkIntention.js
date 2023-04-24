@@ -29,7 +29,8 @@ export default class NetworkIntention extends IntentionAbstract {
                      parameters = [],
                      value,
                      storageLink,
-                     accepted
+                     accepted,
+                     requestLifeTime = 5000
                  }) {
         if (safe.isEmpty(id)) throw new Error('Network Intention must have an id');
         if (safe.isEmpty(createTime)) throw new Error('Network Intention must have createTime');
@@ -39,6 +40,7 @@ export default class NetworkIntention extends IntentionAbstract {
         this.#origin = origin;
         this.#storageLink = storageLink;
         this.#storageLink.addIntention(this);
+        this.#messageTimeout = requestLifeTime;
         
     }
 

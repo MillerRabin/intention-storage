@@ -1,13 +1,13 @@
 import IntentionStorage  from "./IntentionStorage.js";
 import IntentionError  from "./IntentionError.js";
-import messagesModule from './messages.js';
+import coreModule from './core.js';
 import uuid  from "./core/uuid.js";
 
-const messages = await messagesModule.getModule();
+const core = await coreModule.getModule();
 
 export default {
     generateUUID: uuid.generate,
     IntentionStorage,
     IntentionError,
-    mapValueToInterface: messages.mapValueToInterface
+    mapValueToInterface: core.mapValueToInterface
 };

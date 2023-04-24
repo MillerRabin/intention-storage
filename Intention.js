@@ -1,6 +1,6 @@
 import IntentionAbstract  from "./IntentionAbstract.js";
 
-async function accept(local, network) {
+async function accept(local, network) {    
     if (local.accepted.isAccepting(network)) return;
     if (local.enableBroadcast && network.accepted.isAccepting(local)) return;
     try {

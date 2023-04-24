@@ -1,6 +1,6 @@
-import messagesModule from './messages.js';
+import coreModule from './core.js';
 
-const messages = await messagesModule.getModule();
+const core = await coreModule.getModule();
 
 function isBlob(message) {
     try {
@@ -17,7 +17,7 @@ function getArrayFromBlob(blob) {
 async function receive(data) {
     if (isBlob(data))
         data = getArrayFromBlob(data);
-    return await messages.parse(data);
+    return await core.parse(data);
 }
 
 export default class Stream {
@@ -29,8 +29,8 @@ export default class Stream {
         this.#chunkSize = chunkSize;
     }
 
-    send(channel, mode = 'json') {
-        return messages.send({ channel, message: this.#data, mode, chunkSize: this.#chunkSize });
+    send(channel, mode = 'json') {        
+        return core.send({ channel, message: this.#data, mode, chunkSize: this.#chunkSize });
     }
 
     get chunkSize() { return this.#chunkSize; }

@@ -51,7 +51,8 @@ export default class IntentionStorage {
     #dispatchTimeout;
     #storageServer = null;
     #webRTCAnswer;
-    #lifeTime = 5000;
+    #requestLifeTime = 5000;
+    #connectionLifeTime = 5000;    
     #id;
     #type = 'IntentionStorage';
     #query;
@@ -113,7 +114,7 @@ export default class IntentionStorage {
             throw new IntentionError({
                 message: `Storage already exists ${tLink.key}`,
                 code: errorCodes.linkAlreadyExists,
-                detail: { link: tLink}
+                detail: { link: tLink }
             });
         if (tLink != null)
             this.deleteStorage(tLink);
@@ -238,12 +239,24 @@ export default class IntentionStorage {
         return this.#query;
     }
 
-    get lifeTime() {
-        return this.#lifeTime;
+    get requestLifeTime() {
+        return this.#requestLifeTime;
     }
 
-    set lifeTime(value) {
-        this.#lifeTime = value;
+    set requestLifeTime(value) {
+        this.#requestLifeTime = value;
+    }
+
+    get connectionLifeTime() {
+        return this.#connectionLifeTime;
+    }
+
+    set connectionLifeTime(value) {
+        this.#connectionLifeTime = value;
+    }
+
+    get dispatchInterval() {
+        return this.#dispatchInterval;
     }
 
     set dispatchInterval(value) {

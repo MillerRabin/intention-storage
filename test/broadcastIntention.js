@@ -2,7 +2,7 @@ import assert  from "assert";
 import main from "../main.js";
 const { IntentionStorage } = main;
 
-describe('Broadcast intentions', function() {
+describe.only('Broadcast intentions', function() {
     let iQuery = null;
     let source = null;
     let target = null;
@@ -27,10 +27,6 @@ describe('Broadcast intentions', function() {
             intentionStorageServer.dispatchInterval = 500;
         });
 
-        it ('Set dispatch interval', function () {
-            intentionStorageServer.lifeTime = 500;
-        });
-
         it('Create server', function() {
             intentionStorageServer.createServer({ address: 'localhost'});
         });
@@ -51,7 +47,7 @@ describe('Broadcast intentions', function() {
         });
 
         it ('Set dispatch interval', function () {
-            intentionStorage.lifeTime = 500;
+            intentionStorage.connectionLifeTime = 500;
         });
 
         it('add linked storage by parameters', function() {
