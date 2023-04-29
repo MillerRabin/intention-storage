@@ -19,8 +19,14 @@ export default class LinkedStorageClient extends LinkedStorageAbstract {
   #webRTCPeer;
   #waitP;
   #id = uuid.generate();
-
-  constructor({ storage, origin, port = 10010, schema, socket, channel, request, handling, useSocket = true, useWebRTC = true, socketSendMode = 'json' }) {
+  #allowNotEncrypted = true;
+  
+  constructor({ storage, origin, port = 10010, schema,
+                socket, channel, request, handling, 
+                useSocket = true, useWebRTC = true, 
+                allowNotEncrypted = true,
+                waitForServerInterval = 3000,
+                socketSendMode = 'json' }) {
     if (request != null) {
       origin = request.connection.remoteAddress;
       port = request.connection.remotePort;
@@ -30,10 +36,11 @@ export default class LinkedStorageClient extends LinkedStorageAbstract {
     this.#origin = origin;
     this.#schema = schema;
     this.#type = 'LinkedStorageClient';
-    this.#waitForServerInterval = 15000;
+    this.#waitForServerInterval = waitForServerInterval ?? this.#waitForServerInterval;
     this.#waitForServerTimeout = null;
     this.#useSocket = useSocket;
     this.#useWebRTC = useWebRTC;
+    this.#allowNotEncrypted = allowNotEncrypted;
     if (this.#useWebRTC) {
       this.#webRTCPeer = new WebRTC({ storage });
     }
@@ -98,6 +105,7 @@ export default class LinkedStorageClient extends LinkedStorageAbstract {
       this.#schema = schema;
       return socket
     } catch (e) { }
+    if (!this.#allowNotEncrypted) throw new Error('wss schema connection failed ws connection is disabled');
     schema = 'ws';
     socket = await this.#connectSchemaSocket(schema);
     this.#schema = schema;
