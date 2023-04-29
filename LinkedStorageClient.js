@@ -12,7 +12,7 @@ export default class LinkedStorageClient extends LinkedStorageAbstract {
   #origin;
   #schema;
   #type = 'LinkedStorageClient';
-  #waitForServerInterval = 15000;
+  #waitForServerInterval = 3000;
   #waitForServerTimeout = null;
   #useSocket = true;
   #useWebRTC = true;
