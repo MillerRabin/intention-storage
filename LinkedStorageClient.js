@@ -72,25 +72,28 @@ export default class LinkedStorageClient extends LinkedStorageAbstract {
 
   #addListeners(socket, resolve, reject) {
     console.log('connecting');
-    const timeout = setTimeout(() => {
+    /*const timeout = setTimeout(() => {
       this.storage.query.updateStorage(this, 'error');
       socket.close();
       return reject(new Error('Connection timeout'));
-    }, this.#waitConnectionTimeout);
+    }, this.#waitConnectionTimeout);*/
 
     socket.onerror = (error) => {
-      clearTimeout(timeout);
+      console.log('connection error', error);
+      //clearTimeout(timeout);
       this.storage.query.updateStorage(this, 'error');
       return reject(error);
     };
 
     socket.onopen = () => {
-      clearTimeout(timeout);
+      //clearTimeout(timeout);
+      console.log('connected');
       if (this.disposed) {
         this.storage.query.updateStorage(this, 'error');
         socket.close();
         return reject(new Error('StorageLink is disposed'));
       }
+
       this.storage.query.updateStorage(this, 'connected');
       this.startPinging();
       this.setAlive();
