@@ -71,7 +71,7 @@ export default class LinkedStorageClient extends LinkedStorageAbstract {
   }
 
   #addListeners(socket, resolve, reject) {
-    console.log('connecing');
+    console.log('connecting');
     const timeout = setTimeout(() => {
       this.storage.query.updateStorage(this, 'error');
       socket.close();
