@@ -9,5 +9,6 @@ export default {
     generateUUID: uuid.generate,
     IntentionStorage,
     IntentionError,
-    IntentionInterface: core.IntentionInterface
+    IntentionInterface: core.IntentionInterface,
+    createState: createPromiseState
 };

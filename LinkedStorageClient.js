@@ -14,8 +14,8 @@ export default class LinkedStorageClient extends LinkedStorageAbstract {
   #type = 'LinkedStorageClient';
   #waitForServerInterval = 3000;
   #waitForServerTimeout = null;
-  //#waitConnectionInterval = null;
-  //#waitConnectionTimeout = 10000;
+  #waitConnectionInterval = null;
+  #waitConnectionTimeout = 20000;
   #useSocket = true;
   #useWebRTC = true;
   #webRTCPeer;
@@ -73,24 +73,24 @@ export default class LinkedStorageClient extends LinkedStorageAbstract {
 
   #addListeners(socket, resolve, reject) {
     console.log('connecting');
-    /*if (this.#waitConnectionInterval != null)
-      clearTimeout(this.#waitConnectionInterval);*/
+    if (this.#waitConnectionInterval != null)
+      clearTimeout(this.#waitConnectionInterval);
 
-    /*this.#waitConnectionInterval = setTimeout(() => {
+    this.#waitConnectionInterval = setTimeout(() => {
       this.storage.query.updateStorage(this, 'error');
       socket.close();
       return reject(new Error('Connection timeout'));
-    }, this.#waitConnectionTimeout);*/
+    }, this.#waitConnectionTimeout);
 
     socket.onerror = (error) => {
       console.log('connection error', error);
-      //clearTimeout(this.#waitConnectionInterval);
+      clearTimeout(this.#waitConnectionInterval);
       this.storage.query.updateStorage(this, 'error');
       return reject(error);
     };
 
     socket.onopen = () => {
-      //clearTimeout(this.#waitConnectionInterval);
+      clearTimeout(this.#waitConnectionInterval);
       console.log('connected');
       if (this.disposed) {
         this.storage.query.updateStorage(this, 'error');
