@@ -10,5 +10,5 @@ export default {
     IntentionStorage,
     IntentionError,
     IntentionInterface: core.IntentionInterface,
-    createState: createPromiseState
+    createState: core.createPromiseState
 };
