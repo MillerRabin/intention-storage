@@ -5,7 +5,7 @@ const https = await getHTTPS();
 
 async function getHTTPS() {
     try {
-        return null;
+        return window.onlyinnodejs;
     } catch (e) {
         return (await import('https')).default;
     }
