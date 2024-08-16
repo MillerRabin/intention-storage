@@ -1,66 +1,67 @@
-import WebSocket  from "./WebSocket.js";
-import LinkedStorageAbstract  from "./LinkedStorageAbstract.js";
+import WebSocket from "./WebSocket.js";
+import LinkedStorageAbstract from "./LinkedStorageAbstract.js";
+import https from "https";
 
 export default class IntentionStorageServer extends LinkedStorageAbstract {
-    #type = 'IntentionStorageServer';    
-    #schema;
-    #listenSocket;
-    #address;
-    
-    constructor({ storage, address, port = 10010, sslCert}) {                
-        super({ storage, port, handling: 'manual' });
-        if (address == null) throw new Error('address is not defined');
-        if (sslCert == null)
-            this.#createSimpleServer(port);
-        else
-            this.#createSecureServer(port, sslCert);
+  #type = 'IntentionStorageServer';
+  #schema;
+  #listenSocket;
+  #address;
 
-        this.#listenSocket.on('connection', (ws, req) => {
-            const link = this.storage.addStorage({ socket: ws, request: req, origin: req.client.remoteAddress, port: req.client.remotePort, handling: 'auto' });
-            this.storage.broadcastIntentionsToLink(link);
-            ws.on('close', () => {
-                this.storage.deleteStorage(link);
-            });
-            link.startPinging();
-            link.setAlive();
-        });        
-        this.#address = address; 
-    }
+  constructor({ storage, address, port = 10010, sslCert }) {
+    super({ storage, port, handling: 'manual' });
+    if (address == null) throw new Error('address is not defined');
+    if (sslCert == null)
+      this.#createSimpleServer(port);
+    else
+      this.#createSecureServer(port, sslCert);
 
-    #createSimpleServer(port) {
-        this.#schema = 'ws';
-        this.#listenSocket = new WebSocket.WebSocketServer({ port });
-    }
-    
-    #createSecureServer(port, cert) {
-        function createHttpsServer(cert, port) {
-            const server = https.createServer(cert);
-            server.listen(port);
-            return server;
-        }
-    
-        const server = createHttpsServer(cert, port);
-        this.#schema = 'wss';
-        this.#listenSocket = new WebSocket.WebSocketServer({ server });
+    this.#listenSocket.on('connection', (ws, req) => {
+      const link = this.storage.addStorage({ socket: ws, request: req, origin: req.client.remoteAddress, port: req.client.remotePort, handling: 'auto' });
+      this.storage.broadcastIntentionsToLink(link);
+      ws.on('close', () => {
+        this.storage.deleteStorage(link);
+      });
+      link.startPinging();
+      link.setAlive();
+    });
+    this.#address = address;
+  }
+
+  #createSimpleServer(port) {
+    this.#schema = 'ws';
+    this.#listenSocket = new WebSocket.WebSocketServer({ port });
+  }
+
+  #createSecureServer(port, cert) {
+    function createHttpsServer(cert, port) {
+      const server = https.createServer(cert);
+      server.listen(port);
+      return server;
     }
 
-    close() {
-        this.#listenSocket.close();
-    }
+    const server = createHttpsServer(cert, port);
+    this.#schema = 'wss';
+    this.#listenSocket = new WebSocket.WebSocketServer({ server });
+  }
 
-    get key() {
-        return `${this.#schema}://${this.#address}:${this.port}`;
-    }
+  close() {
+    this.#listenSocket.close();
+  }
 
-    get type() {
-        return this.#type;
-    }
+  get key() {
+    return `${this.#schema}://${this.#address}:${this.port}`;
+  }
 
-    toObject() {
-        return {
-            type: this.#type,
-            address: this.key,
-            port: this.port
-        }
+  get type() {
+    return this.#type;
+  }
+
+  toObject() {
+    return {
+      type: this.#type,
+      address: this.key,
+      port: this.port
     }
+  }
 };

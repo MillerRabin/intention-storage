@@ -6,8 +6,6 @@ const gCommandTable = {
   '1:broadcast': async function (storageLink, message) {    
     if (message.intention == null) throw new Error('intention object expected');
     const textIntention = message.intention;
-    if ((textIntention.type != 'Intention') && (textIntention.type != 'NetworkIntention'))
-      throw new Error('type of object must be Intention or NetworkIntention');
     try {
       return await broadcast(storageLink, textIntention);
     } catch (e) {
