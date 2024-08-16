@@ -1,6 +1,15 @@
 import WebSocket from "./WebSocket.js";
 import LinkedStorageAbstract from "./LinkedStorageAbstract.js";
-import https from "https";
+const https = await getHTTPS();
+
+
+async function getHTTPS() {
+    try {
+        return null;
+    } catch (e) {
+        return (await import('https')).default;
+    }
+}
 
 export default class IntentionStorageServer extends LinkedStorageAbstract {
   #type = 'IntentionStorageServer';
