@@ -3,8 +3,8 @@ import Network from "./Network.js";
 import WebSocket from "./WebSocket.js";
 const wrtc = await getWRTC();
 
-const signalServerHttp = 'https://signal.raintech.su:8086';
-const signalServerSocket = 'wss://signal.raintech.su:8086';
+const signalServerHttp = 'https://signal.int-t.com:8086';
+const signalServerSocket = 'wss://signal.int-t.com:8086';
 
 const gConfig = {
     iceServers: []
