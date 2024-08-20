@@ -4,11 +4,10 @@ const https = await getHTTPS();
 
 
 async function getHTTPS() {
-    try {
-        return window.onlyinnodejs;
-    } catch (e) {
-        return (await import('https')).default;
-    }
+  if (window == null)
+    return (await import('https')).default;
+  throw new Error('https module is not supporetd in browser environment');
+    
 }
 
 export default class IntentionStorageServer extends LinkedStorageAbstract {
